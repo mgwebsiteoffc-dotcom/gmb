@@ -411,7 +411,7 @@ class DatabaseSeeder extends Seeder
         // 7. Team
         TeamMember::create([
             'name' => 'Sarah Jenkins',
-            'email' => 'sarah@ampli5agency.com',
+            'email' => 'sarah@untab.com',
             'role' => 'Account Director',
             'assigned_clients' => [$c1->id, $c4->id],
             'permissions' => ['posts' => true, 'reviews' => true, 'media' => true, 'reports' => true, 'settings' => true],
@@ -421,7 +421,7 @@ class DatabaseSeeder extends Seeder
 
         TeamMember::create([
             'name' => 'Marcus Vance',
-            'email' => 'marcus@ampli5agency.com',
+            'email' => 'marcus@untab.com',
             'role' => 'Local SEO Specialist',
             'assigned_clients' => [$c2->id],
             'permissions' => ['posts' => true, 'reviews' => true, 'media' => true, 'reports' => true, 'settings' => false],
@@ -431,7 +431,7 @@ class DatabaseSeeder extends Seeder
 
         TeamMember::create([
             'name' => 'Elena Rostova',
-            'email' => 'elena@ampli5agency.com',
+            'email' => 'elena@untab.com',
             'role' => 'Content & Review Manager',
             'assigned_clients' => [$c3->id],
             'permissions' => ['posts' => true, 'reviews' => true, 'media' => true, 'reports' => false, 'settings' => false],
@@ -441,10 +441,10 @@ class DatabaseSeeder extends Seeder
 
         // 8. Settings
         AgencySetting::create([
-            'agency_name' => 'Apex Local Growth Agency',
-            'custom_domain' => 'clients.apexlocalseo.com',
+            'agency_name' => 'Untab Local Growth Agency',
+            'custom_domain' => 'clients.untab.com',
             'brand_color' => '#1a35c8',
-            'support_email' => 'support@apexlocalseo.com',
+            'support_email' => 'support@untab.com',
             'ai_model' => 'gpt-4o-mini',
             'email_alerts' => true,
             'sms_alerts' => false

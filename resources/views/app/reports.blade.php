@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Automated White-Label Client Reports - Ampli5 Pulse')
+@section('title', 'Automated White-Label Client Reports - Untab')
 
 @section('content')
 <div class="space-y-6" x-data="reportBuilder()">
@@ -81,7 +81,7 @@
                             <span class="w-8 h-8 rounded-lg flex items-center justify-center text-white text-sm font-bold shadow-sm" :style="'background: ' + brandColor">
                                 ⚡
                             </span>
-                            <span x-text="agencyName">Apex SEO & Growth Agency</span>
+                            <span x-text="agencyName">Untab Local Growth Agency</span>
                         </div>
                         <h2 class="text-xl font-black text-slate-900 mt-2 font-display">Local Presence & GBP Performance Report</h2>
                         <div class="text-xs text-slate-500 mt-1">Prepared for <strong class="text-slate-800" x-text="clientName">Apex Dental Care</strong></div>
@@ -90,7 +90,7 @@
                         <span class="text-xs font-bold uppercase tracking-wider bg-slate-100 text-slate-700 px-3 py-1 rounded-full" x-text="reportPeriod">
                             August 2026
                         </span>
-                        <div class="text-[11px] text-slate-400 mt-2">Generated via Ampli5 Pulse</div>
+                        <div class="text-[11px] text-slate-400 mt-2">Generated via Untab</div>
                     </div>
                 </div>
 
@@ -162,7 +162,7 @@
 <script>
     function reportBuilder() {
         return {
-            agencyName: 'Apex SEO & Growth Agency',
+            agencyName: 'Untab Local Growth Agency',
             clientName: 'Apex Dental Care',
             reportPeriod: 'August 2026',
             brandColor: '#1a35c8',

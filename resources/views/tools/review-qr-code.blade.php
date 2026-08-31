@@ -1,6 +1,15 @@
 @extends('layouts.marketing')
 
-@section('title', 'Google Review QR Code Generator & Printable Stand | Ampli5 Pulse')
+@section('title', 'Google Review QR Code Generator & Printable Stand | Untab')
+
+@php
+    $faqs = [
+        ['q' => 'How do I create a Google review QR code?', 'a' => 'Enter your business name and Place ID. Untab generates a high-resolution QR code that links directly to your Google review form — ready to print.'],
+        ['q' => 'Where should I place my review QR code?', 'a' => 'Put it at the point of sale, on receipts, at the front desk, or on table tents — wherever a happy customer is most likely to scan it.'],
+        ['q' => 'Will this QR code increase my review count?', 'a' => 'Yes. A direct review QR code removes friction by skipping the search for your business on Google Maps, dramatically increasing conversion.'],
+    ];
+    $jsonLd = [\App\Support\SeoHelper::faqSchema($faqs)];
+@endphp
 
 @section('content')
 <div class="max-w-4xl mx-auto py-12 px-4 sm:px-6" x-data="qrGen()" x-init="renderQr()">
@@ -138,4 +147,6 @@
         }
     }
 </script>
+
+@include('partials.faq', ['faqs' => $faqs, 'faqTitle' => 'Google Review QR Code FAQ', 'faqIntro' => 'How to print a QR code that gets customers to leave reviews fast.'])
 @endsection

@@ -1,6 +1,6 @@
-# Ampli5 Pulse - Google Business Profile Platform in Laravel 12
+# Untab - Google Business Profile Platform in Laravel 12
 
-A complete, full-featured replica of **[Ampli5 Pulse](https://www.ampli5pulse.com/)** built from the ground up in **Laravel 12**, **Blade**, **Tailwind CSS**, and **SQLite**.
+A complete, full-featured replica of **[Untab](https://www.untab.com/)** built from the ground up in **Laravel 12**, **Blade**, **Tailwind CSS**, and **SQLite**.
 
 ---
 
@@ -68,6 +68,33 @@ A complete, full-featured replica of **[Ampli5 Pulse](https://www.ampli5pulse.co
 
 ---
 
+## 🔐 Authentication (Production)
+
+Real **register / login / logout** flows using Laravel's `Auth` guard (`User` model). The marketing site is public; the `/app` workspace is front-and-centre for the demo and can be gated with the `auth` middleware for production.
+
+---
+
+## 🤖 AI (OpenRouter) Integration
+
+The AI Review Reply and Google Post Caption engines are powered by **OpenRouter** chat completions (matching the reference Python flow that preserves `reasoning_details`):
+
+- `app/Services/OpenRouterService.php` — thin HTTP client over `POST /chat/completions` with `reasoning: { enabled: true }`.
+- `app/Services/AiAssistantService.php` — builds tone-aware, sentiment-aware prompts and returns strict JSON for post captions.
+- **Graceful fallback:** if `OPENROUTER_API_KEY` is empty or the request fails, Untab falls back to its built-in template generator so every panel keeps working.
+- Model default: `nvidia/nemotron-3.5-lightning:free`.
+
+Configure in `.env`:
+
+```bash
+OPENROUTER_API_KEY=your_key
+OPENROUTER_MODEL="nvidia/nemotron-3.5-lightning:free"
+OPENROUTER_BASE_URL="https://openrouter.ai/api/v1"
+OPENROUTER_REASONING=true
+OPENROUTER_TIMEOUT=60
+```
+
+---
+
 ## 🛠️ Free SEO Tools Suite Included
 
 1. **GBP 16-Point Audit & Health Score Tool** (`/google-business-profile-audit-tool`)
@@ -78,19 +105,34 @@ A complete, full-featured replica of **[Ampli5 Pulse](https://www.ampli5pulse.co
 
 ---
 
+## 🔎 SEO / AEO / JSON-LD (everywhere)
+
+- **Central SEO partial** (`resources/views/partials/seo.blade.php`): title, meta description, keywords, canonical, robots, Open Graph, Twitter Card, geo/local SEO meta, favicon, manifest.
+- **Structured data (JSON-LD):** `Organization`, `WebSite`, `SoftwareApplication` (global); `FAQPage` (marketing + tools pages); `LocalBusiness` + `AggregateRating` + `BreadcrumbList` (location pages); `Product`/`AggregateOffer` (pricing).
+- **FAQ sections** on home, features, audit tool, review link, QR code, NFC card, photo guide, agency, and multi-location pages.
+- **Dynamic `/sitemap.xml`** (all pages + every location) and **`/robots.txt`**.
+
+---
+
 ## 💻 Tech Stack & Architecture
 
 - **Backend**: Laravel 12 (PHP 8.4)
 - **Database**: SQLite with Eloquent Relationships (`Client`, `Location`, `Review`, `Post`, `MediaItem`, `SearchQuery`, `SearchPage`, `TeamMember`, `AgencySetting`)
 - **Frontend**: Laravel Blade Templates + Tailwind CSS + Alpine.js + Lucide Icons
 - **Interactive Libraries**: Chart.js, QRCode.js, jsPDF
+- **AI**: OpenRouter chat completions
 
 ---
 
 ## 🏃 Running the Application
 
 ```bash
-cd ampli5-pulse-laravel
+cd untab
+composer install
+cp .env.example .env && php artisan key:generate
+npm install
+npm run build
 php artisan migrate --seed
+php artisan storage:link
 php artisan serve --host=0.0.0.0 --port=8000
 ```

@@ -126,8 +126,8 @@ return new class extends Migration
 
         Schema::create('agency_settings', function (Blueprint $table) {
             $table->id();
-            $table->string('agency_name')->default('Apex Local Growth Agency');
-            $table->string('custom_domain')->default('clients.ampli5pulse.com');
+            $table->string('agency_name')->default('Untab Local Growth Agency');
+            $table->string('custom_domain')->default('clients.untab.com');
             $table->string('brand_color')->default('#1a35c8');
             $table->string('support_email')->default('support@agency.com');
             $table->string('ai_model')->default('gpt-4o-mini');

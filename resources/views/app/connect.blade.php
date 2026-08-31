@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Connect Google Business Accounts - Ampli5 Pulse')
+@section('title', 'Connect Google Business Accounts - Untab')
 
 @section('content')
 <div class="space-y-6" x-data="{ isConnectModalOpen: false }">

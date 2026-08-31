@@ -1,6 +1,15 @@
 @extends('layouts.marketing')
 
-@section('title', 'Google Review Link Generator - Direct Review URL | Ampli5 Pulse')
+@section('title', 'Google Review Link Generator - Direct Review URL | Untab')
+
+@php
+    $faqs = [
+        ['q' => 'How does the Google review link generator work?', 'a' => 'Enter your Business Name and Place ID, and Untab instantly builds a direct Google review URL customers can use to leave a review in seconds.'],
+        ['q' => 'What is a Place ID?', 'a' => 'A Place ID is the unique identifier Google assigns to a business location. You can find it in the Google Maps / Business Profile dashboard.'],
+        ['q' => 'Can I use this review link on my website or ads?', 'a' => 'Yes. Paste the generated URL behind any button, QR code, or ad. It routes customers straight to your review form.'],
+    ];
+    $jsonLd = [\App\Support\SeoHelper::faqSchema($faqs)];
+@endphp
 
 @section('content')
 <div class="max-w-4xl mx-auto py-12 px-4 sm:px-6" x-data="reviewLinkGen()">
@@ -129,4 +138,6 @@
         }
     }
 </script>
+
+@include('partials.faq', ['faqs' => $faqs, 'faqTitle' => 'Google Review Link FAQ', 'faqIntro' => 'How to get more Google reviews with a direct review link.'])
 @endsection

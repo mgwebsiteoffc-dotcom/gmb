@@ -1,0 +1,22 @@
+{
+    "name": "Untab — Google Business Profile Platform",
+    "short_name": "Untab",
+    "description": "Run every Google Business Profile from one dashboard.",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#0f1f8a",
+    "theme_color": "#1a35c8",
+    "icons": [
+        {
+            "src": "/favicon.svg",
+            "sizes": "any",
+            "type": "image/svg+xml",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/logo.svg",
+            "sizes": "240x64",
+            "type": "image/svg+xml"
+        }
+    ]
+}

@@ -35,4 +35,12 @@ return [
         ],
     ],
 
+    'openrouter' => [
+        'api_key' => env('OPENROUTER_API_KEY'),
+        'base_url' => env('OPENROUTER_BASE_URL', 'https://openrouter.ai/api/v1'),
+        'model' => env('OPENROUTER_MODEL', 'nvidia/nemotron-3.5-lightning:free'),
+        'reasoning' => env('OPENROUTER_REASONING', true),
+        'timeout' => (int) env('OPENROUTER_TIMEOUT', 60),
+    ],
+
 ];

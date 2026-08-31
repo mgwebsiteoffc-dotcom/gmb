@@ -1,6 +1,18 @@
 @extends('layouts.marketing')
 
-@section('title', 'Ampli5 Pulse - Run every Google Business Profile from one dashboard')
+@section('title', 'Untab — Run every Google Business Profile from one dashboard')
+
+@php
+    $faqs = [
+        ['q' => 'What is Untab and who is it for?', 'a' => 'Untab is a Google Business Profile management platform built for SEO agencies, franchise operators, and multi-location brands that need to manage many local profiles from one dashboard.'],
+        ['q' => 'How many Google Business Profiles can I manage?', 'a' => 'Untab supports 10 to 500+ profiles per organization. Group locations into client portfolios and filter every module by client, group, or a single location.'],
+        ['q' => 'Can Untab reply to Google reviews for me?', 'a' => 'Yes. The AI Review Reply Assistant drafts on-brand responses in seconds based on star rating, sentiment, and tone. Publish replies individually or in bulk.'],
+        ['q' => 'Does Untab schedule Google Posts?', 'a' => 'Yes. Create and schedule updates, offers with coupon codes, and events across any subset of locations, with a live Google card preview.'],
+        ['q' => 'Can I send white-label reports to clients?', 'a' => 'Yes. Generate branded performance PDF reports with your agency logo and a client-ready link.'],
+        ['q' => 'Is Untab free to start?', 'a' => 'Yes. Start free and explore every module in the live demo without a credit card.'],
+    ];
+    $jsonLd = [\App\Support\SeoHelper::faqSchema($faqs)];
+@endphp
 
 @section('content')
 <!-- Hero Section -->
@@ -21,7 +33,7 @@
 
         <!-- Subtitle -->
         <p class="mt-5 text-base sm:text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed">
-            Ampli5 Pulse is the Google Business app for teams that manage local presence at scale — reviews, posts, reports and insights for every client and every location, without logging into each profile.
+            Untab is the Google Business app for teams that manage local presence at scale — reviews, posts, reports and insights for every client and every location, without logging into each profile.
         </p>
 
         <!-- CTA Buttons -->
@@ -49,7 +61,7 @@
                     <div class="w-3 h-3 rounded-full bg-green-500"></div>
                 </div>
                 <div class="text-[11px] font-mono text-slate-400 bg-slate-900 px-4 py-1 rounded-md border border-slate-700">
-                    app.ampli5pulse.com/dashboard
+                    app.untab.com/dashboard
                 </div>
                 <div class="text-[10px] text-emerald-400 font-bold flex items-center gap-1">
                     <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Live Connected
@@ -124,7 +136,7 @@
                 Two audiences. <span class="text-brand-600">One platform.</span>
             </h2>
             <p class="text-slate-600 text-sm sm:text-base mt-2">
-                Ampli5 Pulse is built specifically for the two teams that manage Google Business Profiles at serious scale.
+                Untab is built specifically for the two teams that manage Google Business Profiles at serious scale.
             </p>
         </div>
 
@@ -160,7 +172,7 @@
                 </div>
 
                 <a href="{{ route('white-label-agency') }}" class="text-xs sm:text-sm font-bold text-brand-700 hover:text-brand-900 flex items-center gap-1.5">
-                    See how agencies use Pulse <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    See how agencies use Untab <i data-lucide="arrow-right" class="w-4 h-4"></i>
                 </a>
             </div>
 
@@ -195,7 +207,7 @@
                 </div>
 
                 <a href="{{ route('industry-multi-location') }}" class="text-xs sm:text-sm font-bold text-accent-600 hover:text-accent-700 flex items-center gap-1.5">
-                    See how franchises use Pulse <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    See how franchises use Untab <i data-lucide="arrow-right" class="w-4 h-4"></i>
                 </a>
             </div>
         </div>
@@ -327,4 +339,7 @@
         </div>
     </div>
 </section>
+
+<!-- FAQ Section -->
+@include('partials.faq', ['faqs' => $faqs, 'faqTitle' => 'Untab Frequently Asked Questions', 'faqIntro' => 'Answers to the questions agencies and franchises ask most about our Google Business Profile platform.'])
 @endsection

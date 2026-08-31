@@ -3,7 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Ampli5 Pulse - Google Business App')</title>
+
+    @php($seoType = $seoType ?? 'website')
+    @php($seoTitle = $seoTitle ?? (trim(View::yieldContent('title')) ?: 'Untab — Google Business App'))
+    @php($seoDesc = $seoDesc ?? (trim(View::yieldContent('meta_description')) ?: 'Manage every Google Business Profile from one dashboard. AI review replies, Google Posts, local SEO insights, and white-label client reports.'))
+    @php($seoRobots = $seoRobots ?? 'noindex, nofollow')
+    @include('partials.seo')
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -88,7 +93,7 @@
                         </div>
                         <div>
                             <span class="font-display font-black text-xl text-white tracking-tight">
-                                Ampli<span class="text-accent-500">5</span> Pulse
+                                Untab
                             </span>
                             <span class="block text-[8px] font-extrabold tracking-widest text-slate-400 uppercase -mt-0.5">
                                 Google Business App
@@ -200,12 +205,12 @@
             <div class="p-4 border-t border-slate-800 bg-slate-950/50">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center gap-2">
-                        <div class="w-8 h-8 rounded-full bg-brand-700 flex items-center justify-center font-bold text-white text-xs">
-                            AP
+                        <div class="w-8 h-8 rounded-full bg-brand-700 flex items-center justify-center font-black text-white text-xs">
+                            U
                         </div>
                         <div class="truncate">
-                            <div class="text-xs font-bold text-white truncate">Apex SEO Agency</div>
-                            <div class="text-[10px] text-slate-400">White-Label Partner</div>
+                            <div class="text-xs font-bold text-white truncate">Untab</div>
+                            <div class="text-[10px] text-slate-400">Local Growth Platform</div>
                         </div>
                     </div>
                     <a href="{{ route('home') }}" class="p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800" title="Back to Marketing Site">
@@ -243,6 +248,14 @@
                     <a href="{{ route('home') }}" class="text-xs font-bold text-slate-600 hover:text-brand-700 bg-slate-100 px-3 py-1.5 rounded-xl transition-all flex items-center gap-1">
                         <i data-lucide="external-link" class="w-3.5 h-3.5"></i> Marketing Site
                     </a>
+                    @auth
+                        <form method="POST" action="{{ route('logout') }}" class="inline">
+                            @csrf
+                            <button type="submit" class="text-xs font-bold text-slate-600 hover:text-red-600 bg-slate-100 px-3 py-1.5 rounded-xl transition-all flex items-center gap-1">
+                                <i data-lucide="log-out" class="w-3.5 h-3.5"></i> Logout
+                            </button>
+                        </form>
+                    @endauth
                 </div>
             </header>
 

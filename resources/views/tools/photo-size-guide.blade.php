@@ -1,6 +1,15 @@
 @extends('layouts.marketing')
 
-@section('title', 'Google Business Profile Photo Size Guide 2026 | Ampli5 Pulse')
+@section('title', 'Google Business Profile Photo Size Guide 2026 | Untab')
+
+@php
+    $faqs = [
+        ['q' => 'What is the best image size for Google Business Profile?', 'a' => 'Google recommends photos at least 720px wide, with a minimum resolution of 250x250px and under 5MB. Optimal images are 1080x1080px in JPG, PNG, or WebP.'],
+        ['q' => 'How many photos should I upload to my GBP?', 'a' => 'Upload at least 10 branded photos covering your cover, logo, interior, exterior, team, and products. Businesses with 100+ photos get more profile views.'],
+        ['q' => 'Does photo geotagging help local SEO?', 'a' => 'Yes. EXIF geotagging that matches your business location reinforces local relevancy signals to Google.'],
+    ];
+    $jsonLd = [\App\Support\SeoHelper::faqSchema($faqs)];
+@endphp
 
 @section('content')
 <div class="max-w-4xl mx-auto py-12 px-4 sm:px-6">
@@ -78,4 +87,6 @@
         </div>
     </div>
 </div>
+
+@include('partials.faq', ['faqs' => $faqs, 'faqTitle' => 'GBP Photo Size & Best Practices FAQ', 'faqIntro' => '2026 dimensions, file types, and tips to maximise profile visibility.'])
 @endsection

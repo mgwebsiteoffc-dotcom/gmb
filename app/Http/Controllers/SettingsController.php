@@ -15,10 +15,10 @@ class SettingsController extends Controller
         $clients = Client::with('locations')->get();
         $allLocations = Location::all();
         $settings = AgencySetting::firstOrCreate([], [
-            'agency_name' => 'Apex Local Growth Agency',
-            'custom_domain' => 'clients.apexlocalseo.com',
+            'agency_name' => 'Untab Local Growth Agency',
+            'custom_domain' => 'clients.untab.com',
             'brand_color' => '#1a35c8',
-            'support_email' => 'support@apexlocalseo.com',
+            'support_email' => 'support@untab.com',
             'ai_model' => 'gpt-4o-mini',
             'email_alerts' => true,
             'sms_alerts' => false

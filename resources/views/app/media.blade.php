@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Media Asset Manager & EXIF Geotagging - Ampli5 Pulse')
+@section('title', 'Media Asset Manager & EXIF Geotagging - Untab')
 
 @section('content')
 <div class="space-y-6" x-data="{ isUploadOpen: false }">
@@ -110,7 +110,7 @@
                 <button @click="isUploadOpen = false" class="text-white text-xl font-bold leading-none">✕</button>
             </div>
 
-            <form action="{{ route('app.media.store') }}" method="POST" class="p-6 space-y-4">
+            <form action="{{ route('app.media.store') }}" method="POST" enctype="multipart/form-data" class="p-6 space-y-4">
                 @csrf
                 <div>
                     <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Target Location</label>
@@ -126,6 +126,12 @@
                     <input type="text" name="title" required placeholder="e.g. Modern Dental Reception Suite" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-medium">
                 </div>
 
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Upload Photo</label>
+                    <input type="file" name="photo" accept="image/*" class="w-full text-xs font-medium text-slate-600 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-brand-50 file:text-brand-700 hover:file:bg-brand-100">
+                    <p class="text-[10px] text-slate-400 mt-1">JPG, PNG, or WebP up to 8MB. Leave image URL blank to use your upload.</p>
+                </div>
+
                 <div class="grid grid-cols-2 gap-3">
                     <div>
                         <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Category</label>
@@ -138,8 +144,8 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Image URL</label>
-                        <input type="text" name="url" value="https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?auto=format&fit=crop&w=800&q=80" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-mono">
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Image URL (optional)</label>
+                        <input type="text" name="url" value="" placeholder="or paste an https:// image URL" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-mono">
                     </div>
                 </div>
 

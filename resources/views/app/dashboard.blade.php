@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Multi-Location Command Center - Ampli5 Pulse')
+@section('title', 'Multi-Location Command Center - Untab')
 
 @section('content')
 <div class="space-y-6">

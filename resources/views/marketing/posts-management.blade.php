@@ -1,6 +1,6 @@
 @extends('layouts.marketing')
 
-@section('title', 'Google Posts: Schedule Updates, Offers, Events | Ampli5 Pulse')
+@section('title', 'Google Posts: Schedule Updates, Offers, Events | Untab')
 
 @section('content')
 <section class="py-16 bg-gradient-to-b from-brand-50 to-white text-center">

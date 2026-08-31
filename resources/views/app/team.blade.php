@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Team & Granular Permissions - Ampli5 Pulse')
+@section('title', 'Team & Granular Permissions - Untab')
 
 @section('content')
 <div class="space-y-6" x-data="{ isInviteOpen: false }">

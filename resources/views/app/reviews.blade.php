@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Google Reviews & AI Reply Assistant - Ampli5 Pulse')
+@section('title', 'Google Reviews & AI Reply Assistant - Untab')
 
 @section('content')
 <div class="space-y-6" x-data="reviewsManager()">
@@ -11,7 +11,14 @@
                 <span class="text-xs font-bold text-brand-600 bg-brand-50 px-2.5 py-0.5 rounded-full uppercase tracking-wider">
                     Unified Review Inbox
                 </span>
-                <span class="text-xs text-slate-400 font-medium">Powered by Ampli5 AI Assistant</span>
+                <span class="text-xs text-slate-400 font-medium">Powered by Untab AI Assistant
+                    @php($aiOn = \App\Services\OpenRouterService::configured())
+                    @if($aiOn)
+                        <span class="ml-1 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-bold border border-emerald-200"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>Live AI</span>
+                    @else
+                        <span class="ml-1 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 text-[10px] font-bold border border-amber-200"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>Demo AI</span>
+                    @endif
+                </span>
             </div>
             <h1 class="text-2xl font-black text-slate-900 font-display">
                 Google Reviews & AI Reply Assistant
@@ -168,6 +175,11 @@
                 <p class="text-xs text-slate-400 mt-1">Try resetting your rating or search query</p>
             </div>
         @endforelse
+
+        <!-- Pagination -->
+        <div class="mt-6">
+            {{ $reviews->links() }}
+        </div>
     </div>
 
     <!-- AI Reply Modal -->
@@ -184,6 +196,13 @@
                     <div>
                         <h3 class="font-bold text-base font-display">AI Review Reply Assistant</h3>
                         <p class="text-[11px] text-brand-200" x-text="'Replying to ' + currentAuthor + ' (' + currentRating + ' Stars)'"></p>
+                        <p class="text-[10px] text-brand-200 mt-0.5">
+                            @if(\App\Services\OpenRouterService::configured())
+                                <span class="inline-flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Live AI (OpenRouter)</span>
+                            @else
+                                <span class="inline-flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span> Demo AI (template)</span>
+                            @endif
+                        </p>
                     </div>
                 </div>
                 <button @click="isModalOpen = false" class="text-white text-xl font-bold leading-none">✕</button>

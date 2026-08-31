@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Performance Insights & GBP Analytics - Ampli5 Pulse')
+@section('title', 'Performance Insights & GBP Analytics - Untab')
 
 @section('content')
 <div class="space-y-6">

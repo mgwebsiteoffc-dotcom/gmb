@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Agency White-Label Settings - Ampli5 Pulse')
+@section('title', 'Agency White-Label Settings - Untab')
 
 @section('content')
 <div class="space-y-6 max-w-4xl mx-auto">

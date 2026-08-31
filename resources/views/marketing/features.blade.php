@@ -1,6 +1,15 @@
 @extends('layouts.marketing')
 
-@section('title', 'Features - Google Business Profile Management for Agencies | Ampli5 Pulse')
+@section('title', 'Features - Google Business Profile Management for Agencies | Untab')
+
+@php
+    $faqs = [
+        ['q' => 'What features does Untab include?', 'a' => 'Untab bundles multi-location dashboards, an AI Review Reply Assistant, a Google Posts scheduler, performance insights, Google Search Console, a media & geotagging library, white-label client reports, and a team & permissions manager.'],
+        ['q' => 'Does Untab work for single-location businesses too?', 'a' => 'Yes. Untab is built for scale but works equally well for a single location.'],
+        ['q' => 'Can I white-label the platform?', 'a' => 'Yes. Upload your agency logo, set your brand accent color and custom domain, and send reports that carry your brand.'],
+    ];
+    $jsonLd = [\App\Support\SeoHelper::faqSchema($faqs)];
+@endphp
 
 @section('content')
 <section class="py-16 bg-gradient-to-b from-brand-50 to-white text-center">
@@ -98,4 +107,6 @@
         </div>
     </div>
 </section>
+
+@include('partials.faq', ['faqs' => $faqs, 'faqTitle' => 'Untab Features FAQ', 'faqIntro' => 'Everything you get with the Untab Google Business Profile platform.'])
 @endsection

@@ -79,7 +79,7 @@ class PostController extends Controller
             'event_start' => $request->input('event_start'),
             'event_end' => $request->input('event_end'),
             'cta_type' => $request->input('cta_type', 'BOOK'),
-            'cta_url' => $request->input('cta_url', 'https://ampli5pulse.com'),
+            'cta_url' => $request->input('cta_url', 'https://untab.com'),
             'media_url' => $request->input('media_url') ?: 'https://images.unsplash.com/photo-1606811841689-23dfddce3e95?auto=format&fit=crop&w=800&q=80',
             'status' => $isScheduled ? 'SCHEDULED' : 'PUBLISHED',
             'publish_date' => $isScheduled ? $request->input('scheduled_at', now()->addDays(2)->format('Y-m-d H:i')) : now()->format('Y-m-d H:i'),

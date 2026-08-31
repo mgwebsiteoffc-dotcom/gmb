@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Google Posts Scheduler & Multi-Location Publisher - Ampli5 Pulse')
+@section('title', 'Google Posts Scheduler & Multi-Location Publisher - Untab')
 
 @section('content')
 <div class="space-y-6" x-data="postsManager()">
@@ -163,6 +163,11 @@
                             <label class="text-xs font-bold text-slate-700 uppercase tracking-wider">Post Content:</label>
                             <button type="button" @click="generateAiPostCopy()" class="text-xs font-bold text-brand-600 hover:text-brand-700 flex items-center gap-1 bg-brand-50 px-2 py-0.5 rounded">
                                 <i data-lucide="sparkles" class="w-3 h-3 text-accent-500"></i> AI Write Post
+                                @if(\App\Services\OpenRouterService::configured())
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                @else
+                                    <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                                @endif
                             </button>
                         </div>
                         <textarea
@@ -261,7 +266,7 @@
             couponCode: '',
             terms: '',
             ctaType: 'BOOK',
-            ctaUrl: 'https://ampli5pulse.com/book',
+            ctaUrl: 'https://untab.com/book',
             mediaUrl: 'https://images.unsplash.com/photo-1606811841689-23dfddce3e95?auto=format&fit=crop&w=800&q=80',
             isScheduled: false,
             openCreateModal() {

@@ -53,7 +53,7 @@ class ReviewController extends Controller
             });
         }
 
-        $reviews = $query->latest()->get();
+        $reviews = $query->latest()->paginate(20)->withQueryString();
         $unansweredCount = Review::where('status', 'unanswered')->count();
 
         return view('app.reviews', compact(

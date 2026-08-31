@@ -3,8 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Ampli5 Pulse - Google Business App for SEO Agencies & Multi-Location Brands')</title>
-    <meta name="description" content="@yield('meta_description', 'Run every Google Business Profile from one dashboard. AI review replies, Google Posts scheduling, local insights, and white-label client reports.')">
+
+    @php($seoType = $seoType ?? 'website')
+    @php($seoTitle = $seoTitle ?? (trim(View::yieldContent('title')) ?: 'Untab — Google Business App for SEO Agencies & Multi-Location Brands'))
+    @php($seoDesc = $seoDesc ?? (trim(View::yieldContent('meta_description')) ?: 'Run every Google Business Profile from one dashboard. AI review replies, Google Posts scheduling, local insights, and white-label client reports.'))
+    @include('partials.seo')
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -87,7 +90,7 @@
                 </div>
                 <div>
                     <span class="font-display font-black text-2xl tracking-tight text-brand-800">
-                        Ampli<span class="text-accent-500">5</span> Pulse
+                        Untab
                     </span>
                     <span class="block text-[9px] font-extrabold tracking-widest text-slate-400 uppercase -mt-1">
                         Google Business Platform
@@ -105,6 +108,12 @@
                 </a>
                 <a href="{{ route('industry-multi-location') }}" class="px-3 py-2 rounded-lg hover:text-brand-700 hover:bg-brand-50 transition-colors {{ request()->routeIs('industry-multi-location') ? 'text-brand-700 bg-brand-50 font-bold' : '' }}">
                     Multi-Location Franchises
+                </a>
+                <a href="{{ route('pricing') }}" class="px-3 py-2 rounded-lg hover:text-brand-700 hover:bg-brand-50 transition-colors {{ request()->routeIs('pricing') ? 'text-brand-700 bg-brand-50 font-bold' : '' }}">
+                    Pricing
+                </a>
+                <a href="{{ route('faq') }}" class="px-3 py-2 rounded-lg hover:text-brand-700 hover:bg-brand-50 transition-colors {{ request()->routeIs('faq') ? 'text-brand-700 bg-brand-50 font-bold' : '' }}">
+                    FAQ
                 </a>
 
                 <!-- Free Tools Dropdown -->
@@ -165,13 +174,26 @@
 
             <!-- Actions -->
             <div class="flex items-center gap-3">
-                <a href="{{ route('app.dashboard') }}" class="hidden sm:inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold text-brand-700 hover:bg-brand-50 transition-all border border-brand-200">
-                    <i data-lucide="log-in" class="w-3.5 h-3.5"></i> Web App Login
-                </a>
-                <a href="{{ route('app.dashboard') }}" class="bg-brand-600 hover:bg-brand-700 text-white text-xs sm:text-sm font-extrabold px-5 py-2.5 rounded-xl transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5 flex items-center gap-2">
-                    <span>Launch Platform</span>
-                    <i data-lucide="arrow-right" class="w-4 h-4"></i>
-                </a>
+                @auth
+                    <a href="{{ route('app.dashboard') }}" class="bg-brand-600 hover:bg-brand-700 text-white text-xs sm:text-sm font-extrabold px-5 py-2.5 rounded-xl transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5 flex items-center gap-2">
+                        <span>Go to Dashboard</span>
+                        <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    </a>
+                    <form method="POST" action="{{ route('logout') }}" class="inline">
+                        @csrf
+                        <button type="submit" class="hidden sm:inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-red-600 hover:bg-slate-100 transition-all border border-slate-200">
+                            <i data-lucide="log-out" class="w-3.5 h-3.5"></i> Logout
+                        </button>
+                    </form>
+                @else
+                    <a href="{{ route('login') }}" class="hidden sm:inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold text-brand-700 hover:bg-brand-50 transition-all border border-brand-200">
+                        <i data-lucide="log-in" class="w-3.5 h-3.5"></i> Sign In
+                    </a>
+                    <a href="{{ route('app.dashboard') }}" class="bg-brand-600 hover:bg-brand-700 text-white text-xs sm:text-sm font-extrabold px-5 py-2.5 rounded-xl transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5 flex items-center gap-2">
+                        <span>Launch Platform</span>
+                        <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    </a>
+                @endauth
             </div>
         </div>
     </header>
@@ -192,7 +214,7 @@
                             ⚡
                         </div>
                         <span class="font-display font-black text-2xl tracking-tight text-white">
-                            Ampli<span class="text-accent-500">5</span> Pulse
+                            Untab
                         </span>
                     </div>
                     <p className="text-slate-400 text-xs sm:text-sm leading-relaxed max-w-sm">
@@ -251,11 +273,13 @@
             </div>
 
             <div class="pt-8 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-4">
-                <div>© {{ date('Y') }} Ampli5 Pulse. Built with Laravel 12 & Tailwind CSS. All rights reserved.</div>
+                <div>© {{ date('Y') }} Untab. Built with Laravel 12 & Tailwind CSS. All rights reserved.</div>
                 <div class="flex items-center gap-4">
                     <a href="{{ route('app.dashboard') }}" class="hover:text-white">Web App</a>
                     <a href="{{ route('tools.audit') }}" class="hover:text-white">Audit Tool</a>
                     <a href="{{ route('white-label-agency') }}" class="hover:text-white">White Label</a>
+                    <a href="{{ route('pricing') }}" class="hover:text-white">Pricing</a>
+                    <a href="{{ route('faq') }}" class="hover:text-white">FAQ</a>
                 </div>
             </div>
         </div>

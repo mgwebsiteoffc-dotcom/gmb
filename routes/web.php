@@ -13,6 +13,10 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\TeamController;
 use App\Http\Controllers\ConnectController;
 use App\Http\Controllers\SettingsController;
+use App\Http\Controllers\SeoController;
+use App\Http\Controllers\FaqController;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\RegisterController;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,8 +24,24 @@ use App\Http\Controllers\SettingsController;
 |--------------------------------------------------------------------------
 */
 
+// 0. SEO / Sitemap / Robots
+Route::get('/sitemap.xml', [SeoController::class, 'sitemap'])->name('seo.sitemap');
+Route::get('/robots.txt', [SeoController::class, 'robots'])->name('seo.robots');
+
 // 1. Marketing Website Pages
 Route::get('/', [MarketingController::class, 'index'])->name('home');
+Route::get('/faq', [FaqController::class, 'index'])->name('faq');
+Route::get('/pricing', [MarketingController::class, 'pricing'])->name('pricing');
+Route::get('/location/{slug}', [MarketingController::class, 'location'])->name('location.show');
+
+// 1b. Authentication
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
+    Route::post('/login', [LoginController::class, 'login'])->name('login.submit');
+    Route::get('/register', [RegisterController::class, 'showRegisterForm'])->name('register');
+    Route::post('/register', [RegisterController::class, 'register'])->name('register.submit');
+});
+Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 Route::get('/features', [MarketingController::class, 'features'])->name('features');
 Route::get('/white-label-agency', [MarketingController::class, 'whiteLabelAgency'])->name('white-label-agency');
 Route::get('/industry-multi-location', [MarketingController::class, 'multiLocation'])->name('industry-multi-location');
@@ -35,7 +55,7 @@ Route::get('/google-review-qr-code', [ToolsController::class, 'reviewQrCode'])->
 Route::get('/google-review-card', [ToolsController::class, 'reviewCard'])->name('tools.review-card');
 Route::get('/google-business-profile-photo-size', [ToolsController::class, 'photoSizeGuide'])->name('tools.photo-size');
 
-// 3. SaaS Web Application (`app.ampli5pulse.com`)
+// 3. SaaS Web Application (`app.untab.com`)
 Route::prefix('app')->name('app.')->group(function () {
     Route::get('/', function() {
         return redirect()->route('app.dashboard');

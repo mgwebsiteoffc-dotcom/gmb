@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Google Search Console Integration - Ampli5 Pulse')
+@section('title', 'Google Search Console Integration - Untab')
 
 @section('content')
 <div class="space-y-6">
