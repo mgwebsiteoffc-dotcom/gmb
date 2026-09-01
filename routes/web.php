@@ -117,6 +117,7 @@ Route::prefix('app')->name('app.')->group(function () {
 
     Route::get('/settings', [SettingsController::class, 'index'])->name('settings');
     Route::post('/settings', [SettingsController::class, 'update'])->name('settings.update');
+    Route::post('/password', [SettingsController::class, 'changePassword'])->name('password.update');
 });
 
 // 4. Super Admin / SaaS Owner Panel (`untab.com/admin`)

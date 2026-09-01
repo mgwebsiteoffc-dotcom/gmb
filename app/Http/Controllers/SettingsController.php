@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use App\Models\Client;
 use App\Models\Location;
 use App\Models\AgencySetting;
@@ -84,5 +85,33 @@ class SettingsController extends Controller
         ]);
 
         return back()->with('success', 'Agency white-label, billing & AI settings updated successfully!');
+    }
+
+    /**
+     * Change the signed-in user's password from the brand panel account menu.
+     */
+    public function changePassword(Request $request)
+    {
+        $request->validate([
+            'current_password' => ['required', 'string'],
+            'new_password' => ['required', 'string', 'min:8', 'confirmed'],
+        ]);
+
+        $user = $request->user();
+
+        if (! Hash::check($request->input('current_password'), $user->password)) {
+            return back()->withErrors([
+                'current_password' => 'Your current password is incorrect.',
+            ]);
+        }
+
+        $user->update([
+            'password' => $request->input('new_password'),
+        ]);
+
+        // Re-authenticate the session so it stays valid after a password change.
+        $request->session()->regenerate();
+
+        return back()->with('success', 'Your password has been updated successfully.');
     }
 }

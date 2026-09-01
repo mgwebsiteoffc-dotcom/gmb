@@ -57,7 +57,7 @@ class Industries
             'icon' => 'smile',
             'eyebrow' => 'For Dental Practices',
             'h1' => 'Manage every dental clinic location from one dashboard.',
-            'intro' => 'Dental practices live and die by local visibility. Untab keeps every clinic\\'s Google Business Profile fresh — reviews answered, offers scheduled, and new patient flow tracked — without switching between profiles.',
+            'intro' => 'Dental practices live and die by local visibility. Untab keeps every clinic\'s Google Business Profile fresh — reviews answered, offers scheduled, and new patient flow tracked — without switching between profiles.',
             'heroFeatures' => [
                 'Reply to every patient review with AI in seconds',
                 'Schedule seasonal offers and treatment events across all branches',
@@ -76,7 +76,7 @@ class Industries
                 'Offers and seasonal campaigns posted to each profile manually',
             ],
             'benefits' => [
-                ['title' => 'AI review replies', 'desc' => 'Draft warm, on-brand replies to patient reviews — positive or negative — in your clinic\\'s voice, in seconds.'],
+                ['title' => 'AI review replies', 'desc' => 'Draft warm, on-brand replies to patient reviews — positive or negative — in your clinic\'s voice, in seconds.'],
                 ['title' => 'Freshness signals', 'desc' => 'Publish health tips, treatment events and seasonal offers across every branch so Google sees an active, trusted profile.'],
                 ['title' => 'Branch benchmarking', 'desc' => 'Compare calls, directions and bookings side by side to spot your strongest and weakest locations.'],
                 ['title' => 'Role-based access', 'desc' => 'Let each dentist or practice manager edit only their own location while the head office keeps a full view.'],
@@ -100,7 +100,7 @@ class Industries
             'icon' => 'utensils',
             'eyebrow' => 'For Restaurants & Cafés',
             'h1' => 'Get found by hungry local diners on Google Maps.',
-            'intro' => 'The map pack decides which restaurant gets the table booking. Untab keeps every outlet\\'s profile current — photos, offers, menu posts and reviews — so you win the search a hungry customer makes at 7pm.',
+            'intro' => 'The map pack decides which restaurant gets the table booking. Untab keeps every outlet\'s profile current — photos, offers, menu posts and reviews — so you win the search a hungry customer makes at 7pm.',
             'heroFeatures' => [
                 'post specials, offers and events across every outlet at once',
                 'respond to every diner review with AI or one-click templates',
@@ -120,7 +120,7 @@ class Industries
             ],
             'benefits' => [
                 ['title' => 'Bulk Google Posts', 'desc' => 'Push a national special, menu update or festival offer to dozens of outlets in one click, with live Google preview.'],
-                ['title' => 'Review consistency', 'desc' => 'Keep a consistent, professional brand voice across every outlet\\'s reviews — with AI drafting and one-click approval.'],
+                ['title' => 'Review consistency', 'desc' => 'Keep a consistent, professional brand voice across every outlet\'s reviews — with AI drafting and one-click approval.'],
                 ['title' => 'Photo & media library', 'desc' => 'Upload and geotag food, interior and team photos so each profile stays visually fresh.'],
                 ['title' => 'Per-outlet insights', 'desc' => 'See calls, directions and clicks per location to reward top performers and fix laggards.'],
             ],

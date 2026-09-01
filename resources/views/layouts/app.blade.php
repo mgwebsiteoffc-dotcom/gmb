@@ -254,15 +254,79 @@
                         <i data-lucide="external-link" class="w-3.5 h-3.5"></i> Marketing Site
                     </a>
                     @auth
-                        <form method="POST" action="{{ route('logout') }}" class="inline">
-                            @csrf
-                            <button type="submit" class="text-xs font-bold text-slate-600 hover:text-red-600 bg-slate-100 px-3 py-1.5 rounded-xl transition-all flex items-center gap-1">
-                                <i data-lucide="log-out" class="w-3.5 h-3.5"></i> Logout
+                        <!-- Account menu: Change Password + Logout -->
+                        <div class="relative" x-data="{ open: false }" @click.away="open = false">
+                            <button @click="open = !open" class="flex items-center gap-2 bg-slate-100 hover:bg-slate-200 rounded-xl pl-1.5 pr-2.5 py-1 transition-all">
+                                <span class="w-7 h-7 rounded-full bg-brand-600 text-white text-xs font-black flex items-center justify-center">
+                                    {{ strtoupper(auth()->user()->name[0] ?? 'U') }}
+                                </span>
+                                <span class="hidden sm:block text-xs font-bold text-slate-700 max-w-[120px] truncate">{{ auth()->user()->name }}</span>
+                                <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400"></i>
                             </button>
-                        </form>
+                            <div x-show="open" x-transition x-cloak class="absolute right-0 top-full mt-2 w-60 bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden z-50">
+                                <div class="px-4 py-3 border-b border-slate-100">
+                                    <div class="text-sm font-bold text-slate-800 truncate">{{ auth()->user()->name }}</div>
+                                    <div class="text-[11px] text-slate-400 truncate">{{ auth()->user()->email }}</div>
+                                </div>
+                                <div class="p-1.5">
+                                    <button type="button" @click="open = false; $dispatch('open-password-modal')" class="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-bold text-slate-600 hover:bg-slate-50 hover:text-brand-700 transition-colors">
+                                        <i data-lucide="key-round" class="w-4 h-4 text-slate-400"></i> Change Password
+                                    </button>
+                                    <form method="POST" action="{{ route('logout') }}">
+                                        @csrf
+                                        <button type="submit" class="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-bold text-slate-600 hover:bg-red-50 hover:text-red-600 transition-colors">
+                                            <i data-lucide="log-out" class="w-4 h-4 text-slate-400"></i> Logout
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
                     @endauth
                 </div>
             </header>
+
+            <!-- Change Password Modal -->
+            @auth
+            <div x-data="{ open: @json($errors->has('current_password') || $errors->has('new_password') ? true : false) }" @open-password-modal.window="open = true" x-show="open" x-transition class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[60] flex items-center justify-center p-4" style="display: none;">
+                <div class="bg-white rounded-2xl w-full max-w-md shadow-2xl border border-slate-200 overflow-hidden" @click.away="open = false">
+                    <div class="bg-gradient-to-r from-brand-700 to-indigo-800 p-5 text-white flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <i data-lucide="key-round" class="w-5 h-5 text-accent-500"></i>
+                            <div>
+                                <h3 class="font-bold text-base font-display">Change Password</h3>
+                                <p class="text-[11px] text-brand-200">Update your account password</p>
+                            </div>
+                        </div>
+                        <button @click="open = false" class="text-white text-xl font-bold leading-none">✕</button>
+                    </div>
+                    <form method="POST" action="{{ route('app.password.update') }}" class="p-6 space-y-4">
+                        @csrf
+                        @if($errors->has('current_password'))
+                            <div class="bg-red-50 border border-red-200 text-red-700 text-xs font-semibold rounded-xl px-3 py-2">{{ $errors->first('current_password') }}</div>
+                        @endif
+                        @if($errors->has('new_password'))
+                            <div class="bg-red-50 border border-red-200 text-red-700 text-xs font-semibold rounded-xl px-3 py-2">{{ $errors->first('new_password') }}</div>
+                        @endif
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Current Password</label>
+                            <input type="password" name="current_password" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-brand-500" placeholder="Your current password">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">New Password</label>
+                            <input type="password" name="new_password" required minlength="8" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-brand-500" placeholder="At least 8 characters">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Confirm New Password</label>
+                            <input type="password" name="new_password_confirmation" required minlength="8" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-brand-500" placeholder="Repeat new password">
+                        </div>
+                        <div class="flex gap-2 pt-2">
+                            <button type="submit" class="flex-1 bg-brand-600 hover:bg-brand-700 text-white font-bold text-sm px-5 py-2.5 rounded-xl transition-all shadow-md">Update Password</button>
+                            <button type="button" @click="open = false" class="px-4 py-2.5 rounded-xl border border-slate-300 text-sm font-bold text-slate-600 hover:bg-slate-50">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            @endauth
 
             <!-- Main Scrollable Body with Flash Messages -->
             <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
