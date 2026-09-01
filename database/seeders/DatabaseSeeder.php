@@ -456,6 +456,7 @@ class DatabaseSeeder extends Seeder
             TeamSeeder::class,
             UserSeeder::class,
             BlogSeeder::class,
+            IndiaBlogSeeder::class,
             FaqSeeder::class,
             SeoGuidelineSeeder::class,
         ]);

@@ -66,7 +66,7 @@
         <div>
             <div class="font-black text-slate-900">About Untab</div>
             <p class="mt-1 text-sm text-slate-600">The all-in-one Google Business Profile management platform for agencies and multi-location brands.</p>
-            <a href="{{ route('home') }}#demo" class="inline-flex items-center gap-1.5 mt-3 text-sm font-bold text-brand-600 hover:text-brand-700">Try the live demo <i data-lucide="arrow-right" class="w-4 h-4"></i></a>
+            <a href="{{ route('demo') }}" class="inline-flex items-center gap-1.5 mt-3 text-sm font-bold text-brand-600 hover:text-brand-700">Try the live demo <i data-lucide="arrow-right" class="w-4 h-4"></i></a>
         </div>
     </div>
 </article>

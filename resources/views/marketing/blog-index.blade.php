@@ -118,7 +118,7 @@
         <h2 class="text-2xl sm:text-3xl font-black text-white">Want these wins for your clients?</h2>
         <p class="mt-3 text-slate-300 max-w-xl mx-auto">See how Untab makes Google Business Profile management effortless for agencies and multi-location brands.</p>
         <div class="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
-            <a href="{{ route('home') }}#demo" class="bg-brand-600 hover:bg-brand-500 text-white font-bold px-6 py-3 rounded-xl transition-all">Try the Live Demo</a>
+            <a href="{{ route('demo') }}" class="bg-brand-600 hover:bg-brand-500 text-white font-bold px-6 py-3 rounded-xl transition-all">Try the Live Demo</a>
             <a href="{{ route('pricing') }}" class="bg-white/10 hover:bg-white/20 text-white font-bold px-6 py-3 rounded-xl transition-all">View Pricing</a>
         </div>
     </div>
