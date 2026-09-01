@@ -43,6 +43,13 @@ class FaqSeeder extends Seeder
 
             // Security
             ['category' => 'Security', 'question' => 'How does Untab handle team permissions?', 'answer' => 'Every team member has a role and granular permissions covering posts, reviews, media, reports, and settings, so staff only access the modules they need.', 'sort_order' => 1],
+
+            // Blog (shown on the article pages & managed in Super Admin)
+            ['category' => 'Blog', 'question' => 'What is a Google Business Profile and why does it matter?', 'answer' => 'A Google Business Profile is the free listing that appears in Google Maps and local search with your hours, photos, reviews and a call button. It is the single most important free marketing tool for local businesses because it is where customers find and choose you.'],
+            ['category' => 'Blog', 'question' => 'How fast does a Google Business Profile improve my rankings?', 'answer' => 'Most businesses see initial improvements in Google impressions within two to four weeks. Meaningful local-pack ranking gains in competitive markets typically take 60-90 days of consistent work.'],
+            ['category' => 'Blog', 'question' => 'Can I manage my own Google Business Profile or do I need an agency?', 'answer' => 'Many businesses successfully manage their own profile with the right tools. Untab is built for business owners too, and for agencies managing many profiles. For multiple locations or highly competitive markets, a specialist can accelerate results.'],
+            ['category' => 'Blog', 'question' => 'What is the single most important thing I can do right now?', 'answer' => 'Complete your Google Business Profile 100%: fill every field, choose the correct primary category, add at least ten photos, write a keyword-rich description, and set up a review request system. These fundamentals deliver the biggest ranking improvement fastest.'],
+            ['category' => 'Blog', 'question' => 'What is the difference between Google My Business and Google Business Profile?', 'answer' => 'Google My Business was the old name. Google rebranded it to Google Business Profile in 2021 — same product, same features. You now manage it directly in Google Search by searching your business name while logged in.'],
         ];
 
         foreach ($faqs as $faq) {

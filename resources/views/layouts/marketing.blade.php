@@ -144,6 +144,28 @@
                     </div>
                 </div>
 
+                <!-- Industries dropdown -->
+                <div class="relative" x-data="{ open: false }" @click.away="open = false">
+                    <button @click="open = !open" class="px-3.5 py-2 rounded-lg hover:text-brand-700 hover:bg-brand-50 transition-colors flex items-center gap-1.5 {{ request()->routeIs('industries','industry.show') ? 'text-brand-700 bg-brand-50 font-bold' : '' }}">
+                        Industries
+                        <i data-lucide="chevron-down" class="w-3.5 h-3.5"></i>
+                    </button>
+                    <div x-show="open" x-transition x-cloak class="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-80 bg-white rounded-2xl shadow-xl border border-slate-200/80 p-2 space-y-1 z-50">
+                        <div class="px-2.5 pb-1 text-[10px] font-extrabold uppercase tracking-widest text-slate-400">By Industry</div>
+                        <a href="{{ route('industries') }}" class="flex items-start gap-3 p-2.5 rounded-xl hover:bg-slate-50 transition-colors">
+                            <div class="w-8 h-8 rounded-lg bg-brand-50 text-brand-700 flex items-center justify-center flex-shrink-0"><i data-lucide="layout-grid" class="w-4 h-4"></i></div>
+                            <div><div class="font-bold text-xs text-slate-800">All Industries</div><div class="text-[10px] text-slate-500">Every vertical, in one place</div></div>
+                        </a>
+                        <div class="h-px bg-slate-100 my-1"></div>
+                        @foreach(\App\Support\Industries::all() as $industry)
+                            <a href="{{ route('industry.show', $industry['slug']) }}" class="flex items-start gap-3 p-2.5 rounded-xl hover:bg-slate-50 transition-colors">
+                                <div class="w-8 h-8 rounded-lg bg-brand-50 text-brand-700 flex items-center justify-center flex-shrink-0"><i data-lucide="{{ $industry['icon'] }}" class="w-4 h-4"></i></div>
+                                <div><div class="font-bold text-xs text-slate-800">{{ $industry['name'] }}</div><div class="text-[10px] text-slate-500">{{ $industry['eyebrow'] }}</div></div>
+                            </a>
+                        @endforeach
+                    </div>
+                </div>
+
                 <a href="{{ route('pricing') }}" class="px-3.5 py-2 rounded-lg hover:text-brand-700 hover:bg-brand-50 transition-colors {{ request()->routeIs('pricing') ? 'text-brand-700 bg-brand-50 font-bold' : '' }}">
                     Pricing
                 </a>
@@ -235,6 +257,7 @@
                 <a href="{{ route('features') }}" class="block px-4 py-3 rounded-xl hover:bg-brand-50 hover:text-brand-700 {{ request()->routeIs('features') ? 'bg-brand-50 text-brand-700 font-bold' : '' }}">Features</a>
                 <a href="{{ route('white-label-agency') }}" class="block px-4 py-3 rounded-xl hover:bg-brand-50 hover:text-brand-700 {{ request()->routeIs('white-label-agency') ? 'bg-brand-50 text-brand-700 font-bold' : '' }}">For SEO Agencies</a>
                 <a href="{{ route('industry-multi-location') }}" class="block px-4 py-3 rounded-xl hover:bg-brand-50 hover:text-brand-700 {{ request()->routeIs('industry-multi-location') ? 'bg-brand-50 text-brand-700 font-bold' : '' }}">Multi-Location Brands</a>
+                <a href="{{ route('industries') }}" class="block px-4 py-3 rounded-xl hover:bg-brand-50 hover:text-brand-700 {{ request()->routeIs('industries','industry.show') ? 'bg-brand-50 text-brand-700 font-bold' : '' }}">Industries</a>
                 <a href="{{ route('pricing') }}" class="block px-4 py-3 rounded-xl hover:bg-brand-50 hover:text-brand-700 {{ request()->routeIs('pricing') ? 'bg-brand-50 text-brand-700 font-bold' : '' }}">Pricing</a>
                 <a href="{{ route('blog.index') }}" class="block px-4 py-3 rounded-xl hover:bg-brand-50 hover:text-brand-700 {{ request()->routeIs('blog.*') ? 'bg-brand-50 text-brand-700 font-bold' : '' }}">Blog & Insights</a>
                 <a href="{{ route('faq') }}" class="block px-4 py-3 rounded-xl hover:bg-brand-50 hover:text-brand-700 {{ request()->routeIs('faq') ? 'bg-brand-50 text-brand-700 font-bold' : '' }}">FAQs</a>
@@ -306,6 +329,7 @@
                     <ul class="space-y-2.5 text-xs text-slate-400">
                         <li><a href="{{ route('white-label-agency') }}" class="hover:text-white transition-colors">For SEO Agencies</a></li>
                         <li><a href="{{ route('industry-multi-location') }}" class="hover:text-white transition-colors">Multi-Location Brands</a></li>
+                        <li><a href="{{ route('industries') }}" class="hover:text-white transition-colors">Industries</a></li>
                         <li><a href="{{ route('features') }}" class="hover:text-white transition-colors">Franchise Management</a></li>
                         <li><a href="{{ route('app.team') }}" class="hover:text-white transition-colors">Team & Role Permissions</a></li>
                         <li><a href="{{ route('app.connect') }}" class="hover:text-white transition-colors">Google OAuth Connect</a></li>
@@ -336,6 +360,7 @@
                     <a href="{{ route('app.dashboard') }}" class="hover:text-white">Web App</a>
                     <a href="{{ route('tools.audit') }}" class="hover:text-white">Audit Tool</a>
                     <a href="{{ route('white-label-agency') }}" class="hover:text-white">White Label</a>
+                    <a href="{{ route('industries') }}" class="hover:text-white">Industries</a>
                     <a href="{{ route('pricing') }}" class="hover:text-white">Pricing</a>
                     <a href="{{ route('blog.index') }}" class="hover:text-white">Blog</a>
                     <a href="{{ route('faq') }}" class="hover:text-white">FAQ</a>

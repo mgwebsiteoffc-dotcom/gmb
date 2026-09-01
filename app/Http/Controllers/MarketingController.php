@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use App\Models\Client;
 use App\Models\Location;
+use App\Support\Industries;
 
 class MarketingController extends Controller
 {
@@ -55,6 +56,30 @@ class MarketingController extends Controller
     public function demo()
     {
         return view('marketing.demo');
+    }
+
+    /**
+     * Industry overview hub listing every "how it helps" vertical.
+     */
+    public function industries()
+    {
+        $industries = Industries::all();
+
+        return view('marketing.industries', compact('industries'));
+    }
+
+    /**
+     * A single industry "how this helps" landing page.
+     */
+    public function industry(string $slug)
+    {
+        $industry = Industries::find($slug);
+
+        if (! $industry) {
+            abort(404);
+        }
+
+        return view('marketing.industry', compact('industry'));
     }
 
     public function location($slug)

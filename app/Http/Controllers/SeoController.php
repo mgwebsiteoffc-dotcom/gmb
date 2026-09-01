@@ -36,7 +36,13 @@ class SeoController extends Controller
             '/local-seo-keywords-checklist' => '0.6',
             '/google-business-profile-description-writer' => '0.6',
             '/demo' => '0.7',
+            '/industries' => '0.8',
         ];
+
+        // Add every industry landing page.
+        foreach (\App\Support\Industries::all() as $industry) {
+            $staticRoutes['/industries/'.$industry['slug']] = '0.7';
+        }
 
         $urls = collect($staticRoutes)->map(function ($priority, $path) use ($baseUrl) {
             return [

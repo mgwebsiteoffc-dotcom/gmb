@@ -41,6 +41,8 @@ Route::get('/', [MarketingController::class, 'index'])->name('home');
 Route::get('/faq', [FaqController::class, 'index'])->name('faq');
 Route::get('/pricing', [MarketingController::class, 'pricing'])->name('pricing');
 Route::get('/demo', [MarketingController::class, 'demo'])->name('demo');
+Route::get('/industries', [MarketingController::class, 'industries'])->name('industries');
+Route::get('/industries/{slug}', [MarketingController::class, 'industry'])->name('industry.show');
 Route::get('/location/{slug}', [MarketingController::class, 'location'])->name('location.show');
 
 // 1a. Blog (publicly viewable, managed in Super Admin)
