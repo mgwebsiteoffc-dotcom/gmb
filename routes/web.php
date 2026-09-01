@@ -17,6 +17,10 @@ use App\Http\Controllers\SeoController;
 use App\Http\Controllers\FaqController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\UserController as AdminUserController;
+use App\Http\Controllers\Admin\ClientController as AdminClientController;
+use App\Http\Controllers\Admin\SettingsController as AdminSettingsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -96,4 +100,31 @@ Route::prefix('app')->name('app.')->group(function () {
 
     Route::get('/settings', [SettingsController::class, 'index'])->name('settings');
     Route::post('/settings', [SettingsController::class, 'update'])->name('settings.update');
+});
+
+// 4. Super Admin / SaaS Owner Panel (`untab.com/admin`)
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:super_admin'])->group(function () {
+    Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
+
+    // Users (super admins, brand admins, staff)
+    Route::get('/users', [AdminUserController::class, 'index'])->name('users.index');
+    Route::get('/users/create', [AdminUserController::class, 'create'])->name('users.create');
+    Route::post('/users', [AdminUserController::class, 'store'])->name('users.store');
+    Route::get('/users/{user}/edit', [AdminUserController::class, 'edit'])->name('users.edit');
+    Route::put('/users/{user}', [AdminUserController::class, 'update'])->name('users.update');
+    Route::patch('/users/{user}/toggle-active', [AdminUserController::class, 'toggleActive'])->name('users.toggle-active');
+    Route::delete('/users/{user}', [AdminUserController::class, 'destroy'])->name('users.destroy');
+
+    // Clients / Brands
+    Route::get('/clients', [AdminClientController::class, 'index'])->name('clients.index');
+    Route::get('/clients/create', [AdminClientController::class, 'create'])->name('clients.create');
+    Route::post('/clients', [AdminClientController::class, 'store'])->name('clients.store');
+    Route::get('/clients/{client}', [AdminClientController::class, 'show'])->name('clients.show');
+    Route::get('/clients/{client}/edit', [AdminClientController::class, 'edit'])->name('clients.edit');
+    Route::put('/clients/{client}', [AdminClientController::class, 'update'])->name('clients.update');
+    Route::delete('/clients/{client}', [AdminClientController::class, 'destroy'])->name('clients.destroy');
+
+    // Platform settings
+    Route::get('/settings', [AdminSettingsController::class, 'index'])->name('settings');
+    Route::post('/settings', [AdminSettingsController::class, 'update'])->name('settings.update');
 });

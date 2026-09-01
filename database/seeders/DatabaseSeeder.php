@@ -440,14 +440,21 @@ class DatabaseSeeder extends Seeder
         ]);
 
         // 8. Settings
-        AgencySetting::create([
+        AgencySetting::updateOrCreate(['id' => 1], [
             'agency_name' => 'Untab Local Growth Agency',
             'custom_domain' => 'clients.untab.com',
             'brand_color' => '#1a35c8',
             'support_email' => 'support@untab.com',
-            'ai_model' => 'gpt-4o-mini',
+            'ai_model' => 'nvidia/nemotron-3.5-lightning:free',
             'email_alerts' => true,
             'sms_alerts' => false
+        ]);
+
+        // 9. Users (super admin, brand admins, staff) & team demo data.
+        //    Runs after clients exist so brand admins link to a client.
+        $this->call([
+            UserSeeder::class,
+            TeamSeeder::class,
         ]);
     }
 }

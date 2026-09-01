@@ -2,6 +2,7 @@
 
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
+use App\Http\Middleware\EnsureUserRole;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
 
@@ -16,6 +17,10 @@ return Application::configure(basePath: dirname(__DIR__))
             'app/reviews/ai-reply',
             'app/posts/ai-caption',
             'app/reviews/*/reply',
+        ]);
+
+        $middleware->alias([
+            'role' => EnsureUserRole::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

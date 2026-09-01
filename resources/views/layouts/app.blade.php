@@ -242,6 +242,13 @@
                 </div>
 
                 <div class="flex items-center gap-3">
+                    @auth
+                        @if(auth()->user()->isSuperAdmin())
+                            <a href="{{ route('admin.dashboard') }}" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 bg-brand-600 hover:bg-brand-700 text-white rounded-xl text-xs font-bold transition-all border border-brand-500 shadow-sm">
+                                <i data-lucide="shield-check" class="w-3.5 h-3.5"></i> Super Admin
+                            </a>
+                        @endif
+                    @endauth
                     <a href="{{ route('tools.audit') }}" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 bg-brand-50 hover:bg-brand-100 text-brand-800 rounded-xl text-xs font-bold transition-all border border-brand-200">
                         <i data-lucide="sparkles" class="w-3.5 h-3.5 text-accent-500"></i> Free SEO Tools
                     </a>

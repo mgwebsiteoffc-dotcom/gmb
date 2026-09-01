@@ -22,6 +22,21 @@ class LoginController extends Controller
 
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
             $request->session()->regenerate();
+
+            $user = Auth::user();
+
+            if (! $user->isActive()) {
+                Auth::logout();
+                return back()->withErrors([
+                    'email' => __('This account has been deactivated. Please contact support.'),
+                ])->onlyInput('email');
+            }
+
+            // SaaS owners go to the Super Admin panel; everyone else to the app.
+            if ($user->isSuperAdmin()) {
+                return redirect()->intended(route('admin.dashboard'));
+            }
+
             return redirect()->intended(route('app.dashboard'));
         }
 

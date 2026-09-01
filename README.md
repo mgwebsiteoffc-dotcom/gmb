@@ -136,3 +136,37 @@ php artisan migrate --seed
 php artisan storage:link
 php artisan serve --host=0.0.0.0 --port=8000
 ```
+
+> **Important**: use `composer install` (or `composer update`) **without** `--prefer-source`. The framework must be fetched as a **dist** package or it will be missing the compiled exception-renderer assets. See [FIXING-ERRORS.md](FIXING-ERRORS.md) if you hit `...exceptions/renderer/dist/styles.css: Failed to open stream`.
+
+---
+
+## 🛡️ Super Admin / SaaS Owner Panel (`/admin`)
+
+A full role-based admin panel for the platform owner (Super Admin), guarded by the `role` middleware:
+
+- **Platform dashboard** — live KPIs (clients, locations, users, reviews, posts), monthly growth chart, role distribution, recent users & brands.
+- **Users & Roles** — create/edit/deactivate/delete Super Admins, Brand Admins, and staff; assign Brand Admins to a client; search & filter by role.
+- **Brands & Clients** — full CRUD for each client/brand, per-brand KPIs (reviews, views, ratings), location lists, and assigned Brand Admins.
+- **Platform Settings** — agency name, custom domain, brand color, support email, and the default OpenRouter AI model.
+
+**Roles:**
+| Role | Access |
+|------|--------|
+| `super_admin` | Full platform access (`/admin`, everything) |
+| `brand_admin` | Scoped to one client/brand (`client_id`) |
+| `user` | Standard agency staff |
+
+**Demo accounts (seeded by `DatabaseSeeder` → `UserSeeder`):** all passwords are `password123` unless noted.
+
+| Email | Role |
+|-------|------|
+| `owner@untab.com` | Super Admin (SaaS owner) |
+| `admin@untab.com` | Super Admin |
+| `apex@untab.com` / `urban@untab.com` / `horizon@untab.com` / `elevate@untab.com` | Brand Admins |
+| `sarah@untab.com` / `marcus@untab.com` / `elena@untab.com` / `leo@untab.com` | Users / Staff |
+
+Seeders live in `database/seeders/`:
+- `UserSeeder` — super admin, brand admins, staff
+- `TeamSeeder` — demo team members (assigned to clients, role permissions)
+- `DatabaseSeeder` — the full demo dataset (clients, locations, reviews, posts, media, search console, settings)
