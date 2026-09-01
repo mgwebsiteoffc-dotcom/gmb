@@ -428,10 +428,69 @@ function viewInsights(){
       <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm"><h2 class="font-bold text-slate-900 mb-3">Maps vs Search Impressions</h2><canvas id="insightChart" class="h-64"></canvas></div>
       <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm"><h2 class="font-bold text-slate-900 mb-3">Customer Conversion Actions</h2><canvas id="actionChart" class="h-64"></canvas></div>
     </div>
-    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm"><h2 class="font-bold text-slate-900 mb-3">Cross-Location Benchmarking</h2>
-      <table class="w-full text-xs"><thead><tr class="text-slate-400 uppercase text-[10px]"><th class="text-left py-2">Location</th><th class="text-right">Views</th><th class="text-right">Calls</th><th class="text-right">Directions</th><th class="text-right">Health</th></tr></thead><tbody>${locs.map(l=>`<tr class="border-t border-slate-50"><td class="py-2 font-bold text-slate-700">${esc(l.name)}</td><td class="text-right">${fmt(l.views)}</td><td class="text-right">${fmt(l.calls)}</td><td class="text-right">${fmt(l.directions)}</td><td class="text-right font-extrabold ${l.health>=90?'text-emerald-600':l.health>=80?'text-amber-600':'text-red-600'}">${l.health}</td></tr>`).join('')}</tbody></table>
-    </div>
+    ${comparisonScorecard()}
   </div>`;
+}
+function locationScore(l){
+  // Composite 0-100 performance score: health (50%), rating (20%), engagement volume (30%).
+  const reviews=Number(l.review_count||0), views=Number(l.views||0), calls=Number(l.calls||0), dirs=Number(l.directions||0), clicks=Number(l.clicks||0), unans=Number(l.unanswered||0);
+  const health=Number(l.health||0);
+  const rating=Number(l.rating||0)*20;                        // out of 100
+  const engagement=Math.min(100,((views/1000)+(calls*2)+(dirs+clicks)*0.5)/8);
+  const replyHealth=Math.max(0,100-unans*20);
+  return Math.round(health*0.4+rating*0.25+Math.min(100,engagement)*0.2+replyHealth*0.15);
+}
+function comparisonScorecard(){
+  const locs=scopeQuery(DB.locations);
+  if(!locs.length) return '';
+  const ranked=locs.map(l=>({...l,score:locationScore(l)})).sort((a,b)=>b.score-a.score);
+  const best=ranked[0], worst=ranked[ranked.length-1];
+  const maxViews=Math.max(...locs.map(l=>l.views),1);
+  const avgScore=Math.round(ranked.reduce((s,l)=>s+l.score,0)/ranked.length);
+  const bestBar=Math.max(8,(best.score/100)*100);
+  const ths={label:'text-[9px] uppercase tracking-wider font-bold text-slate-400 text-left',cv:'text-right'};
+  return `
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div class="grid grid-cols-1 lg:col-span-2 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+        <div class="flex items-center justify-between mb-4"><h2 class="font-bold text-slate-900">Multi-Location Comparison</h2><span class="text-[10px] font-bold text-slate-400 uppercase">${ranked.length} locations · avg score ${avgScore}</span></div>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
+          ${[['Best Performer',best.name.split(' - ')[0],'text-emerald-600 bg-emerald-50 border-emerald-200'],['Top Ranking',best.score+' / 100','text-brand-700 bg-brand-50 border-brand-200'],['Needs Attention',worst.name.split(' - ')[0],'text-amber-600 bg-amber-50 border-amber-200'],['Avg Rating',(locs.reduce((s,l)=>s+l.rating,0)/locs.length).toFixed(1)+' ★','text-violet-600 bg-violet-50 border-violet-200']].map(k=>`<div class="rounded-xl border ${k[2]} p-3"><div class="text-[9px] font-bold text-slate-400 uppercase">${k[0]}</div><div class="text-sm font-extrabold ${k[2].split(' ')[0]}">${esc(k[1])}</div></div>`).join('')}
+        </div>
+        <div class="overflow-x-auto">
+        <table class="w-full text-xs min-w-[560px]"><thead><tr class="text-slate-400 uppercase text-[10px] border-b border-slate-100"><th class="text-left py-2">Rank · Location</th><th class="text-right">Views</th><th class="text-right">Calls</th><th class="text-right">Rating</th><th class="text-right">Health</th><th class="text-right">Score</th></tr></thead>
+        <tbody>${ranked.map((l,i)=>{
+          const c=clientOf(l);
+          const bar=[0,8,16,24,32,40,48].map(p=>l.views>=maxViews*(p/48)?`<div class="w-2 h-5 rounded-sm" style="background:${c.color}"></div>`:`<div class="w-2 h-5 rounded-sm bg-slate-100"></div>`).join('');
+          return `<tr class="border-b border-slate-50">
+            <td class="py-2.5"><div class="flex items-center gap-2"><span class="w-5 h-5 rounded-md text-[10px] font-black flex items-center justify-center ${i===0?'bg-amber-100 text-amber-700':i<=2?'bg-slate-100 text-slate-600':'text-slate-300'}">${i+1}</span><div class="min-w-0"><div class="font-bold text-slate-700 truncate max-w-[220px]">${esc(l.name)}</div><div class="text-[10px] text-slate-400 truncate max-w-[220px]">${esc(c.name)}</div></div></div></td>
+            <td class="text-right"><div class="flex justify-end items-center gap-1">${bar}</div></td>
+            <td class="text-right font-bold">${fmt(l.views)}</td>
+            <td class="text-right font-bold">${fmt(l.calls)}</td>
+            <td class="text-right font-bold">${stars(l.rating)}</td>
+            <td class="text-right"><span class="font-extrabold ${l.health>=90?'text-emerald-600':l.health>=80?'text-amber-600':'text-red-600'}">${l.health}</span></td>
+            <td class="text-right"><span class="inline-flex px-2 py-0.5 rounded-full text-[10px] font-black ${l.score>=85?'bg-emerald-50 text-emerald-700':l.score>=70?'bg-brand-50 text-brand-700':'bg-amber-50 text-amber-700'}">${l.score}</span></td>
+          </tr>`;}).join('')}
+        </tbody></table></div>
+      </div>
+      <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+        <h2 class="font-bold text-slate-900 mb-1">Leaderboard Insight</h2>
+        <p class="text-[11px] text-slate-500 mb-4">Powered by a composite health, rating, engagement & reply-rate score.</p>
+        <div class="space-y-4">
+          <div class="rounded-xl bg-slate-50 p-4">
+            <div class="flex items-center justify-between mb-1"><span class="text-[10px] font-bold text-slate-400 uppercase">Top location</span><span class="text-xs font-black text-emerald-600">${best.score}/100</span></div>
+            <div class="text-sm font-bold text-slate-800 truncate">${esc(best.name)}</div>
+            <div class="mt-2 h-3 bg-slate-200 rounded-full overflow-hidden"><div class="h-full rounded-full bg-emerald-500" style="width:${bestBar}%"></div></div>
+          </div>
+          <div class="p-3 rounded-xl border border-slate-100 text-xs space-y-2">
+            ${ranked.slice(0,4).map((l,i)=>`<div class="flex items-center justify-between"><span class="text-slate-600 font-medium truncate">${i+1}. ${esc(l.name.split(' - ')[0])}</span><span class="font-black text-slate-800">${l.score}</span></div>`).join('')}
+          </div>
+          <div class="p-4 rounded-xl bg-gradient-to-br from-brand-600 to-indigo-700 text-white">
+            <div class="text-[10px] font-bold uppercase tracking-wide text-brand-200">Recommendation</div>
+            <p class="text-xs mt-1 leading-relaxed">${worst.score<best.score-15?`Focus on <strong>${esc(worst.name.split(' - ')[0])}</strong> — reply to its ${worst.unanswered} pending review(s) and post fresh content to close the ${best.score-worst.score}-point gap.`:'Your locations are performing consistently. Keep publishing posts to sustain momentum.'}</p>
+          </div>
+        </div>
+      </div>
+    </div>`;
 }
 function drawInsightCharts(){
   if(!window.Chart) return;
