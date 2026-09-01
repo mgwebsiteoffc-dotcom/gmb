@@ -69,8 +69,19 @@ class User extends Authenticatable
         return in_array($this->role, (array) $roles, true);
     }
 
+    /**
+     * Whether the account is active.
+     *
+     * Fail-safe: never block a login just because the `is_active` column was
+     * added by a migration that hasn't been run yet — and never throw a
+     * MissingAttributeException. A missing/unset attribute is treated as active.
+     */
     public function isActive(): bool
     {
+        if (! array_key_exists('is_active', $this->getAttributes())) {
+            return true;
+        }
+
         return (bool) $this->is_active;
     }
 

@@ -34,11 +34,11 @@
     "scripts": {
         "setup": [
             "composer install",
+            "@php scripts/authenticate-framework-renderer.php",
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\"",
+            "@php -r \"file_exists('database/database.sqlite') || touch('database/database.sqlite');\"",
             "@php artisan key:generate",
-            "@php artisan migrate --force",
-            "npm install --ignore-scripts",
-            "npm run build"
+            "@php artisan migrate --seed --force"
         ],
         "dev": [
             "Composer\\Config::disableProcessTimeout",
@@ -50,9 +50,12 @@
         ],
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
+            "@php -r \"@require 'vendor/autoload.php';\"",
+            "@php scripts/authenticate-framework-renderer.php",
             "@php artisan package:discover --ansi"
         ],
         "post-update-cmd": [
+            "@php scripts/authenticate-framework-renderer.php",
             "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
         ],
         "post-root-package-install": [

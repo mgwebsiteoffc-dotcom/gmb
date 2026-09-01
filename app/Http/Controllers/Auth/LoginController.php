@@ -25,6 +25,8 @@ class LoginController extends Controller
 
             $user = Auth::user();
 
+            // Fail-safe: if the `is_active` column isn't present (migration not
+            // yet run), defaults to active so login never throws.
             if (! $user->isActive()) {
                 Auth::logout();
                 return back()->withErrors([
@@ -33,6 +35,8 @@ class LoginController extends Controller
             }
 
             // SaaS owners go to the Super Admin panel; everyone else to the app.
+            // isSuperAdmin() reads `role`; if the column is absent it is null and
+            // resolves to false, so we safely fall through to the normal app.
             if ($user->isSuperAdmin()) {
                 return redirect()->intended(route('admin.dashboard'));
             }

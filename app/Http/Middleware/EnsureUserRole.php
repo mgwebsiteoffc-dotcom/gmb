@@ -22,6 +22,12 @@ class EnsureUserRole
             abort(403, 'Your account is inactive. Please contact your administrator.');
         }
 
+        // Fail-safe: only enforce roles if the `role` column is present.
+        // If not migrated yet, deny admin access (never crash the renderer).
+        if (! array_key_exists('role', $user->getAttributes())) {
+            abort(403, 'Role column is not configured. Run: php artisan migrate');
+        }
+
         if (! $user->hasRole($roles)) {
             abort(403, 'You do not have permission to access this area.');
         }

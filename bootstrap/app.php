@@ -2,6 +2,7 @@
 
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
+use App\Http\Middleware\EnsureInstalled;
 use App\Http\Middleware\EnsureUserRole;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
@@ -21,6 +22,10 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->alias([
             'role' => EnsureUserRole::class,
+        ]);
+
+        $middleware->web(append: [
+            EnsureInstalled::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
