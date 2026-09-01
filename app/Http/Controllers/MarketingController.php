@@ -47,6 +47,16 @@ class MarketingController extends Controller
         return view('marketing.pricing');
     }
 
+    /**
+     * The "What we offer / how this helps" details page, reachable only
+     * through a "demo" CTA. Bundles SEO + AEO (FAQ, HowTo, Breadcrumb,
+     * SoftwareApplication) structured data.
+     */
+    public function demo()
+    {
+        return view('marketing.demo');
+    }
+
     public function location($slug)
     {
         $location = Location::with('client', 'reviews')

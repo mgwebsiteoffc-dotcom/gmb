@@ -40,6 +40,8 @@ return [
         'base_url' => env('OPENROUTER_BASE_URL', 'https://openrouter.ai/api/v1'),
         'model' => env('OPENROUTER_MODEL', 'nvidia/nemotron-3.5-lightning:free'),
         'reasoning' => env('OPENROUTER_REASONING', true),
+        'temperature' => (float) env('OPENROUTER_TEMPERATURE', 0.5),
+        'max_tokens' => (int) env('OPENROUTER_MAX_TOKENS', 1024),
         'timeout' => (int) env('OPENROUTER_TIMEOUT', 60),
     ],
 

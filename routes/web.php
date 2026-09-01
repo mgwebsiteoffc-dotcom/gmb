@@ -40,6 +40,7 @@ Route::get('/robots.txt', [SeoController::class, 'robots'])->name('seo.robots');
 Route::get('/', [MarketingController::class, 'index'])->name('home');
 Route::get('/faq', [FaqController::class, 'index'])->name('faq');
 Route::get('/pricing', [MarketingController::class, 'pricing'])->name('pricing');
+Route::get('/demo', [MarketingController::class, 'demo'])->name('demo');
 Route::get('/location/{slug}', [MarketingController::class, 'location'])->name('location.show');
 
 // 1a. Blog (publicly viewable, managed in Super Admin)

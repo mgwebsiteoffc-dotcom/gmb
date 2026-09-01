@@ -32,6 +32,10 @@ class SeoController extends Controller
             '/google-review-qr-code' => '0.7',
             '/google-review-card' => '0.7',
             '/google-business-profile-photo-size' => '0.7',
+            '/google-review-character-limit' => '0.6',
+            '/local-seo-keywords-checklist' => '0.6',
+            '/google-business-profile-description-writer' => '0.6',
+            '/demo' => '0.7',
         ];
 
         $urls = collect($staticRoutes)->map(function ($priority, $path) use ($baseUrl) {

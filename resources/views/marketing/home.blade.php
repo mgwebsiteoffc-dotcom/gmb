@@ -45,9 +45,9 @@
                 <span>Get started free</span>
                 <i data-lucide="arrow-right" class="w-4 h-4"></i>
             </a>
-            <a href="{{ route('features') }}" class="bg-white hover:bg-slate-50 text-slate-700 font-bold text-sm sm:text-base px-7 py-4 rounded-2xl transition-all border border-slate-200 shadow-sm flex items-center gap-2">
+            <a href="{{ route('demo') }}" class="bg-white hover:bg-slate-50 text-slate-700 font-bold text-sm sm:text-base px-7 py-4 rounded-2xl transition-all border border-slate-200 shadow-sm flex items-center gap-2">
                 <i data-lucide="play-circle" class="w-4 h-4 text-brand-600"></i>
-                <span>Explore Platform</span>
+                <span>See what we offer</span>
             </a>
         </div>
 

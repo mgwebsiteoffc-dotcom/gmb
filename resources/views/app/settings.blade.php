@@ -84,6 +84,93 @@
             </label>
         </div>
 
+        {{-- Payment gateway & plans (brand end, for their clients) --}}
+        <div class="pt-4 border-t border-slate-100 space-y-5">
+            <div>
+                <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Checkout & Payments</h4>
+                <p class="text-[11px] text-slate-500">Configure the gateway your clients pay through. Managed here at the brand end; the platform Super Admin sets the defaults.</p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Provider</label>
+                    <select name="payment_provider" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm font-semibold focus:ring-2 focus:ring-brand-500">
+                        @foreach(['stripe' => 'Stripe', 'razorpay' => 'Razorpay', 'paypal' => 'PayPal', 'offline' => 'Offline / Manual'] as $provider => $label)
+                            <option value="{{ $provider }}" @selected($settings->payment_provider === $provider)>{{ $label }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Mode</label>
+                    <select name="payment_mode" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm font-semibold focus:ring-2 focus:ring-brand-500">
+                        <option value="test" @selected($settings->payment_mode === 'test')>Test / Sandbox</option>
+                        <option value="live" @selected($settings->payment_mode === 'live')>Live</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Currency</label>
+                    <input type="text" name="payment_currency" value="{{ $settings->payment_currency }}" maxlength="3" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm font-semibold focus:ring-2 focus:ring-brand-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Trial Days</label>
+                    <input type="number" name="plan_trial_days" value="{{ $settings->plan_trial_days }}" min="0" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm font-semibold focus:ring-2 focus:ring-brand-500">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Public / Publishable Key</label>
+                <input type="text" name="payment_public_key" value="{{ $settings->payment_public_key }}" placeholder="pk_test_..." class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm font-mono focus:ring-2 focus:ring-brand-500">
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Secret Key</label>
+                <input type="password" name="payment_secret_key" value="" placeholder="sk_test_... (leave blank to keep existing)" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm font-mono focus:ring-2 focus:ring-brand-500">
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Base Monthly (per brand)</label>
+                    <input type="number" step="0.01" name="plan_monthly_price" value="{{ $settings->plan_monthly_price }}" min="0" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm font-semibold focus:ring-2 focus:ring-brand-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Per Location / Month</label>
+                    <input type="number" step="0.01" name="plan_per_location_price" value="{{ $settings->plan_per_location_price }}" min="0" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm font-semibold focus:ring-2 focus:ring-brand-500">
+                </div>
+                <div class="flex items-end pb-1">
+                    <label class="flex items-center gap-2.5 text-xs text-slate-700 cursor-pointer">
+                        <input type="checkbox" name="payment_enabled" value="1" {{ $settings->payment_enabled ? 'checked' : '' }} class="rounded text-brand-600">
+                        <span>Enable online payments at checkout</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        {{-- AI engine parameters (brand end) --}}
+        <div class="pt-4 border-t border-slate-100 space-y-4">
+            <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider">AI Engine Parameters</h4>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Model</label>
+                    <input type="text" name="ai_model" value="{{ $settings->ai_model }}" placeholder="nvidia/nemotron-3.5-lightning:free" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm font-mono focus:ring-2 focus:ring-brand-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Temperature</label>
+                    <input type="number" step="0.01" name="ai_temperature" value="{{ $settings->ai_temperature }}" min="0" max="2" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm font-semibold focus:ring-2 focus:ring-brand-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Max Tokens</label>
+                    <input type="number" name="ai_max_tokens" value="{{ $settings->ai_max_tokens }}" min="128" max="8192" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm font-semibold focus:ring-2 focus:ring-brand-500">
+                </div>
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">OpenRouter API Key</label>
+                <input type="password" name="ai_api_key" value="" placeholder="sk-or-... (leave blank to keep existing)" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm font-mono focus:ring-2 focus:ring-brand-500">
+            </div>
+            <label class="flex items-center gap-2.5 text-xs text-slate-700 cursor-pointer">
+                <input type="checkbox" name="ai_reasoning" value="1" {{ $settings->ai_reasoning ? 'checked' : '' }} class="rounded text-brand-600">
+                <span>Use AI reasoning (better answers, slightly slower)</span>
+            </label>
+        </div>
+
         <div class="pt-4 flex justify-end">
             <button
                 type="submit"

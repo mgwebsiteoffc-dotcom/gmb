@@ -4,6 +4,7 @@ namespace App\Services;
 
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use App\Models\AgencySetting;
 use RuntimeException;
 
 class OpenRouterService
@@ -14,19 +15,83 @@ class OpenRouterService
     private const ENDPOINT = '/chat/completions';
 
     /**
+     * The persisted agency settings (managed at brand end & by Super Admin).
+     */
+    private static function settings(): ?AgencySetting
+    {
+        try {
+            return AgencySetting::first();
+        } catch (\Throwable $e) {
+            return null;
+        }
+    }
+
+    /**
+     * Resolve the API key: config/.env fallback, then the persisted setting.
+     */
+    private static function key(): ?string
+    {
+        if (! empty(config('services.openrouter.api_key'))) {
+            return config('services.openrouter.api_key');
+        }
+        $settings = self::settings();
+        return ($settings && ! empty($settings->ai_api_key)) ? $settings->ai_api_key : null;
+    }
+
+    /**
      * Whether the OpenRouter client is configured (an API key is present).
      */
     public static function configured(): bool
     {
-        return ! empty(config('services.openrouter.api_key'));
+        return ! empty(self::key());
     }
 
     /**
-     * Default model resolved from config.
+     * Default model resolved from the persisted setting, then config.
      */
     public function model(): string
     {
+        $settings = self::settings();
+        if ($settings && ! empty($settings->ai_model)) {
+            return $settings->ai_model;
+        }
         return config('services.openrouter.model', 'nvidia/nemotron-3.5-lightning:free');
+    }
+
+    /**
+     * Resolve temperature from the persisted setting, then config.
+     */
+    private static function temperature(): float
+    {
+        $settings = self::settings();
+        if ($settings && $settings->ai_temperature !== null && $settings->ai_temperature != 0) {
+            return (float) $settings->ai_temperature;
+        }
+        return (float) config('services.openrouter.temperature', 0.5);
+    }
+
+    /**
+     * Resolve max tokens from the persisted setting, then config.
+     */
+    private static function maxTokens(): int
+    {
+        $settings = self::settings();
+        if ($settings && $settings->ai_max_tokens) {
+            return (int) $settings->ai_max_tokens;
+        }
+        return (int) config('services.openrouter.max_tokens', 1024);
+    }
+
+    /**
+     * Resolve reasoning flag from the persisted setting, then config.
+     */
+    private static function reasoningDefault(): bool
+    {
+        $settings = self::settings();
+        if ($settings && $settings->ai_reasoning !== null) {
+            return (bool) $settings->ai_reasoning;
+        }
+        return (bool) config('services.openrouter.reasoning', true);
     }
 
     /**
@@ -58,13 +123,13 @@ class OpenRouterService
                 }
                 return $out;
             }, $messages),
-            'reasoning' => ['enabled' => (bool) config('services.openrouter.reasoning', $reasoning)],
-            'temperature' => 0.5,
-            'max_tokens' => 1024,
+            'reasoning' => ['enabled' => (bool) self::reasoningDefault() && $reasoning],
+            'temperature' => self::temperature(),
+            'max_tokens' => self::maxTokens(),
         ];
 
         try {
-            $response = Http::withToken(config('services.openrouter.api_key'))
+            $response = Http::withToken(self::key())
                 ->acceptJson()
                 ->timeout(config('services.openrouter.timeout', 60))
                 ->post(rtrim(config('services.openrouter.base_url', 'https://openrouter.ai/api/v1'), '/').self::ENDPOINT, $payload);
