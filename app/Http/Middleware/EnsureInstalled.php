@@ -32,11 +32,12 @@ class EnsureInstalled
             return $next($request);
         }
 
-        // Public marketing, tools, auth and SEO pages render without the DB.
-        // Only guard routes that actually hit the database (app.* and admin.*).
+        // Public marketing, tools, auth and SEO pages render without the DB
+        // (their controllers are fail-safe). Only guard routes that actually
+        // need the database (app.* and admin.*).
         $publicPrefixes = ['tools.', 'reviews-management', 'posts-management', 'white-label-agency',
             'industry-multi-location', 'features', 'home', 'pricing', 'location.show',
-            'faq', 'login', 'register'];
+            'faq', 'blog.index', 'blog.show', 'seo.sitemap', 'seo.robots', 'login', 'register'];
         if ($routeName && in_array($routeName, $publicPrefixes, true)) {
             return $next($request);
         }

@@ -149,7 +149,7 @@
                         @php
                             $unanswered = \App\Models\Review::where('status', 'unanswered')->count();
                         @endphp
-                        @if($unanswered > 0)
+                        @if(($unanswered ?? 0) > 0)
                             <span class="bg-accent-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full">
                                 {{ $unanswered }}
                             </span>

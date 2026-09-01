@@ -74,26 +74,13 @@
             @endphp
             <nav class="p-3 space-y-1 text-xs font-bold">
                 <span class="px-3 text-[10px] font-extrabold uppercase tracking-widest text-slate-500 block mb-1">Platform</span>
-                @foreach($adminNav as $item)
+                @foreach($adminNav ?? [] as $item)
                     <a href="{{ route($item['route']) }}"
                        class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all {{ request()->routeIs($item['pattern']) ? 'bg-brand-600 text-white shadow-md font-extrabold' : 'hover:bg-slate-800 hover:text-white' }}">
                         <i data-lucide="{{ $item['icon'] }}" class="w-4 h-4"></i>
                         <span>{{ $item['label'] }}</span>
                     </a>
                 @endforeach
-
-                <div class="pt-4 mt-2 border-t border-slate-800">
-                    <span class="px-3 text-[10px] font-extrabold uppercase tracking-widest text-slate-500 block mb-1">Back to App</span>
-                    <a href="{{ route('app.dashboard') }}" class="flex items-center gap-3 px-3.5 py-2 rounded-xl transition-all hover:bg-slate-800 hover:text-white">
-                        <i data-lucide="arrow-left-right" class="w-4 h-4"></i>
-                        <span>Go to GBP App</span>
-                    </a>
-                    <a href="{{ route('home') }}" class="flex items-center gap-3 px-3.5 py-2 rounded-xl transition-all hover:bg-slate-800 hover:text-white">
-                        <i data-lucide="globe" class="w-4 h-4"></i>
-                        <span>Marketing Site</span>
-                    </a>
-                </div>
-            </nav>
 
             <div class="p-4 mt-auto border-t border-slate-800 bg-slate-950/50">
                 <div class="flex items-center gap-2">

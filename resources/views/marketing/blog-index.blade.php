@@ -3,16 +3,20 @@
 @section('title', 'Blog — Local SEO & Google Business Profile Insights | Untab')
 @section('meta_description', 'Practical guides on Google Business Profile management, local SEO, review generation, and multi-location marketing from the Untab team.')
 
+@php
+    $blogIndexSchema = [
+        '@context' => 'https://schema.org',
+        '@type' => 'Blog',
+        'name' => 'Untab Blog',
+        'url' => route('blog.index'),
+        'description' => 'Practical guides on Google Business Profile management, local SEO, review generation, and multi-location marketing.',
+        'publisher' => ['@type' => 'Organization', 'name' => 'Untab'],
+    ];
+@endphp
+
 @push('json-ld')
 <script type="application/ld+json">
-@json([
-    '@context' => 'https://schema.org',
-    '@type' => 'Blog',
-    'name' => 'Untab Blog',
-    'url' => route('blog.index'),
-    'description' => 'Practical guides on Google Business Profile management, local SEO, review generation, and multi-location marketing.',
-    'publisher' => ['@type' => 'Organization', 'name' => 'Untab'],
-])
+@json($blogIndexSchema)
 </script>
 @endpush
 

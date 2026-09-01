@@ -70,6 +70,7 @@
             background-image: radial-gradient(rgba(97, 97, 255, 0.12) 1px, transparent 0);
             background-size: 24px 24px;
         }
+        [x-cloak] { display: none !important; }
     </style>
     @stack('styles')
 </head>
@@ -83,7 +84,7 @@
     </div>
 
     <!-- Navigation Header -->
-    <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200/80 transition-all">
+    <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200/80 transition-all" @click.away="mobileMenu = false">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
             <!-- Brand Logo -->
             <a href="{{ route('home') }}" class="flex items-center gap-2">
@@ -101,77 +102,77 @@
             </a>
 
             <!-- Desktop Nav Links -->
-            <nav class="hidden md:flex items-center gap-1 font-semibold text-xs lg:text-sm text-slate-600">
-                <a href="{{ route('features') }}" class="px-3 py-2 rounded-lg hover:text-brand-700 hover:bg-brand-50 transition-colors {{ request()->routeIs('features') ? 'text-brand-700 bg-brand-50 font-bold' : '' }}">
+            <nav class="hidden lg:flex items-center gap-0.5 font-semibold text-sm text-slate-600">
+                <a href="{{ route('features') }}" class="px-3.5 py-2 rounded-lg hover:text-brand-700 hover:bg-brand-50 transition-colors {{ request()->routeIs('features') ? 'text-brand-700 bg-brand-50 font-bold' : '' }}">
                     Features
                 </a>
-                <a href="{{ route('white-label-agency') }}" class="px-3 py-2 rounded-lg hover:text-brand-700 hover:bg-brand-50 transition-colors {{ request()->routeIs('white-label-agency') ? 'text-brand-700 bg-brand-50 font-bold' : '' }}">
-                    For SEO Agencies
-                </a>
-                <a href="{{ route('industry-multi-location') }}" class="px-3 py-2 rounded-lg hover:text-brand-700 hover:bg-brand-50 transition-colors {{ request()->routeIs('industry-multi-location') ? 'text-brand-700 bg-brand-50 font-bold' : '' }}">
-                    Multi-Location Franchises
-                </a>
-                <a href="{{ route('pricing') }}" class="px-3 py-2 rounded-lg hover:text-brand-700 hover:bg-brand-50 transition-colors {{ request()->routeIs('pricing') ? 'text-brand-700 bg-brand-50 font-bold' : '' }}">
-                    Pricing
-                </a>
-                <a href="{{ route('blog.index') }}" class="px-3 py-2 rounded-lg hover:text-brand-700 hover:bg-brand-50 transition-colors {{ request()->routeIs('blog.*') ? 'text-brand-700 bg-brand-50 font-bold' : '' }}">
-                    Blog
-                </a>
-                <a href="{{ route('faq') }}" class="px-3 py-2 rounded-lg hover:text-brand-700 hover:bg-brand-50 transition-colors {{ request()->routeIs('faq') ? 'text-brand-700 bg-brand-50 font-bold' : '' }}">
-                    FAQ
-                </a>
 
-                <!-- Free Tools Dropdown -->
+                <!-- Solutions dropdown -->
                 <div class="relative" x-data="{ open: false }" @click.away="open = false">
-                    <button @click="open = !open" class="px-3 py-2 rounded-lg hover:text-brand-700 hover:bg-brand-50 transition-colors flex items-center gap-1">
-                        <span>Free SEO Tools</span>
+                    <button @click="open = !open" class="px-3.5 py-2 rounded-lg hover:text-brand-700 hover:bg-brand-50 transition-colors flex items-center gap-1.5 {{ request()->routeIs('white-label-agency','industry-multi-location','reviews-management','posts-management') ? 'text-brand-700 bg-brand-50 font-bold' : '' }}">
+                        Solutions
                         <i data-lucide="chevron-down" class="w-3.5 h-3.5"></i>
                     </button>
-                    <div x-show="open" x-transition class="absolute top-full left-0 mt-2 w-72 bg-white rounded-2xl shadow-xl border border-slate-200/80 p-3 space-y-1 z-50">
-                        <a href="{{ route('tools.audit') }}" class="flex items-center gap-2.5 p-2 rounded-xl hover:bg-slate-50 transition-colors">
-                            <div class="w-8 h-8 rounded-lg bg-brand-50 text-brand-700 flex items-center justify-center flex-shrink-0">
-                                <i data-lucide="sparkles" class="w-4 h-4"></i>
-                            </div>
-                            <div>
-                                <div class="font-bold text-xs text-slate-800">GBP Audit Checklist</div>
-                                <div class="text-[10px] text-slate-500">16-point health score check</div>
-                            </div>
+                    <div x-show="open" x-transition x-cloak class="absolute top-full left-0 mt-2 w-72 bg-white rounded-2xl shadow-xl border border-slate-200/80 p-2 space-y-1 z-50">
+                        @foreach([
+                            ['route' => 'white-label-agency', 'label' => 'For SEO Agencies', 'desc' => 'White-label client reporting & bulk tools'],
+                            ['route' => 'industry-multi-location', 'label' => 'Multi-Location Brands', 'desc' => 'Franchises & chains running 10-500+ profiles'],
+                            ['route' => 'reviews-management', 'label' => 'AI Review Management', 'desc' => 'Reply to every review in seconds'],
+                            ['route' => 'posts-management', 'label' => 'Google Posts Scheduler', 'desc' => 'Offers, events & updates at scale'],
+                        ] as $s)
+                            <a href="{{ route($s['route']) }}" class="flex items-start gap-3 p-2.5 rounded-xl hover:bg-slate-50 transition-colors">
+                                <div class="w-8 h-8 rounded-lg bg-brand-50 text-brand-700 flex items-center justify-center flex-shrink-0">
+                                    <i data-lucide="{{ $loop->first ? 'building-2' : ($loop->index === 1 ? 'layers' : ($loop->index === 2 ? 'message-square' : 'calendar')) }}" class="w-4 h-4"></i>
+                                </div>
+                                <div>
+                                    <div class="font-bold text-xs text-slate-800">{{ $s['label'] }}</div>
+                                    <div class="text-[10px] text-slate-500">{{ $s['desc'] }}</div>
+                                </div>
+                            </a>
+                        @endforeach
+                    </div>
+                </div>
+
+                <a href="{{ route('pricing') }}" class="px-3.5 py-2 rounded-lg hover:text-brand-700 hover:bg-brand-50 transition-colors {{ request()->routeIs('pricing') ? 'text-brand-700 bg-brand-50 font-bold' : '' }}">
+                    Pricing
+                </a>
+
+                <!-- Resources dropdown -->
+                <div class="relative" x-data="{ open: false }" @click.away="open = false">
+                    <button @click="open = !open" class="px-3.5 py-2 rounded-lg hover:text-brand-700 hover:bg-brand-50 transition-colors flex items-center gap-1.5 {{ request()->routeIs('blog.*','faq','tools.*') ? 'text-brand-700 bg-brand-50 font-bold' : '' }}">
+                        Resources
+                        <i data-lucide="chevron-down" class="w-3.5 h-3.5"></i>
+                    </button>
+                    <div x-show="open" x-transition x-cloak class="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-80 bg-white rounded-2xl shadow-xl border border-slate-200/80 p-2 space-y-1 z-50">
+                        <a href="{{ route('blog.index') }}" class="flex items-start gap-3 p-2.5 rounded-xl hover:bg-slate-50 transition-colors">
+                            <div class="w-8 h-8 rounded-lg bg-brand-50 text-brand-700 flex items-center justify-center flex-shrink-0"><i data-lucide="newspaper" class="w-4 h-4"></i></div>
+                            <div><div class="font-bold text-xs text-slate-800">Blog & Insights</div><div class="text-[10px] text-slate-500">Local SEO & GBP playbooks</div></div>
                         </a>
-                        <a href="{{ route('tools.review-link') }}" class="flex items-center gap-2.5 p-2 rounded-xl hover:bg-slate-50 transition-colors">
-                            <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center flex-shrink-0">
-                                <i data-lucide="link" class="w-4 h-4"></i>
-                            </div>
-                            <div>
-                                <div class="font-bold text-xs text-slate-800">Direct Review Link</div>
-                                <div class="text-[10px] text-slate-500">1-click compose review URL</div>
-                            </div>
+                        <a href="{{ route('faq') }}" class="flex items-start gap-3 p-2.5 rounded-xl hover:bg-slate-50 transition-colors">
+                            <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center flex-shrink-0"><i data-lucide="help-circle" class="w-4 h-4"></i></div>
+                            <div><div class="font-bold text-xs text-slate-800">FAQs</div><div class="text-[10px] text-slate-500">Answers to common questions</div></div>
                         </a>
-                        <a href="{{ route('tools.review-qr') }}" class="flex items-center gap-2.5 p-2 rounded-xl hover:bg-slate-50 transition-colors">
-                            <div class="w-8 h-8 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center flex-shrink-0">
-                                <i data-lucide="qr-code" class="w-4 h-4"></i>
-                            </div>
-                            <div>
-                                <div class="font-bold text-xs text-slate-800">Review QR Code Generator</div>
-                                <div class="text-[10px] text-slate-500">Printable desk stand flyers</div>
-                            </div>
+                        <div class="h-px bg-slate-100 my-1"></div>
+                        <div class="px-2.5 pb-1 text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Free Tools</div>
+                        <a href="{{ route('tools.audit') }}" class="flex items-start gap-3 p-2.5 rounded-xl hover:bg-slate-50 transition-colors">
+                            <div class="w-8 h-8 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center flex-shrink-0"><i data-lucide="sparkles" class="w-4 h-4"></i></div>
+                            <div><div class="font-bold text-xs text-slate-800">GBP Audit Checklist</div><div class="text-[10px] text-slate-500">16-point health score check</div></div>
                         </a>
-                        <a href="{{ route('tools.review-card') }}" class="flex items-center gap-2.5 p-2 rounded-xl hover:bg-slate-50 transition-colors">
-                            <div class="w-8 h-8 rounded-lg bg-purple-50 text-purple-700 flex items-center justify-center flex-shrink-0">
-                                <i data-lucide="credit-card" class="w-4 h-4"></i>
-                            </div>
-                            <div>
-                                <div class="font-bold text-xs text-slate-800">NFC Smart Card Config</div>
-                                <div class="text-[10px] text-slate-500">Tap-to-review digital card</div>
-                            </div>
+                        <a href="{{ route('tools.review-link') }}" class="flex items-start gap-3 p-2.5 rounded-xl hover:bg-slate-50 transition-colors">
+                            <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center flex-shrink-0"><i data-lucide="link" class="w-4 h-4"></i></div>
+                            <div><div class="font-bold text-xs text-slate-800">Direct Review Link</div><div class="text-[10px] text-slate-500">1-click compose review URL</div></div>
                         </a>
-                        <a href="{{ route('tools.photo-size') }}" class="flex items-center gap-2.5 p-2 rounded-xl hover:bg-slate-50 transition-colors">
-                            <div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-700 flex items-center justify-center flex-shrink-0">
-                                <i data-lucide="image" class="w-4 h-4"></i>
-                            </div>
-                            <div>
-                                <div class="font-bold text-xs text-slate-800">GBP Photo Size Guide</div>
-                                <div class="text-[10px] text-slate-500">2026 specs & dimensions</div>
-                            </div>
+                        <a href="{{ route('tools.review-qr') }}" class="flex items-start gap-3 p-2.5 rounded-xl hover:bg-slate-50 transition-colors">
+                            <div class="w-8 h-8 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center flex-shrink-0"><i data-lucide="qr-code" class="w-4 h-4"></i></div>
+                            <div><div class="font-bold text-xs text-slate-800">Review QR Code</div><div class="text-[10px] text-slate-500">Printable desk stand flyers</div></div>
+                        </a>
+                        <a href="{{ route('tools.review-card') }}" class="flex items-start gap-3 p-2.5 rounded-xl hover:bg-slate-50 transition-colors">
+                            <div class="w-8 h-8 rounded-lg bg-purple-50 text-purple-700 flex items-center justify-center flex-shrink-0"><i data-lucide="credit-card" class="w-4 h-4"></i></div>
+                            <div><div class="font-bold text-xs text-slate-800">NFC Smart Card</div><div class="text-[10px] text-slate-500">Tap-to-review digital card</div></div>
+                        </a>
+                        <a href="{{ route('tools.photo-size') }}" class="flex items-start gap-3 p-2.5 rounded-xl hover:bg-slate-50 transition-colors">
+                            <div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-700 flex items-center justify-center flex-shrink-0"><i data-lucide="image" class="w-4 h-4"></i></div>
+                            <div><div class="font-bold text-xs text-slate-800">GBP Photo Size Guide</div><div class="text-[10px] text-slate-500">2026 specs & dimensions</div></div>
                         </a>
                     </div>
                 </div>
@@ -179,6 +180,9 @@
 
             <!-- Actions -->
             <div class="flex items-center gap-3">
+                <button @click="mobileMenu = !mobileMenu" class="lg:hidden inline-flex items-center justify-center w-10 h-10 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors" aria-label="Toggle menu">
+                    <i data-lucide="menu" class="w-5 h-5"></i>
+                </button>
                 @auth
                     <a href="{{ route('app.dashboard') }}" class="bg-brand-600 hover:bg-brand-700 text-white text-xs sm:text-sm font-extrabold px-5 py-2.5 rounded-xl transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5 flex items-center gap-2">
                         <span>Go to Dashboard</span>
@@ -200,6 +204,26 @@
                     </a>
                 @endauth
             </div>
+        </div>
+
+        <!-- Mobile Menu Drawer -->
+        <div x-show="mobileMenu" x-transition x-cloak class="lg:hidden border-t border-slate-200 bg-white shadow-lg">
+            <nav class="max-w-7xl mx-auto px-4 sm:px-6 py-4 space-y-1 text-sm font-semibold text-slate-700">
+                <a href="{{ route('features') }}" class="block px-4 py-3 rounded-xl hover:bg-brand-50 hover:text-brand-700 {{ request()->routeIs('features') ? 'bg-brand-50 text-brand-700 font-bold' : '' }}">Features</a>
+                <a href="{{ route('white-label-agency') }}" class="block px-4 py-3 rounded-xl hover:bg-brand-50 hover:text-brand-700 {{ request()->routeIs('white-label-agency') ? 'bg-brand-50 text-brand-700 font-bold' : '' }}">For SEO Agencies</a>
+                <a href="{{ route('industry-multi-location') }}" class="block px-4 py-3 rounded-xl hover:bg-brand-50 hover:text-brand-700 {{ request()->routeIs('industry-multi-location') ? 'bg-brand-50 text-brand-700 font-bold' : '' }}">Multi-Location Brands</a>
+                <a href="{{ route('pricing') }}" class="block px-4 py-3 rounded-xl hover:bg-brand-50 hover:text-brand-700 {{ request()->routeIs('pricing') ? 'bg-brand-50 text-brand-700 font-bold' : '' }}">Pricing</a>
+                <a href="{{ route('blog.index') }}" class="block px-4 py-3 rounded-xl hover:bg-brand-50 hover:text-brand-700 {{ request()->routeIs('blog.*') ? 'bg-brand-50 text-brand-700 font-bold' : '' }}">Blog & Insights</a>
+                <a href="{{ route('faq') }}" class="block px-4 py-3 rounded-xl hover:bg-brand-50 hover:text-brand-700 {{ request()->routeIs('faq') ? 'bg-brand-50 text-brand-700 font-bold' : '' }}">FAQs</a>
+                <div class="pt-2 mt-2 border-t border-slate-100">
+                    <div class="px-4 pb-2 text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Free Tools</div>
+                    <a href="{{ route('tools.audit') }}" class="block px-4 py-2.5 rounded-xl hover:bg-slate-50">GBP Audit Checklist</a>
+                    <a href="{{ route('tools.review-link') }}" class="block px-4 py-2.5 rounded-xl hover:bg-slate-50">Direct Review Link</a>
+                    <a href="{{ route('tools.review-qr') }}" class="block px-4 py-2.5 rounded-xl hover:bg-slate-50">Review QR Code</a>
+                    <a href="{{ route('tools.review-card') }}" class="block px-4 py-2.5 rounded-xl hover:bg-slate-50">NFC Smart Card</a>
+                    <a href="{{ route('tools.photo-size') }}" class="block px-4 py-2.5 rounded-xl hover:bg-slate-50">Photo Size Guide</a>
+                </div>
+            </nav>
         </div>
     </header>
 

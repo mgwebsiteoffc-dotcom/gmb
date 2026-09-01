@@ -34,18 +34,32 @@ function say(string $msg) {
 $bundled = $projectRoot.'/resources/vendor/laravel-exception-renderer/dist';
 $destinationDir = $projectRoot.'/vendor/laravel/framework/src/Illuminate/Foundation/resources/exceptions/renderer/dist';
 
-if (is_dir($destinationDir)) {
-    $copied = 0;
-    foreach (['styles.css', 'scripts.js'] as $file) {
-        $source = $bundled.'/'.$file;
-        $target = $destinationDir.'/'.$file;
-        if (! file_exists($source)) {
-            continue;
+$frameworkInstalled = is_dir($projectRoot.'/vendor/laravel/framework');
+
+if ($frameworkInstalled) {
+    // The `dist` folder may itself have been removed (antivirus quarantine or an
+    // interrupted unzip), so create it before attempting to copy into it.
+    if (! is_dir($destinationDir)) {
+        if (@mkdir($destinationDir, 0755, true) || is_dir($destinationDir)) {
+            say("created framework renderer dist directory.");
+        } else {
+            say("WARNING: could not create {$destinationDir} — check permissions.");
         }
-        if (! file_exists($target) || filesize($target) < 1000) {
-            if (@copy($source, $target)) {
-                $copied++;
-                say("restored framework renderer asset: {$file}");
+    }
+
+    $copied = 0;
+    if (is_dir($destinationDir)) {
+        foreach (['styles.css', 'scripts.js'] as $file) {
+            $source = $bundled.'/'.$file;
+            $target = $destinationDir.'/'.$file;
+            if (! file_exists($source)) {
+                continue;
+            }
+            if (! file_exists($target) || filesize($target) < 1000) {
+                if (@copy($source, $target)) {
+                    $copied++;
+                    say("restored framework renderer asset: {$file}");
+                }
             }
         }
     }
