@@ -120,7 +120,7 @@
 
                 <!-- Solutions dropdown -->
                 <div class="relative" x-data="{ open: false }" @mouseenter="open = true" @mouseleave="open = false" @click.away="open = false">
-                    <button @click="open = !open" class="px-3.5 py-2 rounded-lg hover:text-brand-700 hover:bg-brand-50 transition-colors flex items-center gap-1.5 {{ request()->routeIs('white-label-agency','industry-multi-location','reviews-management','posts-management') ? 'text-brand-700 bg-brand-50 font-bold' : '' }}">
+                    <button @click="open = true" class="px-3.5 py-2 rounded-lg hover:text-brand-700 hover:bg-brand-50 transition-colors flex items-center gap-1.5 {{ request()->routeIs('white-label-agency','industry-multi-location','reviews-management','posts-management') ? 'text-brand-700 bg-brand-50 font-bold' : '' }}">
                         Solutions
                         <i data-lucide="chevron-down" class="w-3.5 h-3.5 transition-transform" :class="open ? 'rotate-180' : ''"></i>
                     </button>
@@ -146,7 +146,7 @@
 
                 <!-- Industries dropdown -->
                 <div class="relative" x-data="{ open: false }" @mouseenter="open = true" @mouseleave="open = false" @click.away="open = false">
-                    <button @click="open = !open" class="px-3.5 py-2 rounded-lg hover:text-brand-700 hover:bg-brand-50 transition-colors flex items-center gap-1.5 {{ request()->routeIs('industries','industry.show') ? 'text-brand-700 bg-brand-50 font-bold' : '' }}">
+                    <button @click="open = true" class="px-3.5 py-2 rounded-lg hover:text-brand-700 hover:bg-brand-50 transition-colors flex items-center gap-1.5 {{ request()->routeIs('industries','industry.show') ? 'text-brand-700 bg-brand-50 font-bold' : '' }}">
                         Industries
                         <i data-lucide="chevron-down" class="w-3.5 h-3.5 transition-transform" :class="open ? 'rotate-180' : ''"></i>
                     </button>
@@ -172,7 +172,7 @@
 
                 <!-- Resources dropdown -->
                 <div class="relative" x-data="{ open: false }" @mouseenter="open = true" @mouseleave="open = false" @click.away="open = false">
-                    <button @click="open = !open" class="px-3.5 py-2 rounded-lg hover:text-brand-700 hover:bg-brand-50 transition-colors flex items-center gap-1.5 {{ request()->routeIs('blog.*','faq','tools.*') ? 'text-brand-700 bg-brand-50 font-bold' : '' }}">
+                    <button @click="open = true" class="px-3.5 py-2 rounded-lg hover:text-brand-700 hover:bg-brand-50 transition-colors flex items-center gap-1.5 {{ request()->routeIs('blog.*','faq','tools.*') ? 'text-brand-700 bg-brand-50 font-bold' : '' }}">
                         Resources
                         <i data-lucide="chevron-down" class="w-3.5 h-3.5 transition-transform" :class="open ? 'rotate-180' : ''"></i>
                     </button>
