@@ -7,6 +7,7 @@ use App\Models\Client;
 use App\Models\Review;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ClientController extends Controller
 {
@@ -35,20 +36,37 @@ class ClientController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'category' => ['required', 'string', 'max:255'],
             'logo' => ['nullable', 'string', 'max:255'],
+            'logo_image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,svg,webp', 'max:8192'],
             'color' => ['nullable', 'string', 'max:255'],
             'account_manager' => ['nullable', 'string', 'max:255'],
             'monthly_retainer' => ['nullable', 'string', 'max:255'],
             'active_since' => ['nullable', 'string', 'max:255'],
+            'mobile' => ['nullable', 'string', 'max:25'],
+            'poc_name' => ['nullable', 'string', 'max:255'],
+            'poc_email' => ['nullable', 'email', 'max:255'],
+            'poc_mobile' => ['nullable', 'string', 'max:25'],
+            'onboarded_at' => ['nullable', 'date'],
         ]);
+
+        $logoUrl = null;
+        if ($request->hasFile('logo_image')) {
+            $logoUrl = Storage::disk('public')->url($request->file('logo_image')->store('brand-logos', 'public'));
+        }
 
         $client = Client::create([
             'name' => $data['name'],
             'category' => $data['category'],
             'logo' => $data['logo'] ?: '🏢',
+            'logo_url' => $logoUrl,
             'color' => $data['color'] ?: '#2563eb',
             'account_manager' => $data['account_manager'] ?? null,
             'monthly_retainer' => $data['monthly_retainer'] ?? '$1,500/mo',
             'active_since' => $data['active_since'] ?? null,
+            'mobile' => $data['mobile'] ?? null,
+            'poc_name' => $data['poc_name'] ?? null,
+            'poc_email' => $data['poc_email'] ?? null,
+            'poc_mobile' => $data['poc_mobile'] ?? null,
+            'onboarded_at' => $data['onboarded_at'] ?? null,
         ]);
 
         return redirect()->route('admin.clients.show', $client)
@@ -86,11 +104,22 @@ class ClientController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'category' => ['required', 'string', 'max:255'],
             'logo' => ['nullable', 'string', 'max:255'],
+            'logo_image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,svg,webp', 'max:8192'],
             'color' => ['nullable', 'string', 'max:255'],
             'account_manager' => ['nullable', 'string', 'max:255'],
             'monthly_retainer' => ['nullable', 'string', 'max:255'],
             'active_since' => ['nullable', 'string', 'max:255'],
+            'mobile' => ['nullable', 'string', 'max:25'],
+            'poc_name' => ['nullable', 'string', 'max:255'],
+            'poc_email' => ['nullable', 'email', 'max:255'],
+            'poc_mobile' => ['nullable', 'string', 'max:25'],
+            'onboarded_at' => ['nullable', 'date'],
         ]);
+
+        // Update the logo image only if a new file is uploaded; otherwise keep it.
+        if ($request->hasFile('logo_image')) {
+            $data['logo_url'] = Storage::disk('public')->url($request->file('logo_image')->store('brand-logos', 'public'));
+        }
 
         $client->update($data);
 

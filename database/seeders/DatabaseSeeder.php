@@ -25,7 +25,12 @@ class DatabaseSeeder extends Seeder
             'color' => '#2563eb',
             'account_manager' => 'Sarah Jenkins',
             'monthly_retainer' => '$1,800/mo',
-            'active_since' => 'Jan 2024'
+            'active_since' => 'Jan 2024',
+            'mobile' => '+1 512 555 0192',
+            'poc_name' => 'Dr. James Wilson',
+            'poc_email' => 'james.wilson@apexdentalcare.com',
+            'poc_mobile' => '+1 512 555 0144',
+            'onboarded_at' => '2024-01-15',
         ]);
 
         $c2 = Client::create([
@@ -35,7 +40,12 @@ class DatabaseSeeder extends Seeder
             'color' => '#ea580c',
             'account_manager' => 'Marcus Vance',
             'monthly_retainer' => '$2,400/mo',
-            'active_since' => 'Nov 2023'
+            'active_since' => 'Nov 2023',
+            'mobile' => '+1 512 555 8833',
+            'poc_name' => 'Chef Marco Rossi',
+            'poc_email' => 'marco@urbancrustpizza.com',
+            'poc_mobile' => '+1 512 555 8844',
+            'onboarded_at' => '2023-11-05',
         ]);
 
         $c3 = Client::create([
@@ -45,7 +55,12 @@ class DatabaseSeeder extends Seeder
             'color' => '#4f46e5',
             'account_manager' => 'Elena Rostova',
             'monthly_retainer' => '$1,950/mo',
-            'active_since' => 'Mar 2024'
+            'active_since' => 'Mar 2024',
+            'mobile' => '+1 312 555 4400',
+            'poc_name' => 'Robert Vance, Esq.',
+            'poc_email' => 'r.vance@horizonlawchicago.com',
+            'poc_mobile' => '+1 312 555 4401',
+            'onboarded_at' => '2024-03-01',
         ]);
 
         $c4 = Client::create([
@@ -55,7 +70,12 @@ class DatabaseSeeder extends Seeder
             'color' => '#059669',
             'account_manager' => 'Sarah Jenkins',
             'monthly_retainer' => '$2,200/mo',
-            'active_since' => 'Feb 2024'
+            'active_since' => 'Feb 2024',
+            'mobile' => '+1 305 555 7722',
+            'poc_name' => 'Sophia Martinez',
+            'poc_email' => 'sophia@elevatewellness.com',
+            'poc_mobile' => '+1 305 555 7723',
+            'onboarded_at' => '2024-02-10',
         ]);
 
         // 2. Locations

@@ -8,7 +8,13 @@
     <!-- Header -->
     <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div class="flex items-center gap-4">
-            <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl" style="background: {{ $client->color }}1a">{{ $client->logo }}</div>
+            <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl overflow-hidden" style="background: {{ $client->color }}1a">
+                @if($client->hasLogoImage())
+                    <img src="{{ $client->logo_url }}" alt="{{ $client->name }}" class="w-full h-full object-contain">
+                @else
+                    {{ $client->logo }}
+                @endif
+            </div>
             <div>
                 <h1 class="text-xl font-black font-display text-slate-900">{{ $client->name }}</h1>
                 <p class="text-sm text-slate-400">{{ $client->category }} · {{ $client->monthly_retainer }} · Since {{ $client->active_since }}</p>

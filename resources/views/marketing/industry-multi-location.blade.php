@@ -40,18 +40,21 @@
 <section class="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
         <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+            <div class="w-11 h-11 rounded-xl bg-brand-50 text-brand-700 flex items-center justify-center mb-4"><i data-lucide="megaphone" class="w-5 h-5"></i></div>
             <h3 class="font-bold text-slate-900 text-base font-display mb-2">One Campaign, Every Location</h3>
             <p class="text-xs text-slate-500 leading-relaxed">
                 Launch holiday promotions, seasonal menu updates, or new store hours to 500+ locations simultaneously.
             </p>
         </div>
         <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+            <div class="w-11 h-11 rounded-xl bg-brand-50 text-brand-700 flex items-center justify-center mb-4"><i data-lucide="messages-square" class="w-5 h-5"></i></div>
             <h3 class="font-bold text-slate-900 text-base font-display mb-2">Centralized Review Feed</h3>
             <p class="text-xs text-slate-500 leading-relaxed">
                 Keep review response times under 2 hours across all regions with AI templates tailored to your brand voice.
             </p>
         </div>
         <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+            <div class="w-11 h-11 rounded-xl bg-brand-50 text-brand-700 flex items-center justify-center mb-4"><i data-lucide="trending-down" class="w-5 h-5"></i></div>
             <h3 class="font-bold text-slate-900 text-base font-display mb-2">Spot Underperforming Stores</h3>
             <p class="text-xs text-slate-500 leading-relaxed">
                 Compare calls, directions, and health scores across cities to identify which stores need local SEO attention.

@@ -1,5 +1,6 @@
+@php($blog = $blog ?? null)
 @php($isEdit = isset($blog) && $blog->exists)
-@php($tagsString = ($blog->tags ?? []) ? implode(', ', $blog->tags) : '')
+@php($tagsString = ($blog?->tags ?? []) ? implode(', ', $blog->tags) : '')
 
 <form method="POST" action="{{ $isEdit ? route('admin.blogs.update', $blog) : route('admin.blogs.store') }}" enctype="multipart/form-data" class="space-y-6">
     @csrf
@@ -70,7 +71,7 @@
                 </div>
                 <div>
                     <label class="block text-sm font-bold text-slate-700 mb-1">Publish Date</label>
-                    <input type="datetime-local" name="published_at" value="{{ old('published_at', $blog->published_at?->format('Y-m-d\TH:i') ?? '') }}" class="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+                    <input type="datetime-local" name="published_at" value="{{ old('published_at', $blog?->published_at?->format('Y-m-d\TH:i') ?? '') }}" class="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
                 </div>
                 <div>
                     <label class="block text-sm font-bold text-slate-700 mb-1">Featured</label>

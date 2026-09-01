@@ -23,7 +23,13 @@
         @forelse($clients as $client)
             <a href="{{ route('admin.clients.show', $client) }}" class="group bg-white rounded-2xl border border-slate-200/80 shadow-sm p-5 hover:shadow-md hover:border-brand-200 transition-all">
                 <div class="flex items-start justify-between mb-4">
-                    <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl" style="background: {{ $client->color }}1a">{{ $client->logo }}</div>
+                    <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl overflow-hidden" style="background: {{ $client->color }}1a">
+                        @if($client->hasLogoImage())
+                            <img src="{{ $client->logo_url }}" alt="{{ $client->name }}" class="w-full h-full object-contain">
+                        @else
+                            {{ $client->logo }}
+                        @endif
+                    </div>
                     <span class="inline-flex px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-slate-100 text-slate-500">{{ $client->locations_count }} locations</span>
                 </div>
                 <div class="font-black font-display text-slate-900 group-hover:text-brand-700">{{ $client->name }}</div>

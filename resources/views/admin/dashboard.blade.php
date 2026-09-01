@@ -182,7 +182,13 @@
             <div class="space-y-3">
                 @forelse($recentClients as $client)
                     <a href="{{ route('admin.clients.show', $client) }}" class="flex items-center gap-3 p-3 rounded-xl border border-slate-100 hover:border-brand-200 hover:bg-brand-50/40 transition-all">
-                        <div class="w-10 h-10 rounded-xl flex items-center justify-center text-xl" style="background: {{ $client->color }}1a">{{ $client->logo }}</div>
+                        <div class="w-10 h-10 rounded-xl flex items-center justify-center text-xl overflow-hidden" style="background: {{ $client->color }}1a">
+                            @if($client->hasLogoImage())
+                                <img src="{{ $client->logo_url }}" alt="{{ $client->name }}" class="w-full h-full object-contain">
+                            @else
+                                {{ $client->logo }}
+                            @endif
+                        </div>
                         <div class="flex-1 min-w-0">
                             <div class="text-sm font-bold text-slate-800 truncate">{{ $client->name }}</div>
                             <div class="text-xs text-slate-400">{{ $client->category }} · {{ $client->locations->count() }} locations</div>

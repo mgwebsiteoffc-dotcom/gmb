@@ -119,12 +119,12 @@
                 </a>
 
                 <!-- Solutions dropdown -->
-                <div class="relative" x-data="{ open: false }" @click.away="open = false">
+                <div class="relative" x-data="{ open: false }" @mouseenter="open = true" @mouseleave="open = false" @click.away="open = false">
                     <button @click="open = !open" class="px-3.5 py-2 rounded-lg hover:text-brand-700 hover:bg-brand-50 transition-colors flex items-center gap-1.5 {{ request()->routeIs('white-label-agency','industry-multi-location','reviews-management','posts-management') ? 'text-brand-700 bg-brand-50 font-bold' : '' }}">
                         Solutions
-                        <i data-lucide="chevron-down" class="w-3.5 h-3.5"></i>
+                        <i data-lucide="chevron-down" class="w-3.5 h-3.5 transition-transform" :class="open ? 'rotate-180' : ''"></i>
                     </button>
-                    <div x-show="open" x-transition x-cloak class="absolute top-full left-0 mt-2 w-72 bg-white rounded-2xl shadow-xl border border-slate-200/80 p-2 space-y-1 z-50">
+                    <div x-show="open" x-transition.opacity.duration.150ms x-cloak class="absolute top-full left-0 mt-2 w-72 bg-white rounded-2xl shadow-xl border border-slate-200/80 p-2 space-y-1 z-50">
                         @foreach([
                             ['route' => 'white-label-agency', 'label' => 'For SEO Agencies', 'desc' => 'White-label client reporting & bulk tools'],
                             ['route' => 'industry-multi-location', 'label' => 'Multi-Location Brands', 'desc' => 'Franchises & chains running 10-500+ profiles'],
@@ -145,12 +145,12 @@
                 </div>
 
                 <!-- Industries dropdown -->
-                <div class="relative" x-data="{ open: false }" @click.away="open = false">
+                <div class="relative" x-data="{ open: false }" @mouseenter="open = true" @mouseleave="open = false" @click.away="open = false">
                     <button @click="open = !open" class="px-3.5 py-2 rounded-lg hover:text-brand-700 hover:bg-brand-50 transition-colors flex items-center gap-1.5 {{ request()->routeIs('industries','industry.show') ? 'text-brand-700 bg-brand-50 font-bold' : '' }}">
                         Industries
-                        <i data-lucide="chevron-down" class="w-3.5 h-3.5"></i>
+                        <i data-lucide="chevron-down" class="w-3.5 h-3.5 transition-transform" :class="open ? 'rotate-180' : ''"></i>
                     </button>
-                    <div x-show="open" x-transition x-cloak class="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-80 bg-white rounded-2xl shadow-xl border border-slate-200/80 p-2 space-y-1 z-50">
+                    <div x-show="open" x-transition.opacity.duration.150ms x-cloak class="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-80 bg-white rounded-2xl shadow-xl border border-slate-200/80 p-2 space-y-1 z-50">
                         <div class="px-2.5 pb-1 text-[10px] font-extrabold uppercase tracking-widest text-slate-400">By Industry</div>
                         <a href="{{ route('industries') }}" class="flex items-start gap-3 p-2.5 rounded-xl hover:bg-slate-50 transition-colors">
                             <div class="w-8 h-8 rounded-lg bg-brand-50 text-brand-700 flex items-center justify-center flex-shrink-0"><i data-lucide="layout-grid" class="w-4 h-4"></i></div>
@@ -171,12 +171,12 @@
                 </a>
 
                 <!-- Resources dropdown -->
-                <div class="relative" x-data="{ open: false }" @click.away="open = false">
+                <div class="relative" x-data="{ open: false }" @mouseenter="open = true" @mouseleave="open = false" @click.away="open = false">
                     <button @click="open = !open" class="px-3.5 py-2 rounded-lg hover:text-brand-700 hover:bg-brand-50 transition-colors flex items-center gap-1.5 {{ request()->routeIs('blog.*','faq','tools.*') ? 'text-brand-700 bg-brand-50 font-bold' : '' }}">
                         Resources
-                        <i data-lucide="chevron-down" class="w-3.5 h-3.5"></i>
+                        <i data-lucide="chevron-down" class="w-3.5 h-3.5 transition-transform" :class="open ? 'rotate-180' : ''"></i>
                     </button>
-                    <div x-show="open" x-transition x-cloak class="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-80 bg-white rounded-2xl shadow-xl border border-slate-200/80 p-2 space-y-1 z-50">
+                    <div x-show="open" x-transition.opacity.duration.150ms x-cloak class="absolute top-full right-0 mt-2 w-80 bg-white rounded-2xl shadow-xl border border-slate-200/80 p-2 space-y-1 z-50">
                         <a href="{{ route('blog.index') }}" class="flex items-start gap-3 p-2.5 rounded-xl hover:bg-slate-50 transition-colors">
                             <div class="w-8 h-8 rounded-lg bg-brand-50 text-brand-700 flex items-center justify-center flex-shrink-0"><i data-lucide="newspaper" class="w-4 h-4"></i></div>
                             <div><div class="font-bold text-xs text-slate-800">Blog & Insights</div><div class="text-[10px] text-slate-500">Local SEO & GBP playbooks</div></div>
