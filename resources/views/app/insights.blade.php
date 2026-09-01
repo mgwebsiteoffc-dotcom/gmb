@@ -90,7 +90,7 @@
                 <h3 class="font-bold text-slate-900 text-sm font-display">Maps vs Search Impressions Trend</h3>
                 <p class="text-[11px] text-slate-400">Where customers discovered your business profiles</p>
             </div>
-            <div class="h-64">
+            <div class="relative h-64">
                 <canvas id="impressionsChart"></canvas>
             </div>
         </div>
@@ -100,7 +100,7 @@
                 <h3 class="font-bold text-slate-900 text-sm font-display">Customer Conversion Actions</h3>
                 <p class="text-[11px] text-slate-400">Weekly breakdown of calls, directions, and clicks</p>
             </div>
-            <div class="h-64">
+            <div class="relative h-64">
                 <canvas id="actionsChart"></canvas>
             </div>
         </div>

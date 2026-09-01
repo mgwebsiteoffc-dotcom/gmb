@@ -113,7 +113,9 @@
                 <h2 class="text-sm font-black text-slate-900 font-display">Platform Growth — Monthly Views</h2>
                 <span class="text-[10px] text-slate-400 font-bold uppercase">Trailing 9 months</span>
             </div>
-            <canvas id="adminGrowthChart" height="140"></canvas>
+            <div class="relative h-64">
+                <canvas id="adminGrowthChart"></canvas>
+            </div>
         </div>
         <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6">
             <h2 class="text-sm font-black text-slate-900 font-display mb-4">Role Distribution</h2>
