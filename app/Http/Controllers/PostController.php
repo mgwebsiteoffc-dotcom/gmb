@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use App\Models\Client;
 use App\Models\Location;
 use App\Models\Post;
@@ -57,6 +58,8 @@ class PostController extends Controller
             'type' => 'required|in:WHATS_NEW,OFFER,EVENT',
             'cta_type' => 'nullable|string',
             'cta_url' => 'nullable|url',
+            'media_image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:8192',
+            'media_url' => 'nullable|string',
         ]);
 
         $locations = $request->input('target_locations', []);
@@ -67,6 +70,16 @@ class PostController extends Controller
             : count($locations) . ' Selected Locations';
 
         $isScheduled = $request->has('is_scheduled') && $request->input('is_scheduled') == '1';
+
+        // Resolve the post image: prefer a real upload, otherwise the URL field, otherwise a default.
+        $mediaUrl = $request->input('media_url');
+        if ($request->hasFile('media_image')) {
+            $path = $request->file('media_image')->store('posts', 'public');
+            $mediaUrl = Storage::disk('public')->url($path);
+        }
+        if (empty($mediaUrl)) {
+            $mediaUrl = 'https://images.unsplash.com/photo-1606811841689-23dfddce3e95?auto=format&fit=crop&w=800&q=80';
+        }
 
         Post::create([
             'title' => $request->input('title'),
@@ -80,7 +93,7 @@ class PostController extends Controller
             'event_end' => $request->input('event_end'),
             'cta_type' => $request->input('cta_type', 'BOOK'),
             'cta_url' => $request->input('cta_url', 'https://untab.com'),
-            'media_url' => $request->input('media_url') ?: 'https://images.unsplash.com/photo-1606811841689-23dfddce3e95?auto=format&fit=crop&w=800&q=80',
+            'media_url' => $mediaUrl,
             'status' => $isScheduled ? 'SCHEDULED' : 'PUBLISHED',
             'publish_date' => $isScheduled ? $request->input('scheduled_at', now()->addDays(2)->format('Y-m-d H:i')) : now()->format('Y-m-d H:i'),
             'views' => $isScheduled ? 0 : 120,

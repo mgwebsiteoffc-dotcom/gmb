@@ -126,7 +126,7 @@
                 <button @click="isCreateModalOpen = false" class="text-white text-xl font-bold leading-none">✕</button>
             </div>
 
-            <form action="{{ route('app.posts.store') }}" method="POST" class="grid grid-cols-1 md:grid-cols-12 gap-6 p-6 max-h-[75vh] overflow-y-auto">
+            <form action="{{ route('app.posts.store') }}" method="POST" enctype="multipart/form-data" class="grid grid-cols-1 md:grid-cols-12 gap-6 p-6 max-h-[75vh] overflow-y-auto">
                 @csrf
                 <!-- Left 7 Cols: Form inputs -->
                 <div class="md:col-span-7 space-y-4">
@@ -210,8 +210,18 @@
                     </div>
 
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Image URL</label>
-                        <input type="text" name="media_url" x-model="mediaUrl" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-mono">
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Image</label>
+                        <div class="flex items-center gap-3">
+                            <label class="cursor-pointer inline-flex items-center gap-2 bg-brand-50 text-brand-700 border border-brand-200 rounded-xl px-4 py-2 text-xs font-bold hover:bg-brand-100 transition-colors">
+                                <i data-lucide="upload" class="w-4 h-4"></i>
+                                Upload Image
+                                <input type="file" name="media_image" accept="image/*" class="hidden" @change="handleMediaFile($event)">
+                            </label>
+                            <span x-show="mediaFileName" x-text="mediaFileName" class="text-xs text-slate-500 truncate max-w-[200px]"></span>
+                            <button type="button" x-show="mediaFile" @click="clearMediaFile()" class="text-xs font-bold text-rose-500 hover:text-rose-600">Remove</button>
+                        </div>
+                        <p class="text-[11px] text-slate-400 mt-1">Upload a JPEG, PNG or WebP up to 8MB. No image? A default is used.</p>
+                        <input type="hidden" name="media_url" :value="mediaUrl">
                     </div>
 
                     <div class="pt-2 border-t border-slate-200">
@@ -237,7 +247,7 @@
                     <div>
                         <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-3 text-center">Live Google Maps Preview</span>
                         <div class="bg-white rounded-xl border border-slate-200 shadow-md overflow-hidden max-w-xs mx-auto">
-                            <img :src="mediaUrl" alt="Preview" class="w-full h-36 object-cover">
+                            <img :src="mediaPreview || mediaUrl" alt="Preview" class="w-full h-36 object-cover">
                             <div class="p-4 space-y-2">
                                 <div class="flex items-center justify-between">
                                     <span class="text-[9px] font-bold uppercase bg-brand-50 text-brand-700 px-2 py-0.5 rounded" x-text="postType.replace('_', ' ')"></span>
@@ -268,12 +278,31 @@
             ctaType: 'BOOK',
             ctaUrl: 'https://untab.com/book',
             mediaUrl: 'https://images.unsplash.com/photo-1606811841689-23dfddce3e95?auto=format&fit=crop&w=800&q=80',
+            mediaFile: null,
+            mediaPreview: '',
+            mediaFileName: '',
             isScheduled: false,
             openCreateModal() {
                 this.isCreateModalOpen = true;
                 if (!this.postContent) {
                     this.generateAiPostCopy();
                 }
+            },
+            handleMediaFile(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+                this.mediaFile = file;
+                this.mediaFileName = file.name;
+                const reader = new FileReader();
+                reader.onload = (e) => { this.mediaPreview = e.target.result; };
+                reader.readAsDataURL(file);
+            },
+            clearMediaFile() {
+                this.mediaFile = null;
+                this.mediaFileName = '';
+                this.mediaPreview = '';
+                const input = document.querySelector('input[name="media_image"]');
+                if (input) input.value = '';
             },
             generateAiPostCopy() {
                 fetch('{{ route('app.posts.ai-caption') }}', {
