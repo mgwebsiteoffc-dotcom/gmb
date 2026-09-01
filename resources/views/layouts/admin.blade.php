@@ -13,7 +13,7 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Poppins:wght@500;600;700;800;900&display=swap" rel="stylesheet">
 
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -23,15 +23,15 @@
                 extend: {
                     colors: {
                         brand: {
-                            50: '#eef1ff', 100: '#e0e7ff', 200: '#c5d0ff', 300: '#a5b4fc',
-                            400: '#818cf8', 500: '#6161ff', 600: '#4b4be0', 700: '#2547e0',
-                            800: '#1a35c8', 900: '#0f1f8a',
+                            50: '#f0f4ff', 100: '#e0eaff', 200: '#c3d5fb', 300: '#a5b4fc',
+                            400: '#7a8cf5', 500: '#5666e8', 600: '#3d47e0', 700: '#2c36ad',
+                            800: '#1e1b4b', 900: '#0f172a',
                         },
-                        accent: { 500: '#f97316', 600: '#ea580c' }
+                        accent: { 50: '#e8fbff', 300: '#7dd3fc', 400: '#5ecbfa', 500: '#38bdf8', 600: '#0ea5e9', 700: '#0284c7' }
                     },
                     fontFamily: {
                         sans: ['"Plus Jakarta Sans"', 'sans-serif'],
-                        display: ['"Nunito"', 'sans-serif'],
+                        display: ['"Poppins"', 'sans-serif'],
                     }
                 }
             }
@@ -54,10 +54,10 @@
         <aside class="w-64 bg-slate-950 text-white flex-col flex-shrink-0 hidden md:flex sticky top-0 h-screen overflow-y-auto">
             <div class="p-5 border-b border-slate-800">
                 <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-2.5">
-                    <div class="w-9 h-9 rounded-xl bg-brand-500 flex items-center justify-center text-white font-black text-lg shadow-md">⚡</div>
+                    <div class="w-9 h-9 rounded-xl bg-brand-500 flex items-center justify-center shadow-md">@include('partials.brand-mark', ['class' => 'w-6 h-6'])</div>
                     <div>
                         <span class="font-display font-black text-xl text-white tracking-tight">Untab</span>
-                        <span class="block text-[8px] font-extrabold tracking-widest text-brand-300 uppercase">SaaS Admin</span>
+                        <span class="block text-[8px] font-extrabold tracking-widest text-brand-300 uppercase">One dashboard. Zero tabs.</span>
                     </div>
                 </a>
             </div>
@@ -114,7 +114,7 @@
         <div class="flex-1 flex flex-col overflow-hidden">
             <header class="h-16 bg-white border-b border-slate-200 px-4 sm:px-6 flex items-center justify-between flex-shrink-0">
                 <div class="flex items-center gap-3">
-                    <div class="md:hidden w-9 h-9 rounded-xl bg-brand-500 flex items-center justify-center text-white font-black text-lg">⚡</div>
+                    <div class="md:hidden w-9 h-9 rounded-xl bg-brand-500 flex items-center justify-center">@include('partials.brand-mark', ['class' => 'w-6 h-6'])</div>
                     <div>
                         <h1 class="text-lg font-black font-display text-slate-900">@yield('page_title', 'SaaS Admin Panel')</h1>
                         @hasSection('page_subtitle')

@@ -139,7 +139,7 @@
             businessName: 'Apex Dental Care',
             tagline: 'Scan with camera to leave us a 5-star review!',
             targetUrl: 'https://search.google.com/local/writereview?placeid=ChIJN1t_tDeuEmsRUsoyG83frY4',
-            colorDark: '#1a35c8',
+            colorDark: '#1e1b4b',
             W: 1000,
             H: 1400,
             async renderQr() {
@@ -199,7 +199,7 @@
                 const pillW = 700, pillH = 80, pillX = (W - pillW) / 2, pillY = 1252;
                 this.roundRect(ctx, pillX, pillY, pillW, pillH, 40); ctx.fill();
                 ctx.fillStyle = '#ffffff'; ctx.font = 'bold 36px "Plus Jakarta Sans", sans-serif';
-                ctx.fillText('⚡ Point Your Camera to Review', W / 2, pillY + 52);
+                ctx.fillText('Point Your Camera to Review', W / 2, pillY + 52);
 
                 // Footer
                 ctx.fillStyle = '#94a3b8'; ctx.font = '600 24px "Plus Jakarta Sans", sans-serif';

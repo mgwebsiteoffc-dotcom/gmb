@@ -34,7 +34,7 @@
 @section('meta_keywords', $location->name.', '.$location->category.', local SEO, Google Business Profile, location management')
 
 @section('content')
-<section class="py-16 bg-gradient-to-b from-[#eef1ff] to-white">
+<section class="py-16 bg-gradient-to-b from-[#f0f4ff] to-white">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <nav class="text-xs font-bold text-slate-500 mb-6">
             <a href="{{ route('home') }}" class="hover:text-brand-700">Home</a> <span class="mx-1">/</span>

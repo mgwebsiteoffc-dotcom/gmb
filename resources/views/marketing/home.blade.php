@@ -1,7 +1,7 @@
 @extends('layouts.marketing')
 
-@section('title', 'Untab — Run every Google Business Profile from one dashboard')
-@section('meta_description', 'Run every Google Business Profile from one dashboard. Untab gives SEO agencies and multi-location brands AI review replies, Google Posts scheduling, local SEO insights, and white-label client reports.')
+@section('title', 'Untab — Close all the tabs. Open one dashboard.')
+@section('meta_description', 'Close all the tabs, open one dashboard. Untab gives SEO agencies and multi-location brands AI review replies, Google Posts scheduling, local SEO insights, and white-label client reports — every Google Business Profile, zero tabs.')
 @section('meta_keywords', 'Google Business Profile management, GBP tool, GMB management, local SEO, multi-location, AI review replies, white-label reports')
 
 @php($faqs = [
@@ -19,7 +19,7 @@
 
 @section('content')
 <!-- Hero Section -->
-<section class="relative bg-gradient-to-b from-[#eef1ff] via-white to-[#f5f7ff] pt-16 pb-20 overflow-hidden">
+<section class="relative bg-gradient-to-b from-[#f0f4ff] via-white to-[#f5f7ff] pt-16 pb-20 overflow-hidden">
     <div class="absolute inset-0 bg-grid opacity-60 pointer-events-none"></div>
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
@@ -31,12 +31,12 @@
 
         <!-- Main Headline -->
         <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black font-display tracking-tight text-slate-900 max-w-4xl mx-auto leading-[1.08]">
-            Run every Google Business Profile from <span class="text-brand-600">one dashboard.</span>
+            Close all the tabs.<br class="hidden sm:block"> <span class="text-brand-600">Open one dashboard.</span>
         </h1>
 
         <!-- Subtitle -->
         <p class="mt-5 text-base sm:text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed">
-            Untab is the Google Business app for teams that manage local presence at scale — reviews, posts, reports and insights for every client and every location, without logging into each profile.
+            Untab is the Google Business Profile platform that replaces 20–200 open tabs — one per client profile — with a single workspace. Reviews, posts, reports and insights for every client and location, all under one login.
         </p>
 
         <!-- CTA Buttons -->

@@ -25,7 +25,7 @@
 ])
 
 @section('content')
-<section class="py-20 bg-gradient-to-b from-[#eef1ff] to-white">
+<section class="py-20 bg-gradient-to-b from-[#f0f4ff] to-white">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center max-w-2xl mx-auto mb-16">
             <span class="text-xs font-extrabold text-brand-600 uppercase tracking-widest bg-brand-50 px-3 py-1 rounded-full">Pricing</span>

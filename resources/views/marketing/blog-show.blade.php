@@ -20,11 +20,11 @@
     .article-body ul { list-style: disc; padding-left: 1.5rem; margin-bottom: 1rem; }
     .article-body ol { list-style: decimal; padding-left: 1.5rem; margin-bottom: 1rem; }
     .article-body li { color: #475569; line-height: 1.7; margin-bottom: 0.35rem; }
-    .article-body a { color: #4b4be0; font-weight: 700; text-decoration: underline; text-decoration-color: #c5d0ff; }
-    .article-body blockquote { border-left: 4px solid #4b4be0; background: #eef1ff; border-radius: 0 1rem 1rem 0; padding: 1rem 1.25rem; margin: 1.5rem 0; font-style: italic; color: #1e293b; }
+    .article-body a { color: #3d47e0; font-weight: 700; text-decoration: underline; text-decoration-color: #c3d5fb; }
+    .article-body blockquote { border-left: 4px solid #3d47e0; background: #f0f4ff; border-radius: 0 1rem 1rem 0; padding: 1rem 1.25rem; margin: 1.5rem 0; font-style: italic; color: #1e293b; }
     .article-body strong { color: #0f172a; }
     .article-body table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-size: 0.9rem; }
-    .article-body th { background: #eef1ff; color: #1a35c8; font-weight: 800; text-align: left; padding: 0.6rem 0.75rem; border: 1px solid #e2e5f5; }
+    .article-body th { background: #f0f4ff; color: #1e1b4b; font-weight: 800; text-align: left; padding: 0.6rem 0.75rem; border: 1px solid #e2e5f5; }
     .article-body td { padding: 0.6rem 0.75rem; border: 1px solid #e2e5f5; color: #475569; }
 </style>
 @endpush

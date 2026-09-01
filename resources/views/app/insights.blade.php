@@ -175,7 +175,7 @@
                     {
                         label: 'Google Maps Impressions',
                         data: [Math.round(totalViews * 0.16), Math.round(totalViews * 0.22), Math.round(totalViews * 0.28), Math.round(totalViews * 0.34)],
-                        borderColor: '#6161ff',
+                        borderColor: '#5666e8',
                         backgroundColor: 'rgba(97, 97, 255, 0.12)',
                         fill: true,
                         tension: 0.4
@@ -183,7 +183,7 @@
                     {
                         label: 'Google Search Impressions',
                         data: [Math.round(totalViews * 0.12), Math.round(totalViews * 0.15), Math.round(totalViews * 0.18), Math.round(totalViews * 0.22)],
-                        borderColor: '#f97316',
+                        borderColor: '#38bdf8',
                         backgroundColor: 'rgba(249, 115, 22, 0.08)',
                         fill: true,
                         tension: 0.4

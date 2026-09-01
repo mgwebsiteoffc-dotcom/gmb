@@ -7,16 +7,16 @@
     <title>Untab — Finish Setup</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; background: #eef1ff; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; color: #0f172a; }
-        .card { background: #fff; max-width: 640px; width: 100%; border-radius: 24px; box-shadow: 0 20px 50px rgba(15,31,138,.12); padding: 40px; border: 1px solid #e0e7ff; }
-        .logo { width: 56px; height: 56px; border-radius: 16px; background: linear-gradient(135deg,#1a35c8,#6161ff); display: flex; align-items: center; justify-content: center; font-size: 26px; color: #fff; margin-bottom: 20px; }
+        body { font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; background: #f0f4ff; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; color: #0f172a; }
+        .card { background: #fff; max-width: 640px; width: 100%; border-radius: 24px; box-shadow: 0 20px 50px rgba(15,31,138,.12); padding: 40px; border: 1px solid #e0eaff; }
+        .logo { width: 56px; height: 56px; border-radius: 16px; background: linear-gradient(135deg,#1e1b4b,#5666e8); display: flex; align-items: center; justify-content: center; font-size: 26px; color: #fff; margin-bottom: 20px; }
         h1 { font-size: 26px; font-weight: 800; margin-bottom: 8px; }
         p { color: #475569; font-size: 14px; line-height: 1.6; margin-bottom: 8px; }
         code { background: #f1f5f9; padding: 2px 6px; border-radius: 6px; font-size: 13px; color: #1e293b; }
         pre { background: #0f172a; color: #e2e8f0; padding: 18px; border-radius: 14px; overflow-x: auto; font-size: 13px; line-height: 1.7; margin: 16px 0; }
         pre .cmt { color: #94a3b8; }
         ol { margin: 12px 0 16px 20px; color: #334155; font-size: 14px; line-height: 1.9; }
-        .btn { display: inline-block; background: #1a35c8; color: #fff; font-weight: 700; font-size: 14px; padding: 12px 22px; border-radius: 12px; text-decoration: none; margin-top: 8px; box-shadow: 0 8px 20px rgba(26,53,200,.25); }
+        .btn { display: inline-block; background: #1e1b4b; color: #fff; font-weight: 700; font-size: 14px; padding: 12px 22px; border-radius: 12px; text-decoration: none; margin-top: 8px; box-shadow: 0 8px 20px rgba(26,53,200,.25); }
         .alt { background: #f1f5f9; color: #334155; box-shadow: none; margin-left: 8px; }
         .box { background: #fffbeb; border: 1px solid #fde68a; color: #92400e; padding: 12px 16px; border-radius: 12px; font-size: 13px; margin: 14px 0; }
         ul { margin-left: 20px; color: #334155; font-size: 14px; line-height: 1.9; }
@@ -24,7 +24,7 @@
 </head>
 <body>
     <div class="card">
-        <div class="logo">⚡</div>
+        <div class="logo">↗</div>
         <h1>Untab is installed but not set up yet</h1>
         <p>Your database hasn't been migrated yet, so the app can't render pages right now. This usually just needs one command. Here's exactly what to run:</p>
 

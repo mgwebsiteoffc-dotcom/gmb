@@ -218,7 +218,7 @@
                     {
                         label: 'Views',
                         data: @json($trend['views']),
-                        borderColor: '#4b4be0',
+                        borderColor: '#3d47e0',
                         backgroundColor: 'rgba(75,75,224,0.08)',
                         fill: true,
                         tension: 0.4,
@@ -228,7 +228,7 @@
                     {
                         label: 'Calls',
                         data: @json($trend['calls']),
-                        borderColor: '#f97316',
+                        borderColor: '#38bdf8',
                         backgroundColor: 'rgba(249,115,22,0.05)',
                         fill: true,
                         tension: 0.4,

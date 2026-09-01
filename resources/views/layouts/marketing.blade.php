@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     @php($seoType = $seoType ?? 'website')
-    @php($seoTitle = $seoTitle ?? (trim(View::yieldContent('title')) ?: 'Untab — Google Business App for SEO Agencies & Multi-Location Brands'))
-    @php($seoDesc = $seoDesc ?? (trim(View::yieldContent('meta_description')) ?: 'Run every Google Business Profile from one dashboard. AI review replies, Google Posts scheduling, local insights, and white-label client reports.'))
+    @php($seoTitle = $seoTitle ?? (trim(View::yieldContent('title')) ?: 'Untab — Close all the tabs. Open one dashboard.'))
+    @php($seoDesc = $seoDesc ?? (trim(View::yieldContent('meta_description')) ?: 'Close all the tabs, open one dashboard. AI review replies, Google Posts scheduling, local insights, and white-label client reports — every Google Business Profile, zero tabs.'))
     @php($seoKeywords = $seoKeywords ?? trim(View::yieldContent('meta_keywords')))
     @php($seoRobots = ($seoRobots ?? trim(View::yieldContent('meta_robots'))) ?: 'index, follow')
     @include('partials.seo')
@@ -16,7 +16,7 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Poppins:wght@500;600;700;800;900&display=swap" rel="stylesheet">
 
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -26,25 +26,29 @@
                 extend: {
                     colors: {
                         brand: {
-                            50: '#eef1ff',
-                            100: '#e0e7ff',
-                            200: '#c5d0ff',
+                            50: '#f0f4ff',
+                            100: '#e0eaff',
+                            200: '#c3d5fb',
                             300: '#a5b4fc',
-                            400: '#818cf8',
-                            500: '#6161ff',
-                            600: '#4b4be0',
-                            700: '#2547e0',
-                            800: '#1a35c8',
-                            900: '#0f1f8a',
+                            400: '#7a8cf5',
+                            500: '#5666e8',
+                            600: '#3d47e0',
+                            700: '#2c36ad',
+                            800: '#1e1b4b',
+                            900: '#0f172a',
                         },
                         accent: {
-                            500: '#f97316',
-                            600: '#ea580c',
+                            50: '#e8fbff',
+                            300: '#7dd3fc',
+                            400: '#5ecbfa',
+                            500: '#38bdf8',
+                            600: '#0ea5e9',
+                            700: '#0284c7',
                         }
                     },
                     fontFamily: {
                         sans: ['"Plus Jakarta Sans"', 'sans-serif'],
-                        display: ['"Nunito"', 'sans-serif'],
+                        display: ['"Poppins"', 'sans-serif'],
                     }
                 }
             }
@@ -66,10 +70,10 @@
 
     <style>
         :root {
-            --b: #1a35c8;
-            --b2: #2547e0;
-            --o: #f97316;
-            --bg: #f5f7ff;
+            --b: #1e1b4b;
+            --b2: #3d47e0;
+            --o: #38bdf8;
+            --bg: #f0f4ff;
             --bd: #e2e5f5;
         }
         body {
@@ -90,7 +94,7 @@
     <!-- Top Announcement Bar -->
     <div class="bg-gradient-to-r from-brand-900 via-brand-800 to-indigo-900 text-white text-xs font-semibold py-2 px-4 text-center flex items-center justify-center gap-2">
         <span class="bg-accent-500 text-white text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full">New</span>
-        <span>Google Business App for iOS, Android & Web. Manage 500+ GBP locations without tab-switching.</span>
+        <span>Close all the tabs. Open one dashboard. Manage 500+ Google Business Profiles without tab-switching.</span>
         <a href="{{ route('app.dashboard') }}" class="underline font-bold hover:text-accent-300 ml-1">Open Live App →</a>
     </div>
 
@@ -99,14 +103,14 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
             <!-- Brand Logo -->
             <a href="{{ route('home') }}" class="flex items-center gap-2">
-                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-800 to-brand-500 flex items-center justify-center text-white font-black text-xl shadow-md">
-                    ⚡
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-800 to-brand-500 flex items-center justify-center shadow-md">
+                    @include('partials.brand-mark', ['class' => 'w-6 h-6'])
                 </div>
                 <div>
                     <span class="font-display font-black text-2xl tracking-tight text-brand-800">
                         Untab
                     </span>
-                    <span class="block text-[9px] font-extrabold tracking-widest text-slate-400 uppercase -mt-1">
+                    <span class="block text-[9px] font-extrabold tracking-widest text-brand-300 uppercase -mt-1">
                         Google Business Platform
                     </span>
                 </div>
@@ -288,15 +292,15 @@
                 <!-- Col 1: Brand Info -->
                 <div class="lg:col-span-2 space-y-4">
                     <div class="flex items-center gap-2">
-                        <div class="w-8 h-8 rounded-lg bg-brand-500 flex items-center justify-center text-white font-black">
-                            ⚡
+                        <div class="w-8 h-8 rounded-lg bg-brand-500 flex items-center justify-center">
+                            @include('partials.brand-mark', ['class' => 'w-5 h-5'])
                         </div>
                         <span class="font-display font-black text-2xl tracking-tight text-white">
                             Untab
                         </span>
                     </div>
                     <p class="text-slate-400 text-xs sm:text-sm leading-relaxed max-w-sm">
-                        The Google Business Profile management platform for SEO agencies and multi-location brands. Built by a team that managed 4,000+ local profiles across 15+ countries.
+                        Close all the tabs. Open one dashboard. The Google Business Profile management platform for SEO agencies and multi-location brands.
                     </p>
                     <div class="flex items-center gap-3 pt-2">
                         <a href="{{ route('app.dashboard') }}" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg border border-slate-700 font-semibold">

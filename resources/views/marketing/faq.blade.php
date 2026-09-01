@@ -4,7 +4,7 @@
 @section('meta_description', 'Answers to common questions about Untab — the Google Business Profile management platform for SEO agencies and multi-location brands.')
 
 @section('content')
-<section class="py-16 bg-gradient-to-b from-[#eef1ff] to-white">
+<section class="py-16 bg-gradient-to-b from-[#f0f4ff] to-white">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-10">
             <span class="text-xs font-extrabold text-brand-600 uppercase tracking-widest bg-brand-50 px-3 py-1 rounded-full">Help Center</span>

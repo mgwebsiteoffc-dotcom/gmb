@@ -78,8 +78,8 @@
                 <div class="flex items-start justify-between border-b pb-6" :style="'border-color: ' + brandColor + '30'">
                     <div>
                         <div class="flex items-center gap-2 font-display font-black text-lg" :style="'color: ' + brandColor">
-                            <span class="w-8 h-8 rounded-lg flex items-center justify-center text-white text-sm font-bold shadow-sm" :style="'background: ' + brandColor">
-                                ⚡
+                            <span class="w-8 h-8 rounded-lg flex items-center justify-center shadow-sm" :style="'background: ' + brandColor">
+                                @include('partials.brand-mark', ['class' => 'w-5 h-5'])
                             </span>
                             <span x-text="agencyName">Untab Local Growth Agency</span>
                         </div>
@@ -165,7 +165,7 @@
             agencyName: 'Untab Local Growth Agency',
             clientName: 'Apex Dental Care',
             reportPeriod: 'August 2026',
-            brandColor: '#1a35c8',
+            brandColor: '#1e1b4b',
             executiveSummary: 'During this reporting period, total Google Maps and Search impressions grew by +24.1%, driven by weekly Google Post promotions and rapid 2-hour AI review response times. Top commercial search terms ("emergency dentist downtown austin") now rank firmly in Top 3 Map Pack.',
             copied: false,
             copyLink() {

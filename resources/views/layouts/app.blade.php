@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     @php($seoType = $seoType ?? 'website')
-    @php($seoTitle = $seoTitle ?? (trim(View::yieldContent('title')) ?: 'Untab — Google Business App'))
+    @php($seoTitle = $seoTitle ?? (trim(View::yieldContent('title')) ?: 'Untab — Close all the tabs. Open one dashboard.'))
     @php($seoDesc = $seoDesc ?? (trim(View::yieldContent('meta_description')) ?: 'Manage every Google Business Profile from one dashboard. AI review replies, Google Posts, local SEO insights, and white-label client reports.'))
     @php($seoRobots = $seoRobots ?? 'noindex, nofollow')
     @include('partials.seo')
@@ -13,7 +13,7 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Poppins:wght@500;600;700;800;900&display=swap" rel="stylesheet">
 
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -23,25 +23,29 @@
                 extend: {
                     colors: {
                         brand: {
-                            50: '#eef1ff',
-                            100: '#e0e7ff',
-                            200: '#c5d0ff',
+                            50: '#f0f4ff',
+                            100: '#e0eaff',
+                            200: '#c3d5fb',
                             300: '#a5b4fc',
-                            400: '#818cf8',
-                            500: '#6161ff',
-                            600: '#4b4be0',
-                            700: '#2547e0',
-                            800: '#1a35c8',
-                            900: '#0f1f8a',
+                            400: '#7a8cf5',
+                            500: '#5666e8',
+                            600: '#3d47e0',
+                            700: '#2c36ad',
+                            800: '#1e1b4b',
+                            900: '#0f172a',
                         },
                         accent: {
-                            500: '#f97316',
-                            600: '#ea580c',
+                            50: '#e8fbff',
+                            300: '#7dd3fc',
+                            400: '#5ecbfa',
+                            500: '#38bdf8',
+                            600: '#0ea5e9',
+                            700: '#0284c7',
                         }
                     },
                     fontFamily: {
                         sans: ['"Plus Jakarta Sans"', 'sans-serif'],
-                        display: ['"Nunito"', 'sans-serif'],
+                        display: ['"Poppins"', 'sans-serif'],
                     }
                 }
             }
@@ -88,15 +92,15 @@
                 <!-- App Logo -->
                 <div class="p-5 border-b border-slate-800 flex items-center justify-between">
                     <a href="{{ route('home') }}" class="flex items-center gap-2.5">
-                        <div class="w-8 h-8 rounded-xl bg-brand-500 flex items-center justify-center text-white font-black text-lg shadow-md">
-                            ⚡
+                        <div class="w-8 h-8 rounded-xl bg-brand-500 flex items-center justify-center shadow-md">
+                            @include('partials.brand-mark', ['class' => 'w-6 h-6'])
                         </div>
                         <div>
                             <span class="font-display font-black text-xl text-white tracking-tight">
                                 Untab
                             </span>
-                            <span class="block text-[8px] font-extrabold tracking-widest text-slate-400 uppercase -mt-0.5">
-                                Google Business App
+                            <span class="block text-[8px] font-extrabold tracking-widest text-brand-300 uppercase -mt-0.5">
+                                One dashboard. Zero tabs.
                             </span>
                         </div>
                     </a>
@@ -203,12 +207,12 @@
             <div class="p-4 border-t border-slate-800 bg-slate-950/50">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center gap-2">
-                        <div class="w-8 h-8 rounded-full bg-brand-700 flex items-center justify-center font-black text-white text-xs">
-                            U
+                        <div class="w-8 h-8 rounded-full bg-brand-700 flex items-center justify-center">
+                            @include('partials.brand-mark', ['class' => 'w-5 h-5'])
                         </div>
                         <div class="truncate">
                             <div class="text-xs font-bold text-white truncate">Untab</div>
-                            <div class="text-[10px] text-slate-400">Local Growth Platform</div>
+                            <div class="text-[10px] text-slate-400">Close all the tabs. Open one dashboard.</div>
                         </div>
                     </div>
                     <a href="{{ route('home') }}" class="p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800" title="Back to Marketing Site">

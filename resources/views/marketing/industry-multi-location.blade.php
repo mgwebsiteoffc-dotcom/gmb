@@ -18,7 +18,7 @@
 ])
 
 @section('content')
-<section class="py-16 bg-gradient-to-b from-[#eef1ff] to-white text-center">
+<section class="py-16 bg-gradient-to-b from-[#f0f4ff] to-white text-center">
     <div class="max-w-4xl mx-auto px-4">
         <span class="text-xs font-bold text-brand-600 bg-brand-100/80 px-3.5 py-1 rounded-full uppercase tracking-wider">
             Franchise & Multi-Location Brands

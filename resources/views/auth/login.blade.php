@@ -5,11 +5,11 @@
 @section('meta_robots', 'noindex, follow')
 
 @section('content')
-<section class="min-h-screen bg-gradient-to-b from-[#eef1ff] to-white flex items-center justify-center py-16 px-4">
+<section class="min-h-screen bg-gradient-to-b from-[#f0f4ff] to-white flex items-center justify-center py-16 px-4">
     <div class="w-full max-w-md">
         <div class="text-center mb-8">
             <div class="inline-flex items-center gap-2 mb-4">
-                <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-brand-800 to-brand-500 flex items-center justify-center text-white font-black text-2xl shadow-md">⚡</div>
+                <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-brand-800 to-brand-500 flex items-center justify-center shadow-md">@include('partials.brand-mark', ['class' => 'w-7 h-7'])</div>
             </div>
             <h1 class="text-3xl font-black font-display text-slate-900">Welcome back to <span class="text-brand-600">Untab</span></h1>
             <p class="text-sm text-slate-500 mt-2">Sign in to manage your Google Business Profiles.</p>

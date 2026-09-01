@@ -24,7 +24,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 text-center">
         <p class="inline-flex items-center gap-2 text-brand-100 text-sm font-bold tracking-wide uppercase bg-white/10 rounded-full px-4 py-1.5">Untab Insights</p>
         <h1 class="text-3xl sm:text-5xl font-black text-white mt-6 leading-tight">The Local SEO &amp; GBP Playbook</h1>
-        <p class="mt-5 text-lg text-brand-100 max-w-2xl mx-auto">Actionable guides to rank higher, win more reviews, and run every Google Business Profile from one dashboard.</p>
+        <p class="mt-5 text-lg text-brand-100 max-w-2xl mx-auto">Actionable guides to rank higher, win more reviews, and close all the tabs — every Google Business Profile in one dashboard.</p>
         <form method="GET" action="{{ route('blog.index') }}" class="mt-8 max-w-xl mx-auto flex flex-col sm:flex-row gap-2">
             <input type="text" name="q" value="{{ $search }}" placeholder="Search articles…"
                    class="flex-1 rounded-xl bg-white/95 border border-white/20 px-4 py-3 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-white">

@@ -1,11 +1,11 @@
 {
-    "name": "Untab — Google Business Profile Platform",
+    "name": "Untab — Close all the tabs. Open one dashboard.",
     "short_name": "Untab",
-    "description": "Run every Google Business Profile from one dashboard.",
+    "description": "Close all the tabs, open one dashboard. Manage every Google Business Profile — reviews, posts, reports and insights — under one login.",
     "start_url": "/",
     "display": "standalone",
-    "background_color": "#0f1f8a",
-    "theme_color": "#1a35c8",
+    "background_color": "#1E1B4B",
+    "theme_color": "#1E1B4B",
     "icons": [
         {
             "src": "/favicon.svg",

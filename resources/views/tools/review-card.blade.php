@@ -53,7 +53,7 @@
                         <span class="w-4 h-4 rounded-full bg-slate-900 border"></span> Matte Obsidian
                     </button>
                     <button 
-                        @click="cardColor = '#1a35c8'; textColor = '#ffffff'"
+                        @click="cardColor = '#1e1b4b'; textColor = '#ffffff'"
                         class="p-2.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700 flex items-center gap-2 hover:border-brand-500"
                     >
                         <span class="w-4 h-4 rounded-full bg-blue-700 border"></span> Royal Navy
@@ -99,7 +99,7 @@
 
                 <div class="flex items-center justify-between text-[9px] opacity-75 font-mono">
                     <span>NFC TAP ENABLED</span>
-                    <span class="font-bold tracking-widest text-accent-500">AMPLI5 PULSE</span>
+                    <span class="font-bold tracking-widest text-accent-500">UNTAB</span>
                 </div>
             </div>
             <span class="text-xs text-slate-400 mt-4 font-medium">Physical Card Mockup • Instant Smartphone Tap Detection</span>

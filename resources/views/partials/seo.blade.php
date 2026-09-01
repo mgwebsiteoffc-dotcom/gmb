@@ -2,7 +2,7 @@
 @php($baseUrl = rtrim(config('app.url'), '/'))
 @php($seoType = $seoType ?? 'website')
 @php($seoTitle = $seoTitle ?? ($title ?? 'Untab — Google Business Profile Management Platform'))
-@php($seoDesc = $seoDesc ?? 'Run every Google Business Profile from one dashboard. AI review replies, Google Posts scheduling, local SEO insights, and white-label client reports for agencies and multi-location brands.')
+@php($seoDesc = $seoDesc ?? 'Close all the tabs, open one dashboard. AI review replies, Google Posts scheduling, local SEO insights, and white-label client reports for agencies and multi-location brands.')
 @php($seoKeywords = $seoKeywords ?? 'Google Business Profile management, GBP tool, GMB management, local SEO, review management, AI review replies, Google Posts scheduler, multi-location SEO, white-label reports')
 @php($seoImage = $seoImage ?? $baseUrl.'/og-image.png')
 @php($seoUrl = $seoUrl ?? url()->current())
@@ -14,7 +14,7 @@
 <meta name="keywords" content="{{ $seoKeywords }}">
 <meta name="robots" content="{{ $seoRobots }}">
 <meta name="author" content="{{ $brand }}">
-<meta name="theme-color" content="#1a35c8">
+<meta name="theme-color" content="#1e1b4b">
 <link rel="canonical" href="{{ $seoUrl }}">
 
 <!-- Open Graph / Facebook -->
@@ -54,6 +54,7 @@
         'name' => $brand,
         'alternateName' => 'Untab Local Growth Platform',
         'url' => $baseUrl,
+        'slogan' => 'Close all the tabs. Open one dashboard.',
         'logo' => $baseUrl.'/logo.svg',
         'sameAs' => [
             'https://twitter.com/untab',

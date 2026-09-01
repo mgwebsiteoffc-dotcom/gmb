@@ -45,7 +45,7 @@
 
 @section('content')
 <!-- Hero -->
-<section class="relative bg-gradient-to-b from-[#eef1ff] via-white to-[#f5f7ff] pt-16 pb-20 overflow-hidden">
+<section class="relative bg-gradient-to-b from-[#f0f4ff] via-white to-[#f5f7ff] pt-16 pb-20 overflow-hidden">
     <div class="absolute inset-0 bg-grid opacity-60 pointer-events-none"></div>
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
         <span class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-50 border border-brand-200 text-brand-700 text-xs font-extrabold uppercase tracking-widest mb-6 shadow-sm">
@@ -53,7 +53,7 @@
             Guided Demo
         </span>
         <h1 class="text-4xl sm:text-5xl font-black font-display tracking-tight text-slate-900 max-w-3xl mx-auto leading-[1.08]">
-            What Untab offers, <span class="text-brand-600">and how it helps.</span>
+            Close all the tabs.<br class="hidden sm:block"> <span class="text-brand-600">See one dashboard.</span>
         </h1>
         <p class="mt-5 text-base sm:text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed">
             A guided tour of the Google Business Profile platform for agencies and multi-location brands — see how reviews, posts, reports, and AI come together in one dashboard.
