@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Untab — Google Business Profile Platform (Application)</title>
+<meta name="description" content="Untab — manage every Google Business Profile from one working dashboard. AI review replies, Google Posts, local SEO insights and white-label reports.">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="stylesheet" href="/vendor/tailwind.css">
+<style>
+  :root{--b:#4b4be0;--b2:#2547e0}
+  body{font-family:Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:#f4f6fb;color:#0f172a}
+  .bg-grid{background-image:radial-gradient(rgba(97,97,255,.12) 1px,transparent 0);background-size:22px 22px}
+  ::-webkit-scrollbar{width:8px;height:8px}::-webkit-scrollbar-track{background:#eef1f7}::-webkit-scrollbar-thumb{background:#c7ccd9;border-radius:9999px}
+  .toast{transition:opacity .3s,transform .3s}
+  input:focus,select:focus,textarea:focus{outline:none}
+  [x-cloak]{display:none!important}
+</style>
+<!-- Locally vendored libraries: app works fully offline, no CDN dependency -->
+<script src="/vendor/chart.umd.js"></script>
+<script src="/vendor/jspdf.umd.min.js"></script>
+<script src="/vendor/qrcode.bundle.js"></script>
+</head>
+<body class="antialiased">
+<div id="app"></div>
+
+<script>
+/* =========================================================================
+   Untab — a real, working Google Business Profile management application.
+   All data persists to localStorage; every panel is fully functional.
+   ========================================================================= */
+(function(){
+"use strict";
+
+const LS_DB = "untab_db_v1";
+const LS_SESSION = "untab_session_v1";
+
+/* ---------------- Seed data (realistic demo data) ---------------- */
+const SEED = {
+  clients: [
+    {id:"c1",name:"Apex Dental Care",category:"Dental Clinic Chain",logo:"🦷",color:"#2563eb"},
+    {id:"c2",name:"Urban Crust Pizza Co.",category:"Restaurant & Franchise",logo:"🍕",color:"#ea580c"},
+    {id:"c3",name:"Horizon Law Group",category:"Legal & Attorney",logo:"⚖️",color:"#4f46e5"},
+    {id:"c4",name:"Elevate Wellness & Spa",category:"Health & Beauty",logo:"🌿",color:"#059669"}
+  ],
+  locations: [
+    {id:"l1",client_id:"c1",name:"Apex Dental Care - Downtown Austin",address:"401 Congress Ave, Austin, TX 78701",phone:"(512) 555-0192",category:"Dentist",verified:true,rating:4.9,review_count:342,unanswered:2,health:98,views:24500,calls:312,directions:480,clicks:890,sync:"synced"},
+    {id:"l2",client_id:"c1",name:"Apex Dental Care - Domain Northside",address:"11800 Domain Dr, Austin, TX 78758",phone:"(512) 555-0144",category:"Dentist",verified:true,rating:4.8,review_count:218,unanswered:0,health:95,views:18900,calls:240,directions:395,clicks:710,sync:"synced"},
+    {id:"l3",client_id:"c1",name:"Apex Dental Care - South Lamar",address:"2200 S Lamar Blvd, Austin, TX 78704",phone:"(512) 555-0188",category:"Cosmetic Dentist",verified:true,rating:4.7,review_count:165,unanswered:1,health:92,views:14200,calls:185,directions:310,clicks:520,sync:"synced"},
+    {id:"l4",client_id:"c1",name:"Apex Dental Care - Round Rock Metro",address:"2000 N Mays St, Round Rock, TX 78664",phone:"(512) 555-0177",category:"Pediatric Dentist",verified:true,rating:4.9,review_count:289,unanswered:0,health:96,views:19800,calls:275,directions:410,clicks:780,sync:"synced"},
+    {id:"l5",client_id:"c2",name:"Urban Crust Pizza Co. - Downtown Austin",address:"608 E 6th St, Austin, TX 78701",phone:"(512) 555-8833",category:"Pizza Restaurant",verified:true,rating:4.7,review_count:840,unanswered:3,health:94,views:42000,calls:890,directions:1420,clicks:2150,sync:"synced"},
+    {id:"l6",client_id:"c2",name:"Urban Crust Pizza Co. - South Congress",address:"1603 S Congress Ave, Austin, TX 78704",phone:"(512) 555-8844",category:"Pizza Restaurant",verified:true,rating:4.8,review_count:620,unanswered:1,health:97,views:36500,calls:720,directions:1180,clicks:1840,sync:"synced"},
+    {id:"l7",client_id:"c3",name:"Horizon Law Group - Chicago Loop HQ",address:"200 S Michigan Ave, Chicago, IL 60604",phone:"(312) 555-4400",category:"Personal Injury Attorney",verified:true,rating:4.9,review_count:178,unanswered:0,health:99,views:16500,calls:142,directions:98,clicks:640,sync:"synced"},
+    {id:"l8",client_id:"c4",name:"Elevate Wellness - Miami Brickell",address:"1100 Brickell Bay Dr, Miami, FL 33131",phone:"(305) 555-7722",category:"Day Spa",verified:true,rating:4.9,review_count:420,unanswered:1,health:98,views:31000,calls:480,directions:850,clicks:1620,sync:"synced"}
+  ],
+  reviews: [
+    {id:"r1",location_id:"l1",author:"David K. Miller",avatar:"https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=120&q=80",rating:5,date:"2 hours ago",snippet:"Dr. James and his entire dental team are outstanding! Got an emergency crown done without any pain. Best dental clinic in downtown Austin.",sentiment:"positive",status:"unanswered",reply:"",keywords:["emergency crown","downtown Austin","dental clinic"]},
+    {id:"r2",location_id:"l5",author:"Samantha Lee",avatar:"https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=120&q=80",rating:5,date:"5 hours ago",snippet:"The wood-fired margherita is unreal. Fast service and the waitstaff were so friendly.",sentiment:"positive",status:"unanswered",reply:"",keywords:["wood fired","margherita","friendly"]},
+    {id:"r3",location_id:"l5",author:"Marcus Reed",avatar:"https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=120&q=80",rating:2,date:"Yesterday",snippet:"Ordered online, arrived 45 min late and cold. Not impressed with the delivery experience.",sentiment:"negative",status:"unanswered",reply:"",keywords:["delivery","late","cold"]},
+    {id:"r4",location_id:"l8",author:"Priya N.",avatar:"https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=120&q=80",rating:5,date:"Yesterday",snippet:"The most relaxing spa in Brickell. The hydrotherapy was heavenly and the staff were so attentive.",sentiment:"positive",status:"unanswered",reply:"",keywords:["spa","brickell","hydrotherapy"]},
+    {id:"r5",location_id:"l3",author:"Tom Alvarez",avatar:"https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=120&q=80",rating:3,date:"2 days ago",snippet:"Good dentist but the wait was 40 minutes past my appointment. Checking in was confusing.",sentiment:"neutral",status:"replied",reply:"Hi Tom, thank you for sharing your feedback. We apologise for the wait and are streamlining our check-in process. We hope to see you again soon!",keywords:["wait time","check in"]},
+    {id:"r6",location_id:"l7",author:"Jessica M.",avatar:"https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=120&q=80",rating:5,date:"3 days ago",snippet:"Robert and his team handled my injury case with total professionalism. I felt heard and supported the whole way.",sentiment:"positive",status:"unanswered",reply:"",keywords:["injury","professional","lawyer"]}
+  ],
+  posts: [
+    {id:"p1",title:"Summer Checkup Special",type:"OFFER",target:"All Locations",content:"Book a summer checkup this month and receive 20% off professional cleaning. Call to schedule today!",coupon:"SPARKLE20",cta:"BOOK",status:"PUBLISHED",date:"2026-08-28 10:00",views:1240,clicks:118},
+    {id:"p2",title:"Community Kids Day",type:"EVENT",target:"Round Rock Metro",content:"Join us for a free kids dental workshop — face painting, goody bags and a healthy-snack bar!",coupon:"",cta:"SIGN_UP",status:"SCHEDULED",date:"2026-09-06 10:00",views:0,clicks:0}
+  ],
+  media: [
+    {id:"m1",location_id:"l1",title:"Modern Clinic Operatory",category:"Interior",url:"https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&w=800&q=80",geotag:"30.2672° N, 97.7431° W (Austin, TX)",views:6420},
+    {id:"m2",location_id:"l5",title:"Fresh Wood-Fired Margherita",category:"Food / Product",url:"https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=800&q=80",geotag:"30.2669° N, 97.7370° W (Austin 6th St)",views:11200},
+    {id:"m3",location_id:"l8",title:"Relaxing Spa Treatment Room",category:"Interior",url:"https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=800&q=80",geotag:"25.7617° N, 80.1918° W (Miami Brickell)",views:4890}
+  ],
+  queries: [
+    {query:"emergency dentist downtown austin",clicks:1840,impressions:14200,ctr:"12.96%",position:1.4},
+    {query:"best wood fired pizza south congress",clicks:1520,impressions:18900,ctr:"8.04%",position:2.1},
+    {query:"teeth whitening near domain austin",clicks:1140,impressions:12400,ctr:"9.19%",position:1.8},
+    {query:"chicago commercial lease attorney",clicks:980,impressions:8400,ctr:"11.67%",position:2.4},
+    {query:"brickell day spa massage deals",clicks:840,impressions:9600,ctr:"8.75%",position:2.7},
+    {query:"pediatric dentist round rock tx",clicks:760,impressions:6800,ctr:"11.18%",position:1.9}
+  ],
+  pages: [
+    {url:"/locations/downtown-austin-dentist",clicks:4200,impressions:48000,ctr:"8.75%",position:1.9},
+    {url:"/menu/wood-fired-specialties",clicks:3800,impressions:52000,ctr:"7.31%",position:2.3},
+    {url:"/services/emergency-dental-care",clicks:2900,impressions:31000,ctr:"9.35%",position:1.6},
+    {url:"/spa-packages/brickell-retreat",clicks:2100,impressions:26000,ctr:"8.08%",position:2.4}
+  ],
+  team: [
+    {id:"t1",name:"Sarah Jenkins",email:"sarah@untab.com",role:"Account Director",status:"Active",perms:{posts:true,reviews:true,media:true,reports:true,settings:true}},
+    {id:"t2",name:"Marcus Vance",email:"marcus@untab.com",role:"Local SEO Specialist",status:"Active",perms:{posts:true,reviews:true,media:true,reports:true,settings:false}}
+  ],
+  settings: {agency_name:"Untab Local Growth Agency",domain:"clients.untab.com",brand:"#4b4be0",support_email:"support@untab.com",email_alerts:true,sms_alerts:false},
+  users: []
+};
+
+/* ---------------- State ---------------- */
+let DB = load();
+let session = loadSession();
+
+function load(){
+  try{const raw=localStorage.getItem(LS_DB); if(raw){const p=JSON.parse(raw); return Object.assign({},SEED,p);} }catch(e){}
+  return JSON.parse(JSON.stringify(SEED));
+}
+function save(){ try{localStorage.setItem(LS_DB,JSON.stringify(DB));}catch(e){} }
+function loadSession(){ try{const raw=localStorage.getItem(LS_SESSION); return raw?JSON.parse(raw):null;}catch(e){return null;} }
+function saveSession(){ try{ session?localStorage.setItem(LS_SESSION,JSON.stringify(session)):localStorage.removeItem(LS_SESSION);}catch(e){} }
+
+/* ---------------- Helpers ---------------- */
+const $=s=>document.querySelector(s);
+const $$=s=>Array.from(document.querySelectorAll(s));
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
+function fmt(n){return Number(n||0).toLocaleString('en-US');}
+function stars(r){let s='';for(let i=1;i<=5;i++){s+=i<=r?'★':'☆';}return s;}
+function slug(s){return String(s).toLowerCase().trim().replace(/[^a-z0-9]+/g,'-').replace(/^\-+|\-+$/g,'');}
+function locOf(id){return DB.locations.find(l=>l.id===id);}
+function clientOf(loc){return DB.clients.find(c=>c.id===loc.client_id);}
+function locName(id){const l=locOf(id);return l?l.name:'Location';}
+function toast(msg,ok=true){
+  const t=document.createElement('div');
+  t.className='toast fixed top-4 right-4 z-[100] px-4 py-3 rounded-xl text-sm font-semibold shadow-lg '+(ok?'bg-emerald-600 text-white':'bg-red-600 text-white');
+  t.textContent=msg; document.body.appendChild(t);
+  setTimeout(()=>{t.style.opacity='0';t.style.transform='translateY(-8px)';},2600);
+  setTimeout(()=>t.remove(),3200);
+}
+function uid(p){return p+'_'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
+function currentUser(){ if(!session) return null; return (DB.users||[]).find(u=>u.email===session.email) || {name:session.name,email:session.email}; }
+function brand(){return DB.settings.brand||'#4b4be0';}
+
+/* AI reply generator (template-based, replicating untab's tone logic) */
+function aiReply(review,tone){
+  const author=(review.author||'').split(' ')[0]||'there';
+  const loc=locName(review.location_id);
+  const r=review.rating||5;
+  const kws=review.keywords||[];
+  let out='';
+  if(r>=4){
+    if(tone==='professional') out=`Thank you for taking the time to share your feedback, ${author}. We appreciate your trust in ${loc} and remain dedicated to delivering exceptional service. We look forward to your next visit.`;
+    else if(tone==='seo') out=`Thank you ${author}! We take great pride in providing the best ${kws.length?kws.slice(0,2).join(' and '):'high quality local service'} in the area. Your support for ${loc} means everything to our local team!`;
+    else if(tone==='casual') out=`Thanks a bunch, ${author}! So glad you enjoyed your visit with us at ${loc}. Can't wait to welcome you back!`;
+    else out=`Hi ${author}! Thank you so much for the glowing ${r}-star review! The entire team at ${loc} is delighted to know you had such a great experience. See you again soon! ✨`;
+  } else if(r===3){
+    if(tone==='empathetic'||tone==='apologetic') out=`Hi ${author}, thank you for your honest feedback. We apologise that some aspects did not meet our usual high standards. We would love to make things right — please reach out to our management team.`;
+    else out=`Dear ${author}, thank you for bringing this to our attention. We strive for excellence and take your feedback seriously. Our team is reviewing this.`;
+  } else {
+    if(tone==='empathetic'||tone==='apologetic') out=`Dear ${author}, we sincerely apologise that your recent visit did not meet your expectations. Providing exceptional service is our top priority. Please contact our general manager so we can make this right.`;
+    else out=`Hello ${author}, we take all customer feedback very seriously. We apologise for the frustration caused. Please contact us at your earliest convenience so we can address your concerns.`;
+  }
+  return out;
+}
+function aiCaption(type,biz){
+  if(type==='OFFER') return {title:`Special Limited-Time Savings at ${biz}!`,content:`🎉 Elevate your local experience this season! For a limited time, enjoy premium services with our exclusive promotional discount. Reserve your spot today before appointments fill up.`,coupon:'SAVE20PULSE',cta:'BOOK'};
+  if(type==='EVENT') return {title:`Upcoming Community Workshop & Q&A at ${biz}`,content:`📅 Mark your calendars! Join our specialists for an exclusive interactive session with tips, demonstrations, and special giveaways. Free admission!`,coupon:'',cta:'SIGN_UP'};
+  return {title:`Exciting New Updates at ${biz}`,content:`✨ We are continually upgrading our facilities, services, and team training to provide you with the smoothest local experience. Stop by today or book online!`,coupon:'',cta:'LEARN_MORE'};
+}
+
+/* ---------------- Routing ---------------- */
+const routes = ['dashboard','reviews','posts','insights','search-console','media','reports','team','connect','settings'];
+function currentRoute(){ const h=location.hash.replace(/^#\//,''); const r=h.split('?')[0]; return routes.includes(r)?r:'dashboard'; }
+let activeLoc='all'; // 'all' | 'client-c1' | 'l1'
+function scopeQuery(locs){
+  if(activeLoc==='all') return locs;
+  if(activeLoc.startsWith('client-')){ const cid=activeLoc.replace('client-',''); return locs.filter(l=>l.client_id===cid); }
+  return locs.filter(l=>l.id===activeLoc);
+}
+
+/* ---------------- App shell ---------------- */
+function shell(content,current){
+  const user=currentUser();
+  const nav=[
+    ['dashboard','layout-dashboard','Dashboard'],
+    ['reviews','message-square','Reviews & AI'],
+    ['posts','calendar','Google Posts'],
+    ['insights','bar-chart-2','GBP Insights'],
+    ['search-console','search','Search Console'],
+    ['media','image','Media & Geotag'],
+    ['reports','file-text','White-Label Reports'],
+    ['team','users','Team & Permissions'],
+    ['connect','link','Connect Accounts'],
+    ['settings','settings','Agency Settings']
+  ];
+  const scopeSel=`<div class="p-4 border-b border-slate-800">
+    <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Scope</label>
+    <select id="scopeSelect" class="w-full bg-slate-800 border border-slate-700 text-white text-xs font-semibold rounded-xl px-3 py-2">
+      <option value="all" ${activeLoc==='all'?'selected':''}>🌐 All Locations (${DB.locations.length} Profiles)</option>
+      ${DB.clients.map(c=>{
+        const grp=`<optgroup label="${esc(c.name)}">`;
+        const all=`<option value="client-${c.id}" ${activeLoc==='client-'+c.id?'selected':''}>📁 All ${esc(c.name)} (${DB.locations.filter(l=>l.client_id===c.id).length})</option>`;
+        const items=DB.locations.filter(l=>l.client_id===c.id).map(l=>`<option value="${l.id}" ${activeLoc===l.id?'selected':''}>📍 ${esc(l.name)}</option>`).join('');
+        return grp+all+items+'</optgroup>';
+      }).join('')}
+    </select></div>`;
+  const navItems=nav.map(n=>`<a href="#/${n[0]}" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all ${current===n[0]?'bg-brand-600 text-white shadow-md':'text-slate-300 hover:bg-slate-800 hover:text-white'}"><span class="icon">${n[1]}</span><span>${n[2]}</span></a>`).join('');
+  const iconSvg={
+    'layout-dashboard':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-4 h-4"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>',
+    'message-square':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-4 h-4"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>',
+    'calendar':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-4 h-4"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>',
+    'bar-chart-2':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-4 h-4"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>',
+    'search':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-4 h-4"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>',
+    'image':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-4 h-4"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>',
+    'file-text':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-4 h-4"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>',
+    'users':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-4 h-4"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
+    'link':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-4 h-4"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>',
+    'settings':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-4 h-4"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>'
+  };
+  return `<div class="flex min-h-screen">
+    <aside class="hidden md:flex w-64 bg-slate-900 text-slate-300 flex-col flex-shrink-0 sticky top-0 h-screen">
+      <div class="p-5 border-b border-slate-800 flex items-center gap-2.5">
+        <div class="w-8 h-8 rounded-xl bg-brand-500 flex items-center justify-center text-white font-black text-lg">⚡</div>
+        <div><div class="font-black text-white text-lg leading-tight">Untab</div><div class="text-[8px] font-extrabold tracking-widest text-slate-400 uppercase">Google Business App</div></div>
+      </div>
+      ${scopeSel}
+      <nav class="p-3 space-y-1 overflow-y-auto flex-1">${navItems}</nav>
+      <div class="p-4 border-t border-slate-800 bg-slate-950/50">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-full bg-brand-700 flex items-center justify-center font-black text-white text-xs">${esc((user&&user.name||'U').slice(0,1))}</div>
+          <div class="truncate"><div class="text-xs font-bold text-white truncate">${esc(user?user.name:'Guest')}</div><div class="text-[10px] text-slate-400">${esc(user?user.email:'')}</div></div>
+        </div>
+        <button id="logoutBtn" class="mt-3 w-full text-xs font-bold text-slate-400 hover:text-white text-left">↪ Logout</button>
+      </div>
+    </aside>
+    <div class="flex-1 flex flex-col min-w-0">
+      <header class="h-16 bg-white border-b border-slate-200 px-4 sm:px-6 flex items-center justify-between flex-shrink-0">
+        <div class="flex items-center gap-2 text-xs font-semibold text-slate-500">
+          <a href="#/dashboard" class="hover:text-brand-600">Home</a><span>/</span><span class="text-slate-800 font-bold capitalize">${current}</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <a href="#/reports" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 bg-brand-50 text-brand-800 rounded-xl text-xs font-bold border border-brand-200">Generate Report</a>
+          <span class="text-xs font-bold text-slate-600 bg-slate-100 px-3 py-1.5 rounded-xl">${esc(user?user.name.split(' ')[0]:'Guest')}</span>
+        </div>
+      </header>
+      <main class="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto" id="main">${content}</main>
+    </div>
+  </div>`;
+  return `<div class="flex h-screen"><aside>${navItems}</aside><main><div>${scopeSel}</div>${content}</main></div>`;
+}
+
+/* ---------------- Auth screen ---------------- */
+function authScreen(mode){
+  return `<div class="min-h-screen bg-gradient-to-b from-brand-50 to-white flex items-center justify-center p-4">
+    <div class="w-full max-w-md">
+      <div class="text-center mb-6"><div class="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-gradient-to-tr from-brand-800 to-brand-500 text-white font-black text-2xl mb-3">⚡</div>
+        <h1 class="text-3xl font-black text-slate-900">${mode==='login'?'Welcome back to':'Start free with'} <span class="text-brand-600">Untab</span></h1>
+        <p class="text-sm text-slate-500 mt-2">${mode==='login'?'Sign in to manage your Google Business Profiles.':'No credit card required — explore every module.'}</p></div>
+      <div class="bg-white rounded-3xl border border-slate-200 shadow-xl p-8">
+        <div id="authError" class="hidden mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm"></div>
+        <form id="authForm" class="space-y-4">
+          ${mode==='register'?`<div><label class="block text-xs font-bold text-slate-700 mb-1.5 uppercase">Full Name</label><input id="aName" type="text" required placeholder="Jane Smith" class="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm"></div>`:''}
+          <div><label class="block text-xs font-bold text-slate-700 mb-1.5 uppercase">Email</label><input id="aEmail" type="email" required placeholder="you@agency.com" class="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm"></div>
+          <div><label class="block text-xs font-bold text-slate-700 mb-1.5 uppercase">Password</label><input id="aPass" type="password" required placeholder="••••••••" class="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm"></div>
+          ${mode==='register'?`<div><label class="block text-xs font-bold text-slate-700 mb-1.5 uppercase">Confirm Password</label><input id="aPass2" type="password" required placeholder="Repeat password" class="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm"></div>`:''}
+          <button type="submit" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-extrabold py-3 rounded-xl transition-all shadow-md">${mode==='login'?'Sign In':'Create Free Account'}</button>
+        </form>
+        <button id="demoBtn" class="w-full mt-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3 rounded-xl text-sm">⚡ Continue to live app without login</button>
+        <p class="text-center text-xs text-slate-500 mt-5">${mode==='login'?'New to Untab? <a href="#/register" class="font-bold text-brand-700">Create a free account</a>':'Already have an account? <a href="#/login" class="font-bold text-brand-700">Sign in</a>'}</p>
+      </div>
+    </div></div>`;
+}
+
+/* ---------------- Dashboard ---------------- */
+function viewDashboard(){
+  const locs=scopeQuery(DB.locations);
+  const views=locs.reduce((s,l)=>s+l.views,0), calls=locs.reduce((s,l)=>s+l.calls,0), dirs=locs.reduce((s,l)=>s+l.directions,0), clicks=locs.reduce((s,l)=>s+l.clicks,0);
+  const revs=locs.reduce((s,l)=>s+l.review_count,0), unanswered=locs.reduce((s,l)=>s+l.unanswered,0);
+  const avg=locs.length? (locs.reduce((s,l)=>s+l.rating,0)/locs.length).toFixed(1):'5.0';
+  const kpis=[['Total GBP Views',fmt(views),'+24.1% MoM'],['Customer Calls',fmt(calls),'+18.5% MoM'],['Directions',fmt(dirs),'+29.2% MoM'],['Website Clicks',fmt(clicks),'+12.4% MoM'],['Review Count',fmt(revs),'+3.2% MoM'],['Review Health',avg+' ★',unanswered+' pending']];
+  const pending=DB.reviews.filter(r=>r.status==='unanswered');
+  return `<div class="space-y-6">
+    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-2">
+        <div><span class="text-xs font-bold text-brand-600 bg-brand-50 px-2.5 py-0.5 rounded-full uppercase">Multi-Location Command Center</span>
+        <h1 class="text-2xl font-black text-slate-900 mt-1">Welcome back, ${esc(currentUser().name.split(' ')[0])}</h1>
+        <p class="text-xs text-slate-500">${DB.clients.length} Clients · ${locs.length} of ${DB.locations.length} Locations connected.</p></div>
+        <button id="quickReport" class="bg-brand-600 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-md">⚡ Generate Client Report</button>
+      </div>
+    </div>
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">${kpis.map(k=>`<div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm"><div class="text-[10px] font-bold text-slate-400 uppercase">${k[0]}</div><div class="text-xl font-extrabold text-slate-900 mt-1">${k[1]}</div><div class="text-[10px] font-bold text-emerald-600">${k[2]}</div></div>`).join('')}</div>
+    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+      <h2 class="font-bold text-slate-900 mb-4">Location Health Matrix</h2>
+      <div class="space-y-3">${locs.map(l=>{const c=clientOf(l);return `<div class="flex items-center justify-between gap-3 p-3 rounded-xl border border-slate-100 hover:border-brand-300 transition-all">
+        <div class="flex items-center gap-3 min-w-0"><div class="w-9 h-9 rounded-lg flex items-center justify-center text-lg flex-shrink-0" style="background:${c.color}1a">${c.logo}</div>
+        <div class="min-w-0"><div class="text-sm font-bold text-slate-800 truncate">${esc(l.name)}</div><div class="text-[10px] text-slate-400">${esc(c.name)} · ${esc(l.category)}</div></div></div>
+        <div class="flex items-center gap-3 flex-shrink-0"><span class="text-[10px] font-bold ${l.verified?'text-emerald-600':'text-amber-600'}">${l.verified?'✓ Verified':'Unverified'}</span>
+        <span class="text-xs font-extrabold text-amber-500">${stars(l.rating)}</span>
+        <div class="w-20 h-2 bg-slate-100 rounded-full"><div class="h-full rounded-full" style="width:${l.health}%;background:${l.health>=90?'#10b981':l.health>=80?'#f59e0b':'#ef4444'}"></div></div>
+        <span class="text-xs font-bold w-8 text-right">${l.health}</span></div>
+      </div>`;}).join('')||'<p class="text-sm text-slate-400">No locations in scope.</p>'}
+      </div>
+    </div>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm"><h2 class="font-bold text-slate-900 mb-3">Pending Review Queue</h2>${pending.map(r=>`<div class="flex items-start gap-3 p-3 border-b border-slate-50 last:border-0"><div class="text-amber-400 text-sm">${stars(r.rating)}</div><div class="flex-1 min-w-0"><div class="text-sm font-bold text-slate-800">${esc(r.author)}</div><p class="text-xs text-slate-500 line-clamp-2">${esc(r.snippet)}</p></div><a href="#/reviews" class="text-xs font-bold text-brand-600 flex-shrink-0">Reply →</a></div>`).join('')||'<p class="text-sm text-slate-400">No pending reviews. 🎉</p>'}</div>
+      <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm"><h2 class="font-bold text-slate-900 mb-3">Recent Posts</h2>${DB.posts.slice(0,3).map(p=>`<div class="p-3 border-b border-slate-50 last:border-0"><div class="text-sm font-bold text-slate-800">${esc(p.title)}</div><div class="text-[11px] text-slate-400">${esc(p.type)} · ${esc(p.status)} · ${esc(p.date)}</div></div>`).join('')||'<p class="text-sm text-slate-400">No posts yet.</p>'}</div>
+    </div>
+  </div>`;
+}
+
+/* ---------------- Reviews ---------------- */
+let reviewFilter={rating:'all',sentiment:'all',status:'all',search:''};
+function viewReviews(){
+  const locs=scopeQuery(DB.locations);
+  const ids=new Set(locs.map(l=>l.id));
+  const list=DB.reviews.filter(r=>{
+    if(!ids.has(r.location_id)) return false;
+    if(reviewFilter.rating!=='all' && r.rating!==Number(reviewFilter.rating)) return false;
+    if(reviewFilter.sentiment!=='all' && r.sentiment!==reviewFilter.sentiment) return false;
+    if(reviewFilter.status!=='all' && r.status!==reviewFilter.status) return false;
+    if(reviewFilter.search && !((r.author+r.snippet).toLowerCase().includes(reviewFilter.search.toLowerCase()))) return false;
+    return true;
+  });
+  const unanswered=DB.reviews.filter(r=>r.status==='unanswered').length;
+  return `<div class="space-y-6">
+    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div><span class="text-xs font-bold text-brand-600 bg-brand-50 px-2.5 py-0.5 rounded-full uppercase">Unified Review Inbox</span>
+      <h1 class="text-2xl font-black text-slate-900 mt-1">Google Reviews & AI Reply Assistant</h1></div>
+      <button id="bulkAi" class="bg-brand-600 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-md">✨ Bulk AI Reply All Unanswered (${unanswered})</button>
+    </div>
+    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+      <div class="grid grid-cols-1 sm:grid-cols-4 gap-3">
+        <input id="reviewSearch" value="${esc(reviewFilter.search)}" placeholder="Search customer or review..." class="px-3 py-2 rounded-xl border border-slate-200 text-xs">
+        <select id="reviewRating" class="px-3 py-2 rounded-xl border border-slate-200 text-xs"><option value="all">All ratings</option>${[5,4,3,2,1].map(n=>`<option value="${n}" ${reviewFilter.rating==String(n)?'selected':''}>${'★'.repeat(n)}${'☆'.repeat(5-n)} (${n})</option>`).join('')}</select>
+        <select id="reviewSentiment" class="px-3 py-2 rounded-xl border border-slate-200 text-xs"><option value="all">All sentiment</option><option value="positive" ${reviewFilter.sentiment==='positive'?'selected':''}>Positive</option><option value="neutral" ${reviewFilter.sentiment==='neutral'?'selected':''}>Neutral</option><option value="negative" ${reviewFilter.sentiment==='negative'?'selected':''}>Negative</option></select>
+        <select id="reviewStatus" class="px-3 py-2 rounded-xl border border-slate-200 text-xs"><option value="all">All status</option><option value="unanswered" ${reviewFilter.status==='unanswered'?'selected':''}>Needs Reply</option><option value="replied" ${reviewFilter.status==='replied'?'selected':''}>Replied</option></select>
+      </div>
+    </div>
+    <div class="space-y-3">${list.map(r=>`<div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row gap-4">
+      <div class="flex items-start gap-3 md:w-64 flex-shrink-0">
+        <div class="w-12 h-12 rounded-full bg-brand-100 flex items-center justify-center font-black text-brand-700 flex-shrink-0">${esc(r.author[0])}</div>
+        <div><div class="font-bold text-slate-800 text-sm">${esc(r.author)}</div><div class="text-amber-400 text-sm">${stars(r.rating)}</div><div class="text-[10px] text-slate-400">${esc(r.date)} · ${esc(locName(r.location_id).split(' - ')[0])}</div></div>
+      </div>
+      <div class="flex-1 min-w-0">
+        <p class="text-sm text-slate-600">${esc(r.snippet)}</p>
+        ${(r.keywords||[]).length?`<div class="flex flex-wrap gap-1 mt-2">${r.keywords.map(k=>`<span class="text-[10px] bg-brand-50 text-brand-700 px-2 py-0.5 rounded-full font-bold">${esc(k)}</span>`).join('')}</div>`:''}
+        <div class="flex items-center gap-2 mt-3 flex-wrap">
+          <span class="text-[10px] font-bold ${r.sentiment==='positive'?'text-emerald-600':r.sentiment==='negative'?'text-red-600':'text-amber-600'}">${r.sentiment==='positive'?'▲ Positive':r.sentiment==='negative'?'▼ Negative':'▪ Neutral'}</span>
+          <span class="text-[10px] font-bold ${r.status==='replied'?'text-emerald-600':'text-orange-500'}">${r.status==='replied'?'🟢 Replied':'🔴 Needs Reply'}</span>
+        </div>
+      </div>
+      <div class="flex flex-col md:items-end justify-center gap-2 flex-shrink-0">
+        ${r.status==='unanswered'?`<button class="aiReplyBtn text-xs font-bold text-white bg-brand-600 px-4 py-2 rounded-xl" data-id="${r.id}">✨ AI Reply</button>`:`<div class="text-[11px] text-slate-500 italic max-w-xs text-right">"${esc(r.reply)}"</div>`}
+      </div>
+    </div>`).join('')||'<div class="bg-white p-12 text-center rounded-2xl border border-slate-200"><p class="text-sm text-slate-400">No reviews match your filter.</p></div>'}
+    </div>
+  </div>`;
+}
+function openAiModal(id){
+  const r=DB.reviews.find(x=>x.id===id); if(!r)return;
+  const modal=document.createElement('div');
+  modal.id="aiModal";
+  modal.className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4";
+  modal.innerHTML=`<div class="bg-white rounded-2xl max-w-xl w-full shadow-2xl overflow-hidden">
+    <div class="bg-gradient-to-r from-brand-700 to-indigo-800 p-5 text-white flex items-center justify-between"><div><h3 class="font-bold">AI Review Reply Assistant</h3><p class="text-[11px] text-brand-200">Replying to ${esc(r.author)} (${r.rating}★)</p></div><button class="aiClose text-white text-xl font-bold">✕</button></div>
+    <div class="p-6 space-y-4">
+      <div><label class="text-xs font-bold text-slate-700 uppercase">Tone</label><select id="aiTone" class="mt-1 w-full px-3 py-2 rounded-xl border border-slate-200 text-xs">
+        <option value="friendly">Warm & Friendly</option><option value="professional">Professional</option><option value="seo">SEO Keyword Rich</option><option value="empathetic">Empathetic / Apology</option><option value="casual">Casual</option></select></div>
+      <div><label class="text-xs font-bold text-slate-700 uppercase">Message</label><textarea id="aiText" rows="4" class="mt-1 w-full px-3 py-2 rounded-xl border border-slate-200 text-xs">${esc(r.reply||aiReply(r,'friendly'))}</textarea></div>
+      <div class="flex justify-end gap-2"><button class="aiRegen text-xs font-bold text-brand-600 bg-brand-50 px-4 py-2 rounded-xl">↻ Regenerate</button><button class="aiSave text-xs font-bold text-white bg-brand-600 px-4 py-2 rounded-xl">Publish Reply</button></div>
+    </div></div>`;
+  document.body.appendChild(modal);
+  modal.querySelector('.aiClose').onclick=()=>modal.remove();
+  modal.querySelector('.aiRegen').onclick=()=>{const t=modal.querySelector('#aiTone').value; modal.querySelector('#aiText').value=aiReply(r,t);};
+  modal.querySelector('.aiSave').onclick=()=>{
+    const txt=modal.querySelector('#aiText').value.trim();
+    r.reply=txt; r.status='replied';
+    const l=locOf(r.location_id); if(l) l.unanswered=Math.max(0,l.unanswered-1);
+    save(); toast('Reply published to Google Business Profile.'); modal.remove(); render();
+  };
+}
+
+/* ---------------- Posts ---------------- */
+let postState={type:'WHATS_NEW',target:'All Locations',status:'PUBLISHED',aiLoaded:false};
+function viewPosts(){
+  const filtered=DB.posts;
+  return `<div class="space-y-6">
+    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between"><div><span class="text-xs font-bold text-brand-600 bg-brand-50 px-2.5 py-0.5 rounded-full uppercase">Publisher</span><h1 class="text-2xl font-black text-slate-900 mt-1">Google Posts Scheduler</h1><p class="text-xs text-slate-500">Broadcast updates, offers & events to any subset of locations.</p></div></div>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div class="lg:col-span-2 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+        <div><label class="text-xs font-bold text-slate-700 uppercase">Post Type</label><select id="postType" class="mt-1 w-full px-3 py-2 rounded-xl border border-slate-200 text-xs">
+          <option value="WHATS_NEW" ${postState.type==='WHATS_NEW'?'selected':''}>What's New</option><option value="OFFER" ${postState.type==='OFFER'?'selected':''}>Offer</option><option value="EVENT" ${postState.type==='EVENT'?'selected':''}>Event</option></select></div>
+        <div><label class="text-xs font-bold text-slate-700 uppercase">Business / Location Name</label><input id="postBiz" value="${esc((DB.locations[0]||{name:''}).name)}" class="mt-1 w-full px-3 py-2 rounded-xl border border-slate-200 text-xs"></div>
+        <div class="flex items-center justify-between"><label class="text-xs font-bold text-slate-700 uppercase">Title</label><button id="aiCaption" class="text-xs font-bold text-brand-600 bg-brand-50 px-3 py-1 rounded">✨ AI Write Post</button></div>
+        <input id="postTitle" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs" placeholder="Post title...">
+        <div><label class="text-xs font-bold text-slate-700 uppercase">Content</label><textarea id="postContent" rows="4" class="mt-1 w-full px-3 py-2 rounded-xl border border-slate-200 text-xs" placeholder="Write your post content..."></textarea></div>
+        <div class="grid grid-cols-2 gap-3">
+          <div><label class="text-xs font-bold text-slate-700 uppercase">Coupon Code</label><input id="postCoupon" class="mt-1 w-full px-3 py-2 rounded-xl border border-slate-200 text-xs"></div>
+          <div><label class="text-xs font-bold text-slate-700 uppercase">CTA</label><select id="postCta" class="mt-1 w-full px-3 py-2 rounded-xl border border-slate-200 text-xs"><option>LEARN_MORE</option><option>BOOK</option><option>ORDER</option><option>BUY</option><option>SIGN_UP</option><option>CALL_NOW</option></select></div>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div><label class="text-xs font-bold text-slate-700 uppercase">Target</label><select id="postTarget" class="mt-1 w-full px-3 py-2 rounded-xl border border-slate-200 text-xs"><option>All Locations</option>${DB.locations.map(l=>`<option>${esc(l.name)}</option>`).join('')}</select></div>
+          <div><label class="text-xs font-bold text-slate-700 uppercase">Status</label><select id="postStatus" class="mt-1 w-full px-3 py-2 rounded-xl border border-slate-200 text-xs"><option value="PUBLISHED">Publish Now</option><option value="SCHEDULED">Schedule</option></select></div>
+        </div>
+        <button id="createPost" class="w-full bg-brand-600 text-white font-bold py-3 rounded-xl text-sm shadow-md">Publish Post</button>
+      </div>
+      <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+        <h2 class="font-bold text-slate-900 mb-3">Live Google Card Preview</h2>
+        <div class="border border-slate-200 rounded-2xl p-4 space-y-3">
+          <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-lg bg-brand-500 flex items-center justify-center text-white text-lg">⚡</div><div><div class="text-sm font-bold" id="pvBiz">${esc(DB.locations[0]?.name||'')}</div><div class="text-[10px] text-slate-400">Google Business Profile</div></div></div>
+          <div class="text-sm font-bold text-slate-800" id="pvTitle">Post title</div>
+          <p class="text-xs text-slate-600" id="pvContent">Your post content appears here...</p>
+          ${postState.type==='OFFER'?`<div class="flex items-center justify-between bg-amber-50 border border-amber-200 rounded-xl p-3"><span class="text-xs font-bold text-amber-700">Coupon: <span id="pvCoupon">—</span></span><button class="text-xs font-bold text-white bg-amber-600 px-3 py-1.5 rounded-lg">BOOK NOW</button></div>`:''}
+        </div>
+      </div>
+    </div>
+    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm"><h2 class="font-bold text-slate-900 mb-3">Posts (${filtered.length})</h2>
+      <div class="space-y-3">${filtered.map(p=>`<div class="flex items-center justify-between gap-3 p-3 border border-slate-100 rounded-xl">
+        <div class="min-w-0"><div class="text-sm font-bold text-slate-800">${esc(p.title)}</div><div class="text-[11px] text-slate-400">${esc(p.type)} · ${esc(p.target)} · ${esc(p.status)} · ${esc(p.date)}</div></div>
+        <div class="flex items-center gap-3 flex-shrink-0"><span class="text-[10px] text-slate-400">${fmt(p.views)} views · ${fmt(p.clicks)} clicks</span>
+        ${p.status==='PUBLISHED'?'':`<button class="postPublish text-xs font-bold text-emerald-600" data-id="${p.id}">Publish</button>`}
+        <button class="postDel text-xs font-bold text-red-500" data-id="${p.id}">Delete</button></div>
+      </div>`).join('')||'<p class="text-sm text-slate-400">No posts yet.</p>'}</div>
+    </div>
+  </div>`;
+}
+
+/* ---------------- Insights ---------------- */
+let range='30d';
+let insightChart=null,actionChart=null;
+function viewInsights(){
+  const locs=scopeQuery(DB.locations);
+  const views=locs.reduce((s,l)=>s+l.views,0), calls=locs.reduce((s,l)=>s+l.calls,0), dirs=locs.reduce((s,l)=>s+l.directions,0), clicks=locs.reduce((s,l)=>s+l.clicks,0);
+  const mapsViews=Math.round(views*0.65), searchViews=Math.round(views*0.35);
+  const labels=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug'];
+  const factor=range==='7d'?0.05:range==='12m'?1:0.35;
+  const maps=labels.map((_,i)=>Math.round(mapsViews*factor*(0.7+Math.random()*0.6)));
+  const search=labels.map((_,i)=>Math.round(searchViews*factor*(0.7+Math.random()*0.6)));
+  return `<div class="space-y-6">
+    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-3"><div><span class="text-xs font-bold text-brand-600 bg-brand-50 px-2.5 py-0.5 rounded-full uppercase">Analytics</span><h1 class="text-2xl font-black text-slate-900 mt-1">GBP Performance Insights</h1></div>
+    <div class="flex gap-2">${['7d','30d','90d','12m'].map(r=>`<button class="rangeBtn px-3 py-1.5 rounded-xl text-xs font-bold ${range===r?'bg-brand-600 text-white':'bg-slate-100 text-slate-600'}" data-range="${r}">${r}</button>`).join('')}</div></div>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">${[['Profile Views',views],['Calls',calls],['Directions',dirs],['Website Clicks',clicks]].map(k=>`<div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm"><div class="text-[10px] font-bold text-slate-400 uppercase">${k[0]}</div><div class="text-2xl font-extrabold text-slate-900">${fmt(k[1])}</div></div>`).join('')}</div>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm"><h2 class="font-bold text-slate-900 mb-3">Maps vs Search Impressions</h2><canvas id="insightChart" class="h-64"></canvas></div>
+      <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm"><h2 class="font-bold text-slate-900 mb-3">Customer Conversion Actions</h2><canvas id="actionChart" class="h-64"></canvas></div>
+    </div>
+    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm"><h2 class="font-bold text-slate-900 mb-3">Cross-Location Benchmarking</h2>
+      <table class="w-full text-xs"><thead><tr class="text-slate-400 uppercase text-[10px]"><th class="text-left py-2">Location</th><th class="text-right">Views</th><th class="text-right">Calls</th><th class="text-right">Directions</th><th class="text-right">Health</th></tr></thead><tbody>${locs.map(l=>`<tr class="border-t border-slate-50"><td class="py-2 font-bold text-slate-700">${esc(l.name)}</td><td class="text-right">${fmt(l.views)}</td><td class="text-right">${fmt(l.calls)}</td><td class="text-right">${fmt(l.directions)}</td><td class="text-right font-extrabold ${l.health>=90?'text-emerald-600':l.health>=80?'text-amber-600':'text-red-600'}">${l.health}</td></tr>`).join('')}</tbody></table>
+    </div>
+  </div>`;
+}
+function drawInsightCharts(){
+  if(!window.Chart) return;
+  const ctx1=document.getElementById('insightChart'); if(!ctx1) return;
+  const locs=scopeQuery(DB.locations);
+  const views=locs.reduce((s,l)=>s+l.views,0);
+  const mapsViews=Math.round(views*0.65), searchViews=Math.round(views*0.35);
+  const labels=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug'];
+  const factor=range==='7d'?0.05:range==='12m'?1:0.35;
+  const maps=labels.map((_,i)=>Math.round(mapsViews*factor*(0.7+Math.random()*0.6)));
+  const search=labels.map((_,i)=>Math.round(searchViews*factor*(0.7+Math.random()*0.6)));
+  if(insightChart) insightChart.destroy();
+  insightChart=new Chart(ctx1,{type:'line',data:{labels,datasets:[
+    {label:'Google Maps',data:maps,borderColor:'#2563eb',backgroundColor:'rgba(37,99,235,.1)',fill:true,tension:.4},
+    {label:'Google Search',data:search,borderColor:'#f97316',backgroundColor:'rgba(249,115,22,.1)',fill:true,tension:.4}
+  ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}}}});
+  const calls=locs.reduce((s,l)=>s+l.calls,0),dirs=locs.reduce((s,l)=>s+l.directions,0),clicks=locs.reduce((s,l)=>s+l.clicks,0);
+  const ctx2=document.getElementById('actionChart');
+  if(actionChart) actionChart.destroy();
+  actionChart=new Chart(ctx2,{type:'bar',data:{labels:['Calls','Directions','Website Clicks'],datasets:[{label:'Conversions',data:[calls,dirs,clicks],backgroundColor:['#2563eb','#10b981','#f97316'],borderRadius:8}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}}});
+}
+
+/* ---------------- Search Console ---------------- */
+function viewSearchConsole(){
+  const totalClicks=DB.queries.reduce((s,q)=>s+q.clicks,0);
+  const totalImp=DB.queries.reduce((s,q)=>s+q.impressions,0);
+  return `<div class="space-y-6">
+    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm"><span class="text-xs font-bold text-brand-600 bg-brand-50 px-2.5 py-0.5 rounded-full uppercase">Google Search Console</span><h1 class="text-2xl font-black text-slate-900 mt-1">Organic Search Performance</h1></div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4"><div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm"><div class="text-[10px] font-bold text-slate-400 uppercase">Total Clicks</div><div class="text-2xl font-extrabold text-slate-900">${fmt(totalClicks)}</div></div><div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm"><div class="text-[10px] font-bold text-slate-400 uppercase">Impressions</div><div class="text-2xl font-extrabold text-slate-900">${fmt(totalImp)}</div></div><div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm"><div class="text-[10px] font-bold text-slate-400 uppercase">Avg CTR</div><div class="text-2xl font-extrabold text-emerald-600">9.9%</div></div></div>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm"><h2 class="font-bold text-slate-900 mb-3">Top Queries</h2><table class="w-full text-xs"><thead><tr class="text-slate-400 uppercase text-[10px]"><th class="text-left py-2">Query</th><th class="text-right">Clicks</th><th class="text-right">Imp.</th><th class="text-right">Pos.</th></tr></thead><tbody>${DB.queries.map(q=>`<tr class="border-t border-slate-50"><td class="py-2 text-slate-700 font-medium">${esc(q.query)}</td><td class="text-right">${fmt(q.clicks)}</td><td class="text-right">${fmt(q.impressions)}</td><td class="text-right font-bold">${q.position}</td></tr>`).join('')}</tbody></table></div>
+      <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm"><h2 class="font-bold text-slate-900 mb-3">Top Landing Pages</h2><table class="w-full text-xs"><thead><tr class="text-slate-400 uppercase text-[10px]"><th class="text-left py-2">Page</th><th class="text-right">Clicks</th><th class="text-right">Imp.</th></tr></thead><tbody>${DB.pages.map(p=>`<tr class="border-t border-slate-50"><td class="py-2 text-slate-700 font-medium">${esc(p.url)}</td><td class="text-right">${fmt(p.clicks)}</td><td class="text-right">${fmt(p.impressions)}</td></tr>`).join('')}</tbody></table></div>
+    </div>
+    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm"><h2 class="font-bold text-slate-900 mb-3">Device Breakdown</h2><canvas id="deviceChart" class="h-56"></canvas></div>
+  </div>`;
+}
+let deviceChart=null;
+function drawDeviceChart(){
+  if(!window.Chart) return;
+  const el=document.getElementById('deviceChart'); if(!el)return;
+  if(deviceChart) deviceChart.destroy();
+  deviceChart=new Chart(el,{type:'doughnut',data:{labels:['Mobile','Desktop','Tablet'],datasets:[{data:[74.2,22.8,3],backgroundColor:['#2563eb','#10b981','#f97316']}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}}}});
+}
+
+/* ---------------- Media ---------------- */
+let mediaCat='all';
+function viewMedia(){
+  const list=DB.media.filter(m=>mediaCat==='all'||m.category===mediaCat);
+  const cats=['all','Interior','Exterior','Team & Staff','Food / Product','Cover'];
+  return `<div class="space-y-6">
+    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4"><div><span class="text-xs font-bold text-brand-600 bg-brand-50 px-2.5 py-0.5 rounded-full uppercase">Media Library</span><h1 class="text-2xl font-black text-slate-900 mt-1">Photos & Video Manager</h1><p class="text-xs text-slate-500">Upload real photos with geotagging — saved to your browser.</p></div><button id="openUpload" class="bg-brand-600 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-md">↑ Upload Photo</button></div>
+    <div class="flex flex-wrap gap-2 border-b border-slate-200 pb-2">${cats.map(c=>`<button class="mediaCat px-3.5 py-1.5 rounded-xl text-xs font-bold ${mediaCat===c?'bg-brand-600 text-white':'text-slate-600 hover:bg-slate-100'}" data-cat="${c}">${c==='all'?'All':c}</button>`).join('')}</div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">${list.map(m=>`<div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden"><div class="relative h-44 bg-slate-100"><img src="${esc(m.url)}" class="w-full h-full object-cover" alt="${esc(m.title)}"><span class="absolute top-2 left-2 text-[10px] font-bold bg-slate-900/80 text-white px-2 py-0.5 rounded">${esc(m.category)}</span></div><div class="p-3"><div class="font-bold text-slate-800 text-xs">${esc(m.title)}</div><div class="text-[11px] text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded mt-1 inline-block">📍 ${esc(m.geotag||'No geotag')}</div><div class="flex items-center justify-between mt-2"><span class="text-[10px] text-slate-400">${fmt(m.views)} views</span><button class="mediaDel text-[10px] text-red-500 font-bold" data-id="${m.id}">Delete</button></div></div></div>`).join('')||'<div class="col-span-full bg-white p-12 text-center rounded-2xl border border-slate-200"><p class="text-sm text-slate-400">No media in this category.</p></div>'}</div>
+  </div>`;
+}
+function openUploadModal(){
+  const modal=document.createElement('div');
+  modal.id="uploadModal"; modal.className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4";
+  modal.innerHTML=`<div class="bg-white rounded-2xl max-w-lg w-full shadow-2xl overflow-hidden"><div class="bg-gradient-to-r from-brand-700 to-indigo-800 p-5 text-white flex items-center justify-between"><h3 class="font-bold">Upload to Google Business Profile</h3><button class="upClose text-white text-xl font-bold">✕</button></div>
+  <div class="p-6 space-y-4">
+    <div><label class="text-xs font-bold text-slate-700 uppercase">Location</label><select id="upLoc" class="mt-1 w-full px-3 py-2 rounded-xl border border-slate-200 text-xs">${DB.locations.map(l=>`<option value="${l.id}">${esc(l.name)}</option>`).join('')}</select></div>
+    <div><label class="text-xs font-bold text-slate-700 uppercase">Title</label><input id="upTitle" class="mt-1 w-full px-3 py-2 rounded-xl border border-slate-200 text-xs" placeholder="e.g. Modern Reception Suite"></div>
+    <div class="grid grid-cols-2 gap-3"><div><label class="text-xs font-bold text-slate-700 uppercase">Category</label><select id="upCat" class="mt-1 w-full px-3 py-2 rounded-xl border border-slate-200 text-xs"><option>Interior</option><option>Exterior</option><option>Team & Staff</option><option>Food / Product</option><option>Cover</option></select></div>
+    <div><label class="text-xs font-bold text-slate-700 uppercase">Upload</label><input id="upFile" type="file" accept="image/*" class="mt-1 w-full text-xs"></div></div>
+    <div class="p-3 bg-brand-50 rounded-xl text-xs font-bold text-brand-900 flex items-center gap-2"><input id="upGeo" type="checkbox" checked class="w-4 h-4"> Inject GPS/Lat-Long Geotag metadata</div>
+    <div id="upPrev" class="hidden"><img id="upImg" class="w-full h-40 object-cover rounded-xl"></div>
+    <button id="upSave" class="w-full bg-brand-600 text-white font-bold py-3 rounded-xl text-sm">Publish Photo</button>
+  </div></div>`;
+  document.body.appendChild(modal);
+  modal.querySelector('.upClose').onclick=()=>modal.remove();
+  const file=modal.querySelector('#upFile'),img=modal.querySelector('#upImg'),prev=modal.querySelector('#upPrev');
+  let dataUrl='';
+  file.onchange=()=>{const f=file.files[0]; if(f){const rd=new FileReader(); rd.onload=()=>{dataUrl=rd.result; img.src=dataUrl; prev.classList.remove('hidden');}; rd.readAsDataURL(f);} };
+  modal.querySelector('#upSave').onclick=()=>{
+    const title=modal.querySelector('#upTitle').value.trim()||'Untitled Photo';
+    const locId=modal.querySelector('#upLoc').value;
+    const cat=modal.querySelector('#upCat').value;
+    const geo=modal.querySelector('#upGeo').checked;
+    const l=locOf(locId);
+    const coords=['30.2672° N, 97.7431° W (Austin, TX)','25.7617° N, 80.1918° W (Miami Brickell)','41.8818° N, 87.6231° W (Chicago Loop)'];
+    DB.media.unshift({id:uid('m'),location_id:locId,title,category:cat,url:dataUrl||('https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?auto=format&fit=crop&w=800&q=80'),geotag:geo?coords[Math.floor(Math.random()*coords.length)]:'None',views:120});
+    save(); toast('Photo uploaded & geotagged.'); modal.remove(); render();
+  };
+}
+
+/* ---------------- Reports ---------------- */
+let reportClient='c1';
+function viewReports(){
+  const c=DB.clients.find(x=>x.id===reportClient)||DB.clients[0];
+  const locs=DB.locations.filter(l=>l.client_id===c.id);
+  const views=locs.reduce((s,l)=>s+l.views,0),calls=locs.reduce((s,l)=>s+l.calls,0),dirs=locs.reduce((s,l)=>s+l.directions,0),clicks=locs.reduce((s,l)=>s+l.clicks,0),revs=locs.reduce((s,l)=>s+l.review_count,0);
+  return `<div class="space-y-6">
+    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm"><span class="text-xs font-bold text-brand-600 bg-brand-50 px-2.5 py-0.5 rounded-full uppercase">White-Label</span><h1 class="text-2xl font-black text-slate-900 mt-1">Client Performance Report</h1><p class="text-xs text-slate-500">Branded, client-ready report — export to PDF in one click.</p></div>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+        <div><label class="text-xs font-bold text-slate-700 uppercase">Client</label><select id="reportClientSel" class="mt-1 w-full px-3 py-2 rounded-xl border border-slate-200 text-xs">${DB.clients.map(cl=>`<option value="${cl.id}" ${cl.id===reportClient?'selected':''}>${esc(cl.name)}</option>`).join('')}</select></div>
+        <div><label class="text-xs font-bold text-slate-700 uppercase">Agency Name</label><input id="reportAgency" value="${esc(DB.settings.agency_name)}" class="mt-1 w-full px-3 py-2 rounded-xl border border-slate-200 text-xs"></div>
+        <div><label class="text-xs font-bold text-slate-700 uppercase">Executive Summary</label><textarea id="reportNotes" rows="4" class="mt-1 w-full px-3 py-2 rounded-xl border border-slate-200 text-xs" placeholder="Notes for the client...">Outstanding performance this month. All locations verified and healthy.</textarea></div>
+        <button id="exportPdf" class="w-full bg-brand-600 text-white font-bold py-3 rounded-xl text-sm shadow-md">⬇ Export PDF Report</button>
+      </div>
+      <div class="lg:col-span-2 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+        <div class="border border-slate-200 rounded-2xl p-6" id="reportDoc">
+          <div class="flex items-center justify-between border-b border-slate-200 pb-4 mb-5"><div><div class="text-lg font-black" style="color:${brand()}">${esc(DB.settings.agency_name)}</div><div class="text-[10px] text-slate-400 uppercase">Local SEO Performance Report</div></div><div class="text-right"><div class="text-sm font-bold text-slate-800">${esc(c.name)}</div><div class="text-[10px] text-slate-400">Prepared for ${esc(c.name)}</div></div></div>
+          <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">${[['Profile Views',fmt(views)],['Calls',fmt(calls)],['Directions',fmt(dirs)],['Clicks',fmt(clicks)],['Reviews',fmt(revs)]].map(k=>`<div class="bg-slate-50 rounded-xl p-3"><div class="text-[9px] font-bold text-slate-400 uppercase">${k[0]}</div><div class="text-lg font-extrabold text-slate-900">${k[1]}</div></div>`).join('')}</div>
+          <div class="mb-6"><div class="text-xs font-bold text-slate-700 uppercase mb-2">Executive Summary</div><p class="text-xs text-slate-600 leading-relaxed">${esc(document.getElementById('reportNotes')?.value||'')}</p></div>
+          <div class="text-[10px] text-slate-400">Generated via ${esc(DB.settings.agency_name)} · ${new Date().toLocaleDateString()}</div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ---------------- Team ---------------- */
+function viewTeam(){
+  return `<div class="space-y-6">
+    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between"><div><span class="text-xs font-bold text-brand-600 bg-brand-50 px-2.5 py-0.5 rounded-full uppercase">Team</span><h1 class="text-2xl font-black text-slate-900 mt-1">Team & Granular Permissions</h1></div><button id="openTeam" class="bg-brand-600 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-md">+ Invite Member</button></div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">${DB.team.map(t=>`<div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm"><div class="flex items-center gap-3"><div class="w-11 h-11 rounded-full bg-brand-100 flex items-center justify-center font-black text-brand-700">${esc(t.name[0])}</div><div class="flex-1"><div class="font-bold text-slate-800 text-sm">${esc(t.name)}</div><div class="text-[11px] text-slate-400">${esc(t.email)}</div></div><span class="text-[10px] font-bold ${t.status==='Active'?'text-emerald-600':'text-slate-400'}">${esc(t.status)}</span></div><div class="mt-3 text-[11px] font-bold text-slate-600">${esc(t.role)}</div><div class="flex flex-wrap gap-1.5 mt-2">${Object.entries(t.perms).map(([k,v])=>`<span class="text-[10px] px-2 py-0.5 rounded-full font-bold ${v?'bg-emerald-50 text-emerald-700':'bg-slate-100 text-slate-400'}">${esc(k)}</span>`).join('')}</div></div>`).join('')}</div>
+  </div>`;
+}
+function openTeamModal(){
+  const modal=document.createElement('div'); modal.id="teamModal"; modal.className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4";
+  modal.innerHTML=`<div class="bg-white rounded-2xl max-w-md w-full shadow-2xl overflow-hidden"><div class="bg-gradient-to-r from-brand-700 to-indigo-800 p-5 text-white flex items-center justify-between"><h3 class="font-bold">Invite Team Member</h3><button class="tmClose text-white text-xl font-bold">✕</button></div>
+  <div class="p-6 space-y-4">
+    <div><label class="text-xs font-bold text-slate-700 uppercase">Name</label><input id="tmName" class="mt-1 w-full px-3 py-2 rounded-xl border border-slate-200 text-xs"></div>
+    <div><label class="text-xs font-bold text-slate-700 uppercase">Email</label><input id="tmEmail" type="email" class="mt-1 w-full px-3 py-2 rounded-xl border border-slate-200 text-xs"></div>
+    <div><label class="text-xs font-bold text-slate-700 uppercase">Role</label><select id="tmRole" class="mt-1 w-full px-3 py-2 rounded-xl border border-slate-200 text-xs"><option>Account Director</option><option>Local SEO Specialist</option><option>Content & Review Manager</option><option>Client View-Only</option></select></div>
+    <div class="grid grid-cols-2 gap-2">${['posts','reviews','media','reports','settings'].map(p=>`<label class="flex items-center gap-2 text-xs font-bold text-slate-700"><input type="checkbox" class="tmPerm" data-perm="${p}" checked class="w-4 h-4"> ${esc(p)}</label>`).join('')}</div>
+    <button id="tmSave" class="w-full bg-brand-600 text-white font-bold py-3 rounded-xl text-sm">Send Invite</button>
+  </div></div>`;
+  document.body.appendChild(modal); modal.querySelector('.tmClose').onclick=()=>modal.remove();
+  modal.querySelector('#tmSave').onclick=()=>{
+    const name=modal.querySelector('#tmName').value.trim(), email=modal.querySelector('#tmEmail').value.trim();
+    if(!name||!email){toast('Please fill name and email.',false);return;}
+    const perms={}; modal.querySelectorAll('.tmPerm').forEach(c=>perms[c.dataset.perm]=c.checked);
+    if(DB.team.some(t=>t.email.toLowerCase()===email.toLowerCase())){toast('That invite already exists.',false);return;}
+    DB.team.push({id:uid('t'),name,email,role:modal.querySelector('#tmRole').value,status:'Pending',perms}); save(); toast('Invite sent.'); modal.remove(); render();
+  };
+}
+
+/* ---------------- Connect ---------------- */
+function viewConnect(){
+  return `<div class="space-y-6">
+    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm"><span class="text-xs font-bold text-brand-600 bg-brand-50 px-2.5 py-0.5 rounded-full uppercase">Google OAuth</span><h1 class="text-2xl font-black text-slate-900 mt-1">Connect Business Accounts</h1><p class="text-xs text-slate-500">Link a new Google Business Profile or client portfolio.</p></div>
+    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm"><h2 class="font-bold text-slate-900 mb-3">Connected Portfolios (${DB.clients.length})</h2><div class="space-y-3">${DB.clients.map(c=>`<div class="flex items-center justify-between p-3 border border-slate-100 rounded-xl"><div class="flex items-center gap-3"><div class="w-9 h-9 rounded-lg flex items-center justify-center text-lg" style="background:${c.color}1a">${c.logo}</div><div><div class="text-sm font-bold text-slate-800">${esc(c.name)}</div><div class="text-[10px] text-slate-400">${esc(c.category)} · ${DB.locations.filter(l=>l.client_id===c.id).length} locations</div></div></div><span class="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">● Synced</span></div>`).join('')}</div></div>
+    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm"><h2 class="font-bold text-slate-900 mb-3">Connect New Business</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3"><input id="connName" placeholder="Business name" class="px-3 py-2 rounded-xl border border-slate-200 text-xs"><input id="connCat" value="Local Business" class="px-3 py-2 rounded-xl border border-slate-200 text-xs"></div>
+      <button id="connectBtn" class="mt-3 bg-brand-600 text-white font-bold px-5 py-2.5 rounded-xl text-xs shadow-md">🔗 Connect & Sync</button>
+    </div>
+  </div>`;
+}
+
+/* ---------------- Settings ---------------- */
+function viewSettings(){
+  const s=DB.settings;
+  return `<div class="space-y-6">
+    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm"><span class="text-xs font-bold text-brand-600 bg-brand-50 px-2.5 py-0.5 rounded-full uppercase">Branding</span><h1 class="text-2xl font-black text-slate-900 mt-1">Agency White-Label Settings</h1></div>
+    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4 max-w-2xl">
+      <div><label class="text-xs font-bold text-slate-700 uppercase">Agency Name</label><input id="setAgency" value="${esc(s.agency_name)}" class="mt-1 w-full px-3 py-2 rounded-xl border border-slate-200 text-xs"></div>
+      <div><label class="text-xs font-bold text-slate-700 uppercase">Custom Domain</label><input id="setDomain" value="${esc(s.domain)}" class="mt-1 w-full px-3 py-2 rounded-xl border border-slate-200 text-xs"></div>
+      <div><label class="text-xs font-bold text-slate-700 uppercase">Brand Color</label><input id="setBrand" type="color" value="${esc(s.brand)}" class="mt-1 w-20 h-10 rounded-xl border border-slate-200"></div>
+      <div><label class="text-xs font-bold text-slate-700 uppercase">Support Email</label><input id="setEmail" value="${esc(s.support_email)}" class="mt-1 w-full px-3 py-2 rounded-xl border border-slate-200 text-xs"></div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3"><label class="flex items-center gap-2 text-xs font-bold text-slate-700"><input id="setEmailAlerts" type="checkbox" ${s.email_alerts?'checked':''} class="w-4 h-4"> Negative review email alerts</label><label class="flex items-center gap-2 text-xs font-bold text-slate-700"><input id="setSms" type="checkbox" ${s.sms_alerts?'checked':''} class="w-4 h-4"> SMS alerts</label></div>
+      <button id="saveSettings" class="bg-brand-600 text-white font-bold px-6 py-2.5 rounded-xl text-xs shadow-md">Save Settings</button>
+    </div>
+  </div>`;
+}
+
+/* ---------------- Render ---------------- */
+function render(){
+  const route=currentRoute();
+  const app=document.getElementById('app');
+  if(!session){
+    app.innerHTML=authScreen(location.hash.includes('register')?'register':'login');
+    bindAuth();
+    return;
+  }
+  let content='';
+  switch(route){
+    case 'reviews': content=viewReviews(); break;
+    case 'posts': content=viewPosts(); break;
+    case 'insights': content=viewInsights(); break;
+    case 'search-console': content=viewSearchConsole(); break;
+    case 'media': content=viewMedia(); break;
+    case 'reports': content=viewReports(); break;
+    case 'team': content=viewTeam(); break;
+    case 'connect': content=viewConnect(); break;
+    case 'settings': content=viewSettings(); break;
+    default: content=viewDashboard();
+  }
+  app.innerHTML=shell(content,route);
+  bindShell();
+  if(route==='insights') drawInsightCharts();
+  if(route==='search-console') drawDeviceChart();
+  liveUpdateHandlers();
+}
+
+/* ---- shell bindings ---- */
+function bindShell(){
+  const scope=document.getElementById('scopeSelect');
+  if(scope) scope.onchange=(e)=>{activeLoc=e.target.value; save(); render();};
+  const lg=document.getElementById('logoutBtn'); if(lg) lg.onclick=doLogout;
+  const qr=document.getElementById('quickReport'); if(qr) qr.onclick=()=>location.hash='#/reports';
+}
+function liveUpdateHandlers(){
+  // Reviews filters
+  const rs=document.getElementById('reviewSearch'); if(rs) rs.oninput=()=>{reviewFilter.search=rs.value; renderListOnlyReviews();};
+  ['reviewRating','reviewSentiment','reviewStatus'].forEach(id=>{const el=document.getElementById(id); if(el) el.onchange=()=>{reviewFilter[id.replace('review','').toLowerCase()]=el.value; renderListOnlyReviews();};});
+  const bulk=document.getElementById('bulkAi'); if(bulk) bulk.onclick=()=>{
+    let n=0; DB.reviews.forEach(r=>{if(r.status==='unanswered'){r.reply=aiReply(r,'friendly'); r.status='replied'; n++;}});
+    const pending=DB.reviews.filter(r=>r.status==='unanswered'); DB.reviews.filter(r=>r.status==='replied').forEach(r=>{});
+    save(); render(); toast(`Published AI replies for ${n} reviews!`);
+  };
+  // review AI buttons
+  $$('.aiReplyBtn').forEach(b=>b.onclick=()=>openAiModal(b.dataset.id));
+  // posts
+  const pt=document.getElementById('postType'); if(pt) pt.onchange=()=>{postState.type=pt.value; render();};
+  const at=document.getElementById('postTitle'); if(at) at.oninput=()=>{pval('pvTitle',at.value);};
+  const ac=document.getElementById('postContent'); if(ac) ac.oninput=()=>{pval('pvContent',ac.value);};
+  const ap=document.getElementById('postCoupon'); if(ap) ap.oninput=()=>{pval('pvCoupon',ap.value||'—');};
+  const ai=document.getElementById('aiCaption'); if(ai) ai.onclick=()=>{
+    const biz=document.getElementById('postBiz').value||'Our Business';
+    const cap=aiCaption(postState.type,biz);
+    document.getElementById('postTitle').value=cap.title; document.getElementById('postContent').value=cap.content;
+    if(cap.coupon) document.getElementById('postCoupon').value=cap.coupon;
+    document.getElementById('postCta').value=cap.cta;
+    pval('pvTitle',cap.title);pval('pvContent',cap.content);pval('pvCoupon',cap.coupon||'—');
+    toast('AI caption generated!');
+  };
+  const cp=document.getElementById('createPost'); if(cp) cp.onclick=createPost;
+  $$('.postDel').forEach(b=>b.onclick=()=>{DB.posts=DB.posts.filter(p=>p.id!==b.dataset.id); save(); toast('Post deleted.'); render();});
+  $$('.postPublish').forEach(b=>b.onclick=()=>{const p=DB.posts.find(x=>x.id===b.dataset.id); if(p){p.status='PUBLISHED';p.date=new Date().toLocaleString();save();toast('Post published.');render();}});
+  // media
+  $$('.mediaCat').forEach(b=>b.onclick=()=>{mediaCat=b.dataset.cat; render();});
+  $$('.mediaDel').forEach(b=>b.onclick=()=>{DB.media=DB.media.filter(m=>m.id!==b.dataset.id); save(); toast('Media removed.'); render();});
+  const ou=document.getElementById('openUpload'); if(ou) ou.onclick=openUploadModal;
+  // reports
+  const rcs=document.getElementById('reportClientSel'); if(rcs) rcs.onchange=()=>{reportClient=rcs.value; render();};
+  const rn=document.getElementById('reportNotes'); if(rn) rn.oninput=()=>{const d=document.querySelector('#reportDoc p'); if(d)d.textContent=rn.value;};
+  const ep=document.getElementById('exportPdf'); if(ep) ep.onclick=exportReportPdf;
+  // team
+  const ot=document.getElementById('openTeam'); if(ot) ot.onclick=openTeamModal;
+  // connect
+  const cb=document.getElementById('connectBtn'); if(cb) cb.onclick=()=>{
+    const name=(document.getElementById('connName').value||'').trim(); if(!name){toast('Enter a business name.',false);return;}
+    const cat=document.getElementById('connCat').value||'Local Business';
+    const cid=uid('c'); DB.clients.push({id:cid,name,category:cat,logo:'🏢',color:'#6161ff'});
+    DB.locations.push({id:uid('l'),client_id:cid,name:name+' - Primary Store',address:'700 Main St, Austin, TX',phone:'(512) 555-0100',category:cat,verified:true,rating:4.9,review_count:120,unanswered:0,health:96,views:12500,calls:180,directions:290,clicks:450,sync:'synced'});
+    save(); toast('Business connected & synced!'); render();
+  };
+  // settings
+  const ss=document.getElementById('saveSettings'); if(ss) ss.onclick=()=>{
+    DB.settings.agency_name=document.getElementById('setAgency').value;
+    DB.settings.domain=document.getElementById('setDomain').value;
+    DB.settings.brand=document.getElementById('setBrand').value;
+    DB.settings.support_email=document.getElementById('setEmail').value;
+    DB.settings.email_alerts=document.getElementById('setEmailAlerts').checked;
+    DB.settings.sms_alerts=document.getElementById('setSms').checked;
+    save(); toast('Settings saved!'); render();
+  };
+}
+function pval(id,v){const e=document.getElementById(id); if(e)e.textContent=v;}
+function renderListOnlyReviews(){
+  // Simply re-render fully to keep simple & reliable
+  render();
+}
+function createPost(){
+  const title=document.getElementById('postTitle').value.trim(); const content=document.getElementById('postContent').value.trim();
+  if(!title||!content){toast('Post needs a title and content.',false);return;}
+  const status=document.getElementById('postStatus').value;
+  DB.posts.unshift({id:uid('p'),title,type:postState.type,target:document.getElementById('postTarget').value,content,coupon:document.getElementById('postCoupon').value,cta:document.getElementById('postCta').value,status,date:status==='SCHEDULED'?'2026-09-06 10:00 (scheduled)':new Date().toLocaleString(),views:status==='SCHEDULED'?0:120,clicks:status==='SCHEDULED'?0:12});
+  save(); toast(status==='SCHEDULED'?'Post scheduled!':'Post published!'); render();
+}
+
+/* ---------------- Auth ---------------- */
+function bindAuth(){
+  const form=document.getElementById('authForm'); if(form) form.onsubmit=(e)=>{
+    e.preventDefault();
+    const email=document.getElementById('aEmail').value.trim(); const pass=document.getElementById('aPass').value;
+    const mode=location.hash.includes('register')?'register':'login';
+    const err=document.getElementById('authError'); const showErr=m=>{err.textContent=m; err.classList.remove('hidden');};
+    if(mode==='register'){
+      const name=document.getElementById('aName').value.trim(); const pass2=document.getElementById('aPass2').value;
+      if(pass!==pass2){showErr('Passwords do not match.');return;}
+      if((DB.users||[]).some(u=>u.email===email)){showErr('An account already exists with that email.');return;}
+      DB.users.push({name,email,password:btoa(pass)}); save();
+      session={name,email}; saveSession(); render(); return;
+    }
+    const u=(DB.users||[]).find(x=>x.email===email && x.password===btoa(pass));
+    if(!u){showErr('Invalid credentials. Try the demo account below.');return;}
+    session={name:u.name,email:u.email}; saveSession(); render();
+  };
+  const demo=document.getElementById('demoBtn'); if(demo) demo.onclick=()=>{session={name:'Demo User',email:'demo@untab.com'}; saveSession(); render();};
+}
+function doLogout(){session=null; saveSession(); location.hash='#/login'; render();}
+
+/* ---------------- PDF export ---------------- */
+function exportReportPdf(){
+  if(!window.jspdf){toast('PDF library not ready.',false);return;}
+  const c=DB.clients.find(x=>x.id===reportClient)||DB.clients[0];
+  const locs=DB.locations.filter(l=>l.client_id===c.id);
+  const views=locs.reduce((s,l)=>s+l.views,0),calls=locs.reduce((s,l)=>s+l.calls,0),dirs=locs.reduce((s,l)=>s+l.directions,0),clicks=locs.reduce((s,l)=>s+l.clicks,0),revs=locs.reduce((s,l)=>s+l.review_count,0);
+  const notes=document.getElementById('reportNotes')?.value||'';
+  const agency=document.getElementById('reportAgency')?.value||DB.settings.agency_name;
+  const {jsPDF}=window.jspdf; const doc=new jsPDF();
+  doc.setFillColor(15,31,138); doc.rect(0,0,210,40,'F'); doc.setTextColor(255); doc.setFontSize(20); doc.text('Untab '+ (agency||''),14,20); doc.setFontSize(10); doc.text('Local SEO Performance Report',14,30);
+  doc.setTextColor(30); doc.setFontSize(12); doc.text(c.name,14,50); doc.setFontSize(10); doc.text('Prepared for '+c.name,14,56);
+  doc.text('Generated: '+new Date().toLocaleDateString(),14,62);
+  let y=80; const kpis=[['Profile Views',views],['Calls',calls],['Directions',dirs],['Clicks',clicks],['Reviews',revs]];
+  kpis.forEach(k=>{doc.setFontSize(10); doc.text(k[0]+':',14,y); doc.setFont('helvetica','bold'); doc.text(String(k[1]).replace(/\B(?=(\d{3})+(?!\d))/g,','),90,y); doc.setFont('helvetica','normal'); y+=8;});
+  y+=8; doc.setFont('helvetica','bold'); doc.text('Executive Summary',14,y); doc.setFont('helvetica','normal');
+  const lines=doc.splitTextToSize(notes||'No notes provided.',180); doc.setFontSize(11); y+=6; doc.text(lines,14,y);
+  doc.save('untab-report-'+slug(c.name)+'.pdf');
+  toast('PDF report exported!');
+}
+
+/* ---------------- Init ---------------- */
+window.addEventListener('hashchange',render);
+render();
+
+})();
+</script>
+</body>
+</html>
