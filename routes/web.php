@@ -13,6 +13,7 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\TeamController;
 use App\Http\Controllers\ConnectController;
 use App\Http\Controllers\SettingsController;
+use App\Http\Controllers\OnboardingController;
 use App\Http\Controllers\SeoController;
 use App\Http\Controllers\FaqController;
 use App\Http\Controllers\BlogController;
@@ -118,6 +119,9 @@ Route::prefix('app')->name('app.')->group(function () {
     Route::get('/settings', [SettingsController::class, 'index'])->name('settings');
     Route::post('/settings', [SettingsController::class, 'update'])->name('settings.update');
     Route::post('/password', [SettingsController::class, 'changePassword'])->name('password.update');
+
+    // New-brand onboarding
+    Route::get('/onboarding', [OnboardingController::class, 'index'])->name('onboarding');
 });
 
 // 4. Super Admin / SaaS Owner Panel (`untab.com/admin`)

@@ -4,6 +4,19 @@
 
 @section('content')
 <div class="space-y-6">
+    @if($onboardingIncomplete ?? false)
+        <!-- Onboarding nudge for a brand that hasn't added a location yet -->
+        <div class="bg-gradient-to-r from-brand-800 via-brand-600 to-brand-500 rounded-2xl p-5 sm:p-6 text-white shadow-md flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+                <h2 class="text-base sm:text-lg font-black font-display">Finish setting up your brand</h2>
+                <p class="text-xs sm:text-sm text-brand-100 mt-0.5">Connect a Google account and add your first location to start managing your profiles.</p>
+            </div>
+            <a href="{{ route('app.onboarding') }}" class="inline-flex items-center gap-2 bg-white text-brand-700 font-bold text-xs sm:text-sm px-5 py-2.5 rounded-xl shadow-md hover:shadow-lg transition-all self-start">
+                <i data-lucide="rocket" class="w-4 h-4"></i> Complete Setup
+            </a>
+        </div>
+    @endif
+
     <!-- Welcome Header -->
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm">
         <div>

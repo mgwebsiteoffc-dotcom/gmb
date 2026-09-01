@@ -16,7 +16,15 @@ class TeamController extends Controller
         $clients = $this->scopedClients();
         $allLocations = $this->scopedAllLocations();
         $selectedLocationId = $this->resolveLocationFilter($selectedLocationId, $clients);
-        $team = TeamMember::all();
+
+        $client = $this->scopeClient();
+        if ($this->seesAllBrands()) {
+            $team = TeamMember::orderBy('name')->get();
+        } elseif ($client) {
+            $team = TeamMember::whereJsonContains('assigned_clients', $client->id)->orderBy('name')->get();
+        } else {
+            $team = collect();
+        }
 
         return view('app.team', compact(
             'clients',
@@ -34,11 +42,17 @@ class TeamController extends Controller
             'role' => 'required|string',
         ]);
 
+        // A brand user can only assign the invite to their own brand.
+        $client = $this->scopeClient();
+        $assignedClients = $this->seesAllBrands()
+            ? ($request->input('assigned_clients', []))
+            : ($client ? [$client->id] : []);
+
         TeamMember::create([
             'name' => $request->input('name'),
             'email' => $request->input('email'),
             'role' => $request->input('role'),
-            'assigned_clients' => $request->input('assigned_clients', []),
+            'assigned_clients' => $assignedClients,
             'permissions' => [
                 'posts' => $request->has('perm_posts'),
                 'reviews' => $request->has('perm_reviews'),

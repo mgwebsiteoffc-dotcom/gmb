@@ -31,6 +31,22 @@ trait ScopesByClient
     }
 
     /**
+     * The client id currently in scope, or null (super admin / all brands).
+     */
+    protected function scopeClientId(): ?int
+    {
+        return $this->scopeClient()?->id;
+    }
+
+    /**
+     * Whether the signed-in user has full cross-brand access (Super Admin).
+     */
+    protected function seesAllBrands(): bool
+    {
+        return Auth::check() && Auth::user()->isSuperAdmin();
+    }
+
+    /**
      * Clients the signed-in user is allowed to manage. Super admins see every
      * brand; everyone else sees only their own (or nothing if unassigned).
      */

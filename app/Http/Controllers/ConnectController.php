@@ -25,7 +25,16 @@ class ConnectController extends Controller
         $clients = $this->scopedClients();
         $allLocations = $this->scopedAllLocations();
         $selectedLocationId = $this->resolveLocationFilter($selectedLocationId, $clients);
-        $googleAccounts = GoogleAccount::orderBy('display_name')->get();
+
+        $accountsQuery = GoogleAccount::query();
+        if ($this->seesAllBrands()) {
+            // Super admin sees every connected account.
+        } elseif ($accountClientId = $this->scopeClientId()) {
+            $accountsQuery->where('client_id', $accountClientId);
+        } else {
+            $accountsQuery->whereRaw('1 = 0');
+        }
+        $googleAccounts = $accountsQuery->orderBy('display_name')->get();
         $googleConfigured = GoogleBusinessService::configured();
 
         return view('app.connect', compact(
@@ -92,6 +101,7 @@ class ConnectController extends Controller
             $acct = GoogleAccount::updateOrCreate(
                 ['account_name' => $account['name']],
                 [
+                    'client_id' => $this->scopeClientId(),
                     'display_name' => $account['displayName'],
                     'type' => $account['type'],
                     'access_token' => $accessToken,

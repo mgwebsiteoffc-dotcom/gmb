@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Location;
 
 class LoginController extends Controller
 {
@@ -39,6 +40,16 @@ class LoginController extends Controller
             // resolves to false, so we safely fall through to the normal app.
             if ($user->isSuperAdmin()) {
                 return redirect()->intended(route('admin.dashboard'));
+            }
+
+            // A brand with no locations yet is new: send them through onboarding
+            // (connect a Google account, add a location, publish a post, etc.)
+            $locationCount = $user->client_id
+                ? Location::where('client_id', $user->client_id)->count()
+                : 0;
+
+            if ($locationCount === 0) {
+                return redirect()->route('app.onboarding');
             }
 
             return redirect()->intended(route('app.dashboard'));

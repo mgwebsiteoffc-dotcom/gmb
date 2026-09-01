@@ -416,17 +416,17 @@ class DatabaseSeeder extends Seeder
         ]);
 
         // 6. Search Console Queries & Pages
-        SearchQuery::create(['query' => 'emergency dentist downtown austin', 'clicks' => 1840, 'impressions' => 14200, 'ctr' => '12.96%', 'position' => 1.4]);
-        SearchQuery::create(['query' => 'best wood fired pizza south congress', 'clicks' => 1520, 'impressions' => 18900, 'ctr' => '8.04%', 'position' => 2.1]);
-        SearchQuery::create(['query' => 'teeth whitening near domain austin', 'clicks' => 1140, 'impressions' => 12400, 'ctr' => '9.19%', 'position' => 1.8]);
-        SearchQuery::create(['query' => 'chicago commercial lease attorney', 'clicks' => 980, 'impressions' => 8400, 'ctr' => '11.67%', 'position' => 2.4]);
-        SearchQuery::create(['query' => 'brickell day spa massage deals', 'clicks' => 840, 'impressions' => 9600, 'ctr' => '8.75%', 'position' => 2.7]);
-        SearchQuery::create(['query' => 'pediatric dentist round rock tx', 'clicks' => 760, 'impressions' => 6800, 'ctr' => '11.18%', 'position' => 1.9]);
+        SearchQuery::create(['client_id' => $c1->id, 'query' => 'emergency dentist downtown austin', 'clicks' => 1840, 'impressions' => 14200, 'ctr' => '12.96%', 'position' => 1.4]);
+        SearchQuery::create(['client_id' => $c2->id, 'query' => 'best wood fired pizza south congress', 'clicks' => 1520, 'impressions' => 18900, 'ctr' => '8.04%', 'position' => 2.1]);
+        SearchQuery::create(['client_id' => $c1->id, 'query' => 'teeth whitening near domain austin', 'clicks' => 1140, 'impressions' => 12400, 'ctr' => '9.19%', 'position' => 1.8]);
+        SearchQuery::create(['client_id' => $c3->id, 'query' => 'chicago commercial lease attorney', 'clicks' => 980, 'impressions' => 8400, 'ctr' => '11.67%', 'position' => 2.4]);
+        SearchQuery::create(['client_id' => $c4->id, 'query' => 'brickell day spa massage deals', 'clicks' => 840, 'impressions' => 9600, 'ctr' => '8.75%', 'position' => 2.7]);
+        SearchQuery::create(['client_id' => $c1->id, 'query' => 'pediatric dentist round rock tx', 'clicks' => 760, 'impressions' => 6800, 'ctr' => '11.18%', 'position' => 1.9]);
 
-        SearchPage::create(['url' => '/locations/downtown-austin-dentist', 'clicks' => 4200, 'impressions' => 48000, 'ctr' => '8.75%', 'position' => 1.9]);
-        SearchPage::create(['url' => '/menu/wood-fired-specialties', 'clicks' => 3800, 'impressions' => 52000, 'ctr' => '7.31%', 'position' => 2.3]);
-        SearchPage::create(['url' => '/services/emergency-dental-care', 'clicks' => 2900, 'impressions' => 31000, 'ctr' => '9.35%', 'position' => 1.6]);
-        SearchPage::create(['url' => '/spa-packages/brickell-retreat', 'clicks' => 2100, 'impressions' => 26000, 'ctr' => '8.08%', 'position' => 2.4]);
+        SearchPage::create(['client_id' => $c1->id, 'url' => '/locations/downtown-austin-dentist', 'clicks' => 4200, 'impressions' => 48000, 'ctr' => '8.75%', 'position' => 1.9]);
+        SearchPage::create(['client_id' => $c2->id, 'url' => '/menu/wood-fired-specialties', 'clicks' => 3800, 'impressions' => 52000, 'ctr' => '7.31%', 'position' => 2.3]);
+        SearchPage::create(['client_id' => $c1->id, 'url' => '/services/emergency-dental-care', 'clicks' => 2900, 'impressions' => 31000, 'ctr' => '9.35%', 'position' => 1.6]);
+        SearchPage::create(['client_id' => $c4->id, 'url' => '/spa-packages/brickell-retreat', 'clicks' => 2100, 'impressions' => 26000, 'ctr' => '8.08%', 'position' => 2.4]);
 
         // 7. Team
         TeamMember::create([

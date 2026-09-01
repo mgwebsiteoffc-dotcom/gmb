@@ -20,17 +20,35 @@ class SearchConsoleController extends Controller
         $clients = $this->scopedClients();
         $allLocations = $this->scopedAllLocations();
         $selectedLocationId = $this->resolveLocationFilter($selectedLocationId, $clients);
+        $connectedDomains = $clients->count();
 
         $queriesQuery = SearchQuery::query();
+        if ($this->seesAllBrands()) {
+            // Super admin sees every brand's data.
+        } elseif ($clientId = $this->scopeClientId()) {
+            $queriesQuery->where('client_id', $clientId);
+        } else {
+            // Unassigned brand: no data until they have a brand.
+            $queriesQuery->whereRaw('1 = 0');
+        }
         if (!empty($search)) {
             $queriesQuery->where('query', 'like', "%{$search}%");
         }
         $queries = $queriesQuery->orderBy('clicks', 'desc')->get();
 
-        $pages = SearchPage::orderBy('clicks', 'desc')->get();
+        $pagesQuery = SearchPage::query();
+        if ($this->seesAllBrands()) {
+            // all
+        } elseif ($clientId = $this->scopeClientId()) {
+            $pagesQuery->where('client_id', $clientId);
+        } else {
+            $pagesQuery->whereRaw('1 = 0');
+        }
+        $pages = $pagesQuery->orderBy('clicks', 'desc')->get();
 
         $totalClicks = $queries->sum('clicks');
         $totalImpressions = $queries->sum('impressions');
+        $hasData = $queries->isNotEmpty() || $pages->isNotEmpty() || $connectedDomains > 0;
 
         $devices = [
             ['name' => 'Mobile', 'share' => '74.2%', 'clicks' => 18312, 'impressions' => 360000],
@@ -42,6 +60,8 @@ class SearchConsoleController extends Controller
             'clients',
             'allLocations',
             'selectedLocationId',
+            'connectedDomains',
+            'hasData',
             'tab',
             'search',
             'queries',

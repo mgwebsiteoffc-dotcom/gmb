@@ -22,10 +22,31 @@
         </div>
 
         <div class="flex items-center gap-2 text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200 px-3.5 py-2 rounded-xl">
-            <i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i> All 4 Client Domains Synced
+            <i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i>
+            {{ $connectedDomains > 0 ? $connectedDomains . ' Client Domain' . ($connectedDomains === 1 ? '' : 's') . ' Synced' : 'No domains connected yet' }}
         </div>
     </div>
 
+    @if(!$hasData)
+        <!-- Empty / onboarding state: never show another brand's data -->
+        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-10 sm:p-14 text-center">
+            <div class="w-14 h-14 rounded-2xl bg-brand-50 text-brand-600 flex items-center justify-center mx-auto mb-4">
+                <i data-lucide="search" class="w-7 h-7"></i>
+            </div>
+            <h2 class="text-xl font-black font-display text-slate-900">Connect your Google account to see Search Console data</h2>
+            <p class="text-sm text-slate-500 max-w-md mx-auto mt-2">
+                Once your Google Business Profile is verified and connected, your brand's own keywords, landing pages, CTR and positions will appear here — no other brand's data.
+            </p>
+            <div class="mt-6 flex justify-center gap-3">
+                <a href="{{ route('app.connect') }}" class="inline-flex items-center gap-2 bg-brand-600 hover:bg-brand-700 text-white font-bold text-sm px-6 py-3 rounded-2xl shadow-md">
+                    <i data-lucide="link" class="w-4 h-4"></i> Connect Google Account
+                </a>
+                <a href="{{ route('app.onboarding') }}" class="inline-flex items-center gap-2 bg-white hover:bg-slate-50 text-slate-700 font-bold text-sm px-6 py-3 rounded-2xl border border-slate-200 shadow-sm">
+                    View Setup Guide
+                </a>
+            </div>
+        </div>
+    @else
     <!-- Summary KPIs -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm">
@@ -144,5 +165,6 @@
             </div>
         @endif
     </div>
+    @endif
 </div>
 @endsection

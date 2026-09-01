@@ -62,11 +62,15 @@ class DashboardController extends Controller
             ->take(3)
             ->get();
 
+        // Flag an incomplete (new) brand so the dashboard can nudge onboarding.
+        $onboardingIncomplete = ! auth()->user()->isSuperAdmin() && $locations->count() === 0;
+
         return view('app.dashboard', compact(
             'clients',
             'allLocations',
             'locations',
             'selectedLocationId',
+            'onboardingIncomplete',
             'totalReviews',
             'totalViews',
             'totalCalls',
