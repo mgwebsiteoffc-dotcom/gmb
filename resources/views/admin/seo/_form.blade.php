@@ -1,7 +1,5 @@
-@php
-    $isEdit = isset($guideline) && $guideline->exists;
-    $keywords = ($guideline->recommended_keywords ?? []) ? implode(', ', $guideline->recommended_keywords) : '';
-@endphp
+@php($isEdit = isset($guideline) && $guideline->exists)
+@php($keywords = ($guideline->recommended_keywords ?? []) ? implode(', ', $guideline->recommended_keywords) : '')
 
 <form method="POST" action="{{ $isEdit ? route('admin.seo.update', $guideline) : route('admin.seo.store') }}" class="space-y-6">
     @csrf

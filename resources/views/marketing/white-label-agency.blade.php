@@ -2,14 +2,12 @@
 
 @section('title', 'White-Label GBP Platform for Agencies | Untab')
 
-@php
-    $faqs = [
-        ['q' => 'What is a white-label GBP platform?', 'a' => 'It\'s a Google Business Profile management tool that runs entirely under your agency\'s brand — your logo, your domain, your reports.'],
-        ['q' => 'Can my agency resell Untab under its own brand?', 'a' => 'Yes. Customize your domain, brand color, logo, and report branding so your clients only see your agency.'],
-        ['q' => 'Do my clients get their own login?', 'a' => 'Yes. Create client view-only logins so they see only their own locations.'],
-    ];
-    $jsonLd = [\App\Support\SeoHelper::faqSchema($faqs)];
-@endphp
+@php($faqs = [
+    ['q' => 'What is a white-label GBP platform?', 'a' => 'It\'s a Google Business Profile management tool that runs entirely under your agency\'s brand — your logo, your domain, your reports.'],
+    ['q' => 'Can my agency resell Untab under its own brand?', 'a' => 'Yes. Customize your domain, brand color, logo, and report branding so your clients only see your agency.'],
+    ['q' => 'Do my clients get their own login?', 'a' => 'Yes. Create client view-only logins so they see only their own locations.'],
+])
+@php($jsonLd = [\App\Support\SeoHelper::faqSchema($faqs)])
 
 @section('content')
 <section class="py-16 bg-gradient-to-r from-brand-800 to-indigo-900 text-white text-center">

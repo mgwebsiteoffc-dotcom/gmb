@@ -2,14 +2,12 @@
 
 @section('title', 'Free Google Business Profile Audit Tool & Checklist | Untab')
 
-@php
-    $faqs = [
-        ['q' => 'What is a Google Business Profile audit?', 'a' => 'A GBP audit checks 16 points across your profile — from verification and categories to photos, posts, reviews, and NAP consistency — and gives you an actionable health score.'],
-        ['q' => 'How is my GBP health score calculated?', 'a' => 'The score is based on completing each best-practice checklist item. Verified, complete, and actively-maintained profiles score highest.'],
-        ['q' => 'Is this audit tool free?', 'a' => 'Yes. Untab\'s 16-point GBP audit tool is completely free to use with no account required.'],
-    ];
-    $jsonLd = [\App\Support\SeoHelper::faqSchema($faqs)];
-@endphp
+@php($faqs = [
+    ['q' => 'What is a Google Business Profile audit?', 'a' => 'A GBP audit checks 16 points across your profile — from verification and categories to photos, posts, reviews, and NAP consistency — and gives you an actionable health score.'],
+    ['q' => 'How is my GBP health score calculated?', 'a' => 'The score is based on completing each best-practice checklist item. Verified, complete, and actively-maintained profiles score highest.'],
+    ['q' => 'Is this audit tool free?', 'a' => 'Yes. Untab\'s 16-point GBP audit tool is completely free to use with no account required.'],
+])
+@php($jsonLd = [\App\Support\SeoHelper::faqSchema($faqs)])
 
 @section('content')
 <div class="max-w-5xl mx-auto py-12 px-4 sm:px-6" x-data="auditCalculator()">

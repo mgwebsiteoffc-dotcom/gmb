@@ -2,14 +2,12 @@
 
 @section('title', 'Google Review QR Code Generator & Printable Stand | Untab')
 
-@php
-    $faqs = [
-        ['q' => 'How do I create a Google review QR code?', 'a' => 'Enter your business name and Place ID. Untab generates a high-resolution QR code that links directly to your Google review form — ready to print.'],
-        ['q' => 'Where should I place my review QR code?', 'a' => 'Put it at the point of sale, on receipts, at the front desk, or on table tents — wherever a happy customer is most likely to scan it.'],
-        ['q' => 'Will this QR code increase my review count?', 'a' => 'Yes. A direct review QR code removes friction by skipping the search for your business on Google Maps, dramatically increasing conversion.'],
-    ];
-    $jsonLd = [\App\Support\SeoHelper::faqSchema($faqs)];
-@endphp
+@php($faqs = [
+    ['q' => 'How do I create a Google review QR code?', 'a' => 'Enter your business name and Place ID. Untab generates a high-resolution QR code that links directly to your Google review form — ready to print.'],
+    ['q' => 'Where should I place my review QR code?', 'a' => 'Put it at the point of sale, on receipts, at the front desk, or on table tents — wherever a happy customer is most likely to scan it.'],
+    ['q' => 'Will this QR code increase my review count?', 'a' => 'Yes. A direct review QR code removes friction by skipping the search for your business on Google Maps, dramatically increasing conversion.'],
+])
+@php($jsonLd = [\App\Support\SeoHelper::faqSchema($faqs)])
 
 @section('content')
 <div class="max-w-4xl mx-auto py-12 px-4 sm:px-6" x-data="qrGen()" x-init="renderQr()">

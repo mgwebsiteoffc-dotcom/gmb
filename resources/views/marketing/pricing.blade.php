@@ -1,20 +1,18 @@
 @extends('layouts.marketing')
 
-@php
-    $jsonLd = [[
-        '@context' => 'https://schema.org',
-        '@type' => 'Product',
-        'name' => 'Untab',
-        'description' => 'Google Business Profile management platform for agencies and multi-location brands.',
-        'offers' => [
-            '@type' => 'AggregateOffer',
-            'lowPrice' => '0',
-            'highPrice' => '349',
-            'priceCurrency' => 'USD',
-            'offerCount' => '3',
-        ],
-    ]];
-@endphp
+@php($jsonLd = [[
+    '@context' => 'https://schema.org',
+    '@type' => 'Product',
+    'name' => 'Untab',
+    'description' => 'Google Business Profile management platform for agencies and multi-location brands.',
+    'offers' => [
+        '@type' => 'AggregateOffer',
+        'lowPrice' => '0',
+        'highPrice' => '349',
+        'priceCurrency' => 'USD',
+        'offerCount' => '3',
+    ],
+]])
 
 @section('title', 'Pricing — Start free with Untab, Google Business Profile Platform')
 

@@ -29,16 +29,14 @@
 
     <!-- KPI cards -->
     <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4">
-        @php
-            $kpis = [
-                ['label' => 'Clients / Brands', 'value' => $totalClients, 'icon' => 'building-2', 'accent' => 'text-brand-600 bg-brand-50'],
-                ['label' => 'Locations', 'value' => $totalLocations, 'icon' => 'map-pin', 'accent' => 'text-violet-600 bg-violet-50'],
-                ['label' => 'Total Users', 'value' => $totalUsers, 'icon' => 'users', 'accent' => 'text-emerald-600 bg-emerald-50'],
-                ['label' => 'Reviews', 'value' => $totalReviews, 'icon' => 'star', 'accent' => 'text-amber-600 bg-amber-50'],
-                ['label' => 'Unanswered', 'value' => $unansweredReviews, 'icon' => 'message-square', 'accent' => 'text-accent-600 bg-accent-50'],
-                ['label' => 'Google Posts', 'value' => $totalPosts, 'icon' => 'calendar', 'accent' => 'text-sky-600 bg-sky-50'],
-            ];
-        @endphp
+        @php($kpis = [
+            ['label' => 'Clients / Brands', 'value' => $totalClients, 'icon' => 'building-2', 'accent' => 'text-brand-600 bg-brand-50'],
+            ['label' => 'Locations', 'value' => $totalLocations, 'icon' => 'map-pin', 'accent' => 'text-violet-600 bg-violet-50'],
+            ['label' => 'Total Users', 'value' => $totalUsers, 'icon' => 'users', 'accent' => 'text-emerald-600 bg-emerald-50'],
+            ['label' => 'Reviews', 'value' => $totalReviews, 'icon' => 'star', 'accent' => 'text-amber-600 bg-amber-50'],
+            ['label' => 'Unanswered', 'value' => $unansweredReviews, 'icon' => 'message-square', 'accent' => 'text-accent-600 bg-accent-50'],
+            ['label' => 'Google Posts', 'value' => $totalPosts, 'icon' => 'calendar', 'accent' => 'text-sky-600 bg-sky-50'],
+        ])
         @foreach($kpis as $kpi)
             <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-4 flex flex-col gap-1">
                 <div class="flex items-center justify-between">
@@ -85,14 +83,12 @@
 
     <!-- Engagement row -->
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-        @php
-            $engagement = [
-                ['label' => 'Monthly Views', 'value' => $monthlyViews, 'icon' => 'eye', 'format' => 'short'],
-                ['label' => 'Monthly Calls', 'value' => $monthlyCalls, 'icon' => 'phone', 'format' => 'short'],
-                ['label' => 'Directions', 'value' => $monthlyDirections, 'icon' => 'navigation', 'format' => 'short'],
-                ['label' => 'Website Clicks', 'value' => $monthlyClicks, 'icon' => 'mouse-pointer-click', 'format' => 'short'],
-            ];
-        @endphp
+        @php($engagement = [
+            ['label' => 'Monthly Views', 'value' => $monthlyViews, 'icon' => 'eye', 'format' => 'short'],
+            ['label' => 'Monthly Calls', 'value' => $monthlyCalls, 'icon' => 'phone', 'format' => 'short'],
+            ['label' => 'Directions', 'value' => $monthlyDirections, 'icon' => 'navigation', 'format' => 'short'],
+            ['label' => 'Website Clicks', 'value' => $monthlyClicks, 'icon' => 'mouse-pointer-click', 'format' => 'short'],
+        ])
         @foreach($engagement as $e)
             <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-4">
                 <div class="flex items-center gap-2 text-slate-400 mb-1">
@@ -123,14 +119,12 @@
             <h2 class="text-sm font-black text-slate-900 font-display mb-4">Role Distribution</h2>
             <div class="space-y-4">
                 @foreach($roleDistribution as $role => $count)
-                    @php
-                        $meta = [
-                            'super_admin' => ['label' => 'Super Admins', 'color' => 'bg-brand-600', 'class' => 'text-brand-700'],
-                            'brand_admin' => ['label' => 'Brand Admins', 'color' => 'bg-violet-500', 'class' => 'text-violet-700'],
-                            'user' => ['label' => 'Users / Staff', 'color' => 'bg-slate-400', 'class' => 'text-slate-700'],
-                        ][$role];
-                        $pct = $totalUsers > 0 ? round($count / $totalUsers * 100) : 0;
-                    @endphp
+                    @php($meta = [
+                        'super_admin' => ['label' => 'Super Admins', 'color' => 'bg-brand-600', 'class' => 'text-brand-700'],
+                        'brand_admin' => ['label' => 'Brand Admins', 'color' => 'bg-violet-500', 'class' => 'text-violet-700'],
+                        'user' => ['label' => 'Users / Staff', 'color' => 'bg-slate-400', 'class' => 'text-slate-700'],
+                    ][$role] ?? ['label' => ucfirst($role), 'color' => 'bg-slate-400', 'class' => 'text-slate-700'])
+                    @php($pct = $totalUsers > 0 ? round($count / $totalUsers * 100) : 0)
                     <div>
                         <div class="flex items-center justify-between text-xs font-bold mb-1.5">
                             <span class="{{ $meta['class'] }}">{{ $meta['label'] }}</span>

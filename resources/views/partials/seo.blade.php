@@ -1,15 +1,13 @@
-@php
-    $brand = 'Untab';
-    $baseUrl = rtrim(config('app.url'), '/');
-    $seoType   = $seoType ?? 'website';
-    $seoTitle  = $seoTitle ?? ($title ?? 'Untab — Google Business Profile Management Platform');
-    $seoDesc   = $seoDesc ?? 'Run every Google Business Profile from one dashboard. AI review replies, Google Posts scheduling, local SEO insights, and white-label client reports for agencies and multi-location brands.';
-    $seoKeywords = $seoKeywords ?? 'Google Business Profile management, GBP tool, GMB management, local SEO, review management, AI review replies, Google Posts scheduler, multi-location SEO, white-label reports';
-    $seoImage  = $seoImage ?? $baseUrl.'/og-image.png';
-    $seoUrl    = $seoUrl ?? url()->current();
-    $seoRobots = $seoRobots ?? 'index, follow';
-    $jsonLd    = $jsonLd ?? [];
-@endphp
+@php($brand = 'Untab')
+@php($baseUrl = rtrim(config('app.url'), '/'))
+@php($seoType = $seoType ?? 'website')
+@php($seoTitle = $seoTitle ?? ($title ?? 'Untab — Google Business Profile Management Platform'))
+@php($seoDesc = $seoDesc ?? 'Run every Google Business Profile from one dashboard. AI review replies, Google Posts scheduling, local SEO insights, and white-label client reports for agencies and multi-location brands.')
+@php($seoKeywords = $seoKeywords ?? 'Google Business Profile management, GBP tool, GMB management, local SEO, review management, AI review replies, Google Posts scheduler, multi-location SEO, white-label reports')
+@php($seoImage = $seoImage ?? $baseUrl.'/og-image.png')
+@php($seoUrl = $seoUrl ?? url()->current())
+@php($seoRobots = $seoRobots ?? 'index, follow')
+@php($jsonLd = $jsonLd ?? [])
 
 <title>{{ $seoTitle }}</title>
 <meta name="description" content="{{ $seoDesc }}">

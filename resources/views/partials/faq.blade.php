@@ -1,8 +1,6 @@
-@php
-    $faqTitle = $faqTitle ?? 'Frequently Asked Questions';
-    $faqIntro = $faqIntro ?? 'Answers to the questions agencies and multi-location brands ask most.';
-    $faqs = $faqs ?? [];
-@endphp
+@php($faqTitle = $faqTitle ?? 'Frequently Asked Questions')
+@php($faqIntro = $faqIntro ?? 'Answers to the questions agencies and multi-location brands ask most.')
+@php($faqs = $faqs ?? [])
 
 <section class="py-16 bg-white border-t border-slate-200" id="faq">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">

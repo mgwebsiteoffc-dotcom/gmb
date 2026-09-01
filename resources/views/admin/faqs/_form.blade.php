@@ -1,6 +1,4 @@
-@php
-    $isEdit = isset($faq) && $faq->exists;
-@endphp
+@php($isEdit = isset($faq) && $faq->exists)
 
 <form method="POST" action="{{ $isEdit ? route('admin.faqs.update', $faq) : route('admin.faqs.store') }}" class="space-y-6">
     @csrf

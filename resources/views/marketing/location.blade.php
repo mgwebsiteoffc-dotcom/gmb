@@ -1,35 +1,33 @@
 @extends('layouts.marketing')
 
-@php
-    $jsonLd = [
-        [
-            '@context' => 'https://schema.org',
-            '@type' => 'LocalBusiness',
-            'name' => $location->name,
-            'image' => $location->cover_image,
-            'telephone' => $location->phone,
-            'address' => [
-                '@type' => 'PostalAddress',
-                'streetAddress' => $location->address,
-                'addressCountry' => 'US',
-            ],
-            'aggregateRating' => [
-                '@type' => 'AggregateRating',
-                'ratingValue' => (string) $location->rating,
-                'reviewCount' => (string) $location->review_count,
-            ],
-            'url' => url()->current(),
+@php($jsonLd = [
+    [
+        '@context' => 'https://schema.org',
+        '@type' => 'LocalBusiness',
+        'name' => $location->name,
+        'image' => $location->cover_image,
+        'telephone' => $location->phone,
+        'address' => [
+            '@type' => 'PostalAddress',
+            'streetAddress' => $location->address,
+            'addressCountry' => 'US',
         ],
-        [
-            '@context' => 'https://schema.org',
-            '@type' => 'BreadcrumbList',
-            'itemListElement' => [
-                ['@type' => 'ListItem', 'position' => 1, 'name' => 'Home', 'item' => route('home')],
-                ['@type' => 'ListItem', 'position' => 2, 'name' => 'Locations', 'item' => route('location.show', \Illuminate\Support\Str::slug($location->name))],
-            ],
+        'aggregateRating' => [
+            '@type' => 'AggregateRating',
+            'ratingValue' => (string) $location->rating,
+            'reviewCount' => (string) $location->review_count,
         ],
-    ];
-@endphp
+        'url' => url()->current(),
+    ],
+    [
+        '@context' => 'https://schema.org',
+        '@type' => 'BreadcrumbList',
+        'itemListElement' => [
+            ['@type' => 'ListItem', 'position' => 1, 'name' => 'Home', 'item' => route('home')],
+            ['@type' => 'ListItem', 'position' => 2, 'name' => 'Locations', 'item' => route('location.show', \Illuminate\Support\Str::slug($location->name))],
+        ],
+    ],
+])
 
 @section('title', $location->name.' — Untab Local SEO Profile')
 

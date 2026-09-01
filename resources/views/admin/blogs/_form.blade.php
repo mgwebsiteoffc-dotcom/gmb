@@ -1,7 +1,5 @@
-@php
-    $isEdit = isset($blog) && $blog->exists;
-    $tagsString = ($blog->tags ?? []) ? implode(', ', $blog->tags) : '';
-@endphp
+@php($isEdit = isset($blog) && $blog->exists)
+@php($tagsString = ($blog->tags ?? []) ? implode(', ', $blog->tags) : '')
 
 <form method="POST" action="{{ $isEdit ? route('admin.blogs.update', $blog) : route('admin.blogs.store') }}" enctype="multipart/form-data" class="space-y-6">
     @csrf

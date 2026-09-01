@@ -61,26 +61,40 @@
                 </a>
             </div>
 
-            @php
-                $adminNav = [
-                    ['route' => 'admin.dashboard', 'label' => 'Dashboard', 'icon' => 'layout-dashboard', 'pattern' => 'admin.dashboard'],
-                    ['route' => 'admin.clients.index', 'label' => 'Brands & Clients', 'icon' => 'building-2', 'pattern' => 'admin.clients.*'],
-                    ['route' => 'admin.users.index', 'label' => 'Users & Roles', 'icon' => 'users', 'pattern' => 'admin.users.*'],
-                    ['route' => 'admin.blogs.index', 'label' => 'Blog Management', 'icon' => 'newspaper', 'pattern' => 'admin.blogs.*'],
-                    ['route' => 'admin.faqs.index', 'label' => 'FAQ Management', 'icon' => 'help-circle', 'pattern' => 'admin.faqs.*'],
-                    ['route' => 'admin.seo.index', 'label' => 'SEO Guidelines', 'icon' => 'search', 'pattern' => 'admin.seo.*'],
-                    ['route' => 'admin.settings', 'label' => 'Platform Settings', 'icon' => 'settings', 'pattern' => 'admin.settings'],
-                ];
-            @endphp
             <nav class="p-3 space-y-1 text-xs font-bold">
                 <span class="px-3 text-[10px] font-extrabold uppercase tracking-widest text-slate-500 block mb-1">Platform</span>
-                @foreach($adminNav ?? [] as $item)
-                    <a href="{{ route($item['route']) }}"
-                       class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all {{ request()->routeIs($item['pattern']) ? 'bg-brand-600 text-white shadow-md font-extrabold' : 'hover:bg-slate-800 hover:text-white' }}">
-                        <i data-lucide="{{ $item['icon'] }}" class="w-4 h-4"></i>
-                        <span>{{ $item['label'] }}</span>
+                <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all {{ request()->routeIs('admin.dashboard') ? 'bg-brand-600 text-white shadow-md font-extrabold' : 'hover:bg-slate-800 hover:text-white' }}">
+                    <i data-lucide="layout-dashboard" class="w-4 h-4"></i><span>Dashboard</span>
+                </a>
+                <a href="{{ route('admin.clients.index') }}" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all {{ request()->routeIs('admin.clients.*') ? 'bg-brand-600 text-white shadow-md font-extrabold' : 'hover:bg-slate-800 hover:text-white' }}">
+                    <i data-lucide="building-2" class="w-4 h-4"></i><span>Brands &amp; Clients</span>
+                </a>
+                <a href="{{ route('admin.users.index') }}" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all {{ request()->routeIs('admin.users.*') ? 'bg-brand-600 text-white shadow-md font-extrabold' : 'hover:bg-slate-800 hover:text-white' }}">
+                    <i data-lucide="users" class="w-4 h-4"></i><span>Users &amp; Roles</span>
+                </a>
+                <a href="{{ route('admin.blogs.index') }}" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all {{ request()->routeIs('admin.blogs.*') ? 'bg-brand-600 text-white shadow-md font-extrabold' : 'hover:bg-slate-800 hover:text-white' }}">
+                    <i data-lucide="newspaper" class="w-4 h-4"></i><span>Blog Management</span>
+                </a>
+                <a href="{{ route('admin.faqs.index') }}" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all {{ request()->routeIs('admin.faqs.*') ? 'bg-brand-600 text-white shadow-md font-extrabold' : 'hover:bg-slate-800 hover:text-white' }}">
+                    <i data-lucide="help-circle" class="w-4 h-4"></i><span>FAQ Management</span>
+                </a>
+                <a href="{{ route('admin.seo.index') }}" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all {{ request()->routeIs('admin.seo.*') ? 'bg-brand-600 text-white shadow-md font-extrabold' : 'hover:bg-slate-800 hover:text-white' }}">
+                    <i data-lucide="search" class="w-4 h-4"></i><span>SEO Guidelines</span>
+                </a>
+                <a href="{{ route('admin.settings') }}" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all {{ request()->routeIs('admin.settings') ? 'bg-brand-600 text-white shadow-md font-extrabold' : 'hover:bg-slate-800 hover:text-white' }}">
+                    <i data-lucide="settings" class="w-4 h-4"></i><span>Platform Settings</span>
+                </a>
+
+                <div class="pt-4 mt-2 border-t border-slate-800">
+                    <span class="px-3 text-[10px] font-extrabold uppercase tracking-widest text-slate-500 block mb-1">Back to App</span>
+                    <a href="{{ route('app.dashboard') }}" class="flex items-center gap-3 px-3.5 py-2 rounded-xl transition-all hover:bg-slate-800 hover:text-white">
+                        <i data-lucide="arrow-left-right" class="w-4 h-4"></i><span>Go to GBP App</span>
                     </a>
-                @endforeach
+                    <a href="{{ route('home') }}" class="flex items-center gap-3 px-3.5 py-2 rounded-xl transition-all hover:bg-slate-800 hover:text-white">
+                        <i data-lucide="globe" class="w-4 h-4"></i><span>Marketing Site</span>
+                    </a>
+                </div>
+            </nav>
 
             <div class="p-4 mt-auto border-t border-slate-800 bg-slate-950/50">
                 <div class="flex items-center gap-2">

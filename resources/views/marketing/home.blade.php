@@ -2,17 +2,15 @@
 
 @section('title', 'Untab — Run every Google Business Profile from one dashboard')
 
-@php
-    $faqs = [
-        ['q' => 'What is Untab and who is it for?', 'a' => 'Untab is a Google Business Profile management platform built for SEO agencies, franchise operators, and multi-location brands that need to manage many local profiles from one dashboard.'],
-        ['q' => 'How many Google Business Profiles can I manage?', 'a' => 'Untab supports 10 to 500+ profiles per organization. Group locations into client portfolios and filter every module by client, group, or a single location.'],
-        ['q' => 'Can Untab reply to Google reviews for me?', 'a' => 'Yes. The AI Review Reply Assistant drafts on-brand responses in seconds based on star rating, sentiment, and tone. Publish replies individually or in bulk.'],
-        ['q' => 'Does Untab schedule Google Posts?', 'a' => 'Yes. Create and schedule updates, offers with coupon codes, and events across any subset of locations, with a live Google card preview.'],
-        ['q' => 'Can I send white-label reports to clients?', 'a' => 'Yes. Generate branded performance PDF reports with your agency logo and a client-ready link.'],
-        ['q' => 'Is Untab free to start?', 'a' => 'Yes. Start free and explore every module in the live demo without a credit card.'],
-    ];
-    $jsonLd = [\App\Support\SeoHelper::faqSchema($faqs)];
-@endphp
+@php($faqs = [
+    ['q' => 'What is Untab and who is it for?', 'a' => 'Untab is a Google Business Profile management platform built for SEO agencies, franchise operators, and multi-location brands that need to manage many local profiles from one dashboard.'],
+    ['q' => 'How many Google Business Profiles can I manage?', 'a' => 'Untab supports 10 to 500+ profiles per organization. Group locations into client portfolios and filter every module by client, group, or a single location.'],
+    ['q' => 'Can Untab reply to Google reviews for me?', 'a' => 'Yes. The AI Review Reply Assistant drafts on-brand responses in seconds based on star rating, sentiment, and tone. Publish replies individually or in bulk.'],
+    ['q' => 'Does Untab schedule Google Posts?', 'a' => 'Yes. Create and schedule updates, offers with coupon codes, and events across any subset of locations, with a live Google card preview.'],
+    ['q' => 'Can I send white-label reports to clients?', 'a' => 'Yes. Generate branded performance PDF reports with your agency logo and a client-ready link.'],
+    ['q' => 'Is Untab free to start?', 'a' => 'Yes. Start free and explore every module in the live demo without a credit card.'],
+])
+@php($jsonLd = [\App\Support\SeoHelper::faqSchema($faqs)])
 
 @section('content')
 <!-- Hero Section -->

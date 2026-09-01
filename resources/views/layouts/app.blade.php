@@ -146,9 +146,7 @@
                             <i data-lucide="message-square" class="w-4 h-4"></i>
                             <span>Reviews & AI</span>
                         </div>
-                        @php
-                            $unanswered = \App\Models\Review::where('status', 'unanswered')->count();
-                        @endphp
+                        @php($unanswered = \Illuminate\Support\Facades\Schema::hasTable('reviews') ? \App\Models\Review::where('status', 'unanswered')->count() : 0)
                         @if(($unanswered ?? 0) > 0)
                             <span class="bg-accent-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full">
                                 {{ $unanswered }}
