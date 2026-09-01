@@ -152,6 +152,53 @@ function aiCaption(type,biz){
   return {title:`Exciting New Updates at ${biz}`,content:`✨ We are continually upgrading our facilities, services, and team training to provide you with the smoothest local experience. Stop by today or book online!`,coupon:'',cta:'LEARN_MORE'};
 }
 
+/* ---------------- The Brain (OpenRouter) --------------
+   When the user pastes an OpenRouter API key in Settings, the AI Review Reply
+   Assistant and the Google Posts caption engine call a real LLM. Without a key
+   they fall back to the offline templates above so the demo always works.     */
+const BRAIN={
+  get key(){ return (DB.settings&&DB.settings.ai_key)?String(DB.settings.ai_key).trim():''; },
+  get model(){ return (DB.settings&&DB.settings.ai_model)?DB.settings.ai_model:'nvidia/nemotron-3.5-lightning:free'; },
+  get on(){ return !!this.key; },
+  async chat(messages){
+    if(!this.on) return null;
+    try{
+      const res=await fetch('https://openrouter.ai/api/v1/chat/completions',{
+        method:'POST',
+        headers:{'Authorization':'Bearer '+this.key,'Content-Type':'application/json'},
+        body:JSON.stringify({model:this.model,messages,reasoning:{enabled:false},temperature:0.6,max_tokens:700})
+      });
+      if(!res.ok) return null;
+      const d=await res.json();
+      const c=d&&d.choices&&d.choices[0]&&d.choices[0].message&&d.choices[0].message.content;
+      return (c&&String(c).trim())?String(c).trim():null;
+    }catch(e){ return null; }
+  },
+  async reply(review,tone){
+    const author=(review.author||'').split(' ')[0]||'there';
+    const loc=locName(review.location_id);
+    const r=review.rating||5;
+    const kws=(review.keywords||[]).slice(0,4).join(', ');
+    const sys=`You are Untab, representing ${loc}. You reply to Google Business Profile reviews on behalf of the business owner. Match the review's sentiment. Tone: ${tone}. Keep it 2-4 sentences, under 220 characters, no hashtags, on brand. Reply directly to the customer only. No preface.`;
+    let user=`Author: ${author}\nStar rating: ${r}/5\nReview: "${review.snippet||''}"`;
+    if(kws) user+=`\nLocal keywords to weave in naturally if relevant: ${kws}`;
+    if(r>=4) user+=`\nThis is a positive review — thank them sincerely and invite them to return.`;
+    else if(r===3) user+=`\nThis is a mixed review — acknowledge feedback politely, apologize for any shortfall, offer to make it right.`;
+    else user+=`\nThis is a negative review — apologize genuinely, take responsibility, offer to resolve offline, no defensive tone.`;
+    return this.chat([{role:'system',content:sys},{role:'user',content:user}]);
+  },
+  async caption(type,biz){
+    if(!this.on) return null;
+    const kind=type==='OFFER'?'a limited-time promotional offer':type==='EVENT'?'an upcoming community event':'a "what\'s new" update';
+    const sys=`You are Untab, an expert local-marketing copywriter. Write a short, high-converting, SEO-friendly Google Business Profile post. Respond with strict JSON using ONLY these keys: title, content, coupon_code, terms, cta_type. cta_type must be one of BOOK, ORDER, BUY, LEARN_MORE, SIGN_UP, CALL_NOW. No markdown, no extra text.`;
+    const user=`Create ${kind} for the business "${biz}". Include a clear call-to-action and make the copy persuasive. Return only the JSON object.`;
+    const raw=await this.chat([{role:'system',content:sys},{role:'user',content:user}]);
+    if(!raw) return null;
+    try{ const d=JSON.parse(raw); if(d&&d.title&&d.content) return d; }catch(e){}
+    return null;
+  }
+};
+
 /* ---------------- Routing ---------------- */
 const routes = ['dashboard','reviews','posts','insights','search-console','media','reports','team','connect','settings'];
 function currentRoute(){ const h=location.hash.replace(/^#\//,''); const r=h.split('?')[0]; return routes.includes(r)?r:'dashboard'; }
@@ -355,13 +402,20 @@ function openAiModal(id){
     </div></div>`;
   document.body.appendChild(modal);
   modal.querySelector('.aiClose').onclick=()=>modal.remove();
-  modal.querySelector('.aiRegen').onclick=()=>{const t=modal.querySelector('#aiTone').value; modal.querySelector('#aiText').value=aiReply(r,t);};
+  const tl=modal.querySelector('#aiText');
+  async function regen(){
+    const t=modal.querySelector('#aiTone').value;
+    const live=BRAIN.on?await BRAIN.reply(r,t):null;
+    tl.value=(live&&live.trim())?live.trim():aiReply(r,t);
+  }
+  modal.querySelector('.aiRegen').onclick=regen;
   modal.querySelector('.aiSave').onclick=()=>{
-    const txt=modal.querySelector('#aiText').value.trim();
+    const txt=tl.value.trim();
     r.reply=txt; r.status='replied';
     const l=locOf(r.location_id); if(l) l.unanswered=Math.max(0,l.unanswered-1);
     save(); toast('Reply published to Google Business Profile.'); modal.remove(); render();
   };
+  if(BRAIN.on){ const btn=modal.querySelector('.aiRegen'); btn.textContent='↻ Regenerate (AI)'; }
 }
 
 /* ---------------- Posts ---------------- */
@@ -655,6 +709,15 @@ function viewSettings(){
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-3"><label class="flex items-center gap-2 text-xs font-bold text-slate-700"><input id="setEmailAlerts" type="checkbox" ${s.email_alerts?'checked':''} class="w-4 h-4"> Negative review email alerts</label><label class="flex items-center gap-2 text-xs font-bold text-slate-700"><input id="setSms" type="checkbox" ${s.sms_alerts?'checked':''} class="w-4 h-4"> SMS alerts</label></div>
       <button id="saveSettings" class="bg-brand-600 text-white font-bold px-6 py-2.5 rounded-xl text-xs shadow-md">Save Settings</button>
     </div>
+    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4 max-w-2xl">
+      <div class="flex items-center justify-between"><div><h2 class="font-bold text-slate-900">AI Engine — Untab Brain</h2><p class="text-[11px] text-slate-500">OpenRouter LLM for review replies &amp; post captions.</p></div><span class="text-[10px] font-bold ${BRAIN.on?'bg-emerald-50 text-emerald-700':'bg-amber-50 text-amber-700'} px-2 py-1 rounded-full uppercase">${BRAIN.on?'● Connected':'○ Offline (templates)'}</span></div>
+      <div><label class="text-xs font-bold text-slate-700 uppercase">OpenRouter API Key</label><input id="setAiKey" value="${esc(s.ai_key||'')}" placeholder="sk-or-v1-… (free at openrouter.ai/keys)" class="mt-1 w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-mono"></div>
+      <p class="text-[11px] text-slate-500">Used by the AI Review Reply Assistant and Google Posts caption engine. Leave blank to use built-in offline templates. Saved to this device.</p>
+    </div>
+    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4 max-w-2xl">
+      <div class="flex items-center justify-between"><div><h2 class="font-bold text-slate-900">Google Business Profile</h2><p class="text-[11px] text-slate-500">Live profile &amp; review sync via OAuth.</p></div><span class="text-[10px] font-bold bg-slate-100 text-slate-500 px-2 py-1 rounded-full uppercase">Set in backend .env</span></div>
+      <p class="text-[11px] text-slate-500">Real Google OAuth runs on the server (Laravel). Add <code class="font-mono">GOOGLE_CLIENT_ID</code> / <code class="font-mono">GOOGLE_CLIENT_SECRET</code> to <code class="font-mono">.env</code> and use the Connect Accounts page. This demo mirrors the UI.</p>
+    </div>
   </div>`;
 }
 
@@ -698,10 +761,17 @@ function liveUpdateHandlers(){
   // Reviews filters
   const rs=document.getElementById('reviewSearch'); if(rs) rs.oninput=()=>{reviewFilter.search=rs.value; renderListOnlyReviews();};
   ['reviewRating','reviewSentiment','reviewStatus'].forEach(id=>{const el=document.getElementById(id); if(el) el.onchange=()=>{reviewFilter[id.replace('review','').toLowerCase()]=el.value; renderListOnlyReviews();};});
-  const bulk=document.getElementById('bulkAi'); if(bulk) bulk.onclick=()=>{
-    let n=0; DB.reviews.forEach(r=>{if(r.status==='unanswered'){r.reply=aiReply(r,'friendly'); r.status='replied'; n++;}});
-    const pending=DB.reviews.filter(r=>r.status==='unanswered'); DB.reviews.filter(r=>r.status==='replied').forEach(r=>{});
-    save(); render(); toast(`Published AI replies for ${n} reviews!`);
+  const bulk=document.getElementById('bulkAi'); if(bulk) bulk.onclick=async ()=>{
+    const pending=DB.reviews.filter(r=>r.status==='unanswered');
+    if(!pending.length){ toast('No unanswered reviews.'); return; }
+    toast(`Generating replies for ${pending.length} reviews…`);
+    let n=0;
+    for(const r of pending){
+      r.reply=(BRAIN.on?await BRAIN.reply(r,'friendly'):null)||aiReply(r,'friendly');
+      r.status='replied'; n++;
+      const l=locOf(r.location_id); if(l) l.unanswered=Math.max(0,l.unanswered-1);
+    }
+    save(); render(); toast(`Published AI replies for ${n} reviews (${BRAIN.on?'OpenRouter':''})!`);
   };
   // review AI buttons
   $$('.aiReplyBtn').forEach(b=>b.onclick=()=>openAiModal(b.dataset.id));
@@ -710,14 +780,15 @@ function liveUpdateHandlers(){
   const at=document.getElementById('postTitle'); if(at) at.oninput=()=>{pval('pvTitle',at.value);};
   const ac=document.getElementById('postContent'); if(ac) ac.oninput=()=>{pval('pvContent',ac.value);};
   const ap=document.getElementById('postCoupon'); if(ap) ap.oninput=()=>{pval('pvCoupon',ap.value||'—');};
-  const ai=document.getElementById('aiCaption'); if(ai) ai.onclick=()=>{
+  const ai=document.getElementById('aiCaption'); if(ai) ai.onclick=async ()=>{
     const biz=document.getElementById('postBiz').value||'Our Business';
-    const cap=aiCaption(postState.type,biz);
+    const live=BRAIN.on?await BRAIN.caption(postState.type,biz):null;
+    const cap=live&&live.title?live:aiCaption(postState.type,biz);
     document.getElementById('postTitle').value=cap.title; document.getElementById('postContent').value=cap.content;
-    if(cap.coupon) document.getElementById('postCoupon').value=cap.coupon;
-    document.getElementById('postCta').value=cap.cta;
-    pval('pvTitle',cap.title);pval('pvContent',cap.content);pval('pvCoupon',cap.coupon||'—');
-    toast('AI caption generated!');
+    if(cap.coupon||cap.coupon_code) document.getElementById('postCoupon').value=cap.coupon||cap.coupon_code;
+    if(cap.cta||cap.cta_type) document.getElementById('postCta').value=cap.cta||cap.cta_type;
+    pval('pvTitle',cap.title);pval('pvContent',cap.content);pval('pvCoupon',(cap.coupon||cap.coupon_code)||'—');
+    toast(BRAIN.on?'AI caption generated (OpenRouter)!':'AI caption generated!');
   };
   const cp=document.getElementById('createPost'); if(cp) cp.onclick=createPost;
   $$('.postDel').forEach(b=>b.onclick=()=>{DB.posts=DB.posts.filter(p=>p.id!==b.dataset.id); save(); toast('Post deleted.'); render();});
@@ -748,6 +819,7 @@ function liveUpdateHandlers(){
     DB.settings.support_email=document.getElementById('setEmail').value;
     DB.settings.email_alerts=document.getElementById('setEmailAlerts').checked;
     DB.settings.sms_alerts=document.getElementById('setSms').checked;
+    const ak=document.getElementById('setAiKey'); if(ak) DB.settings.ai_key=ak.value.trim();
     save(); toast('Settings saved!'); render();
   };
 }

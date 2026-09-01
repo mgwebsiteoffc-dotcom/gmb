@@ -93,5 +93,68 @@
             </button>
         </div>
     </form>
+
+    <!-- AI Engine (OpenRouter) -->
+    <div class="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200/80 shadow-sm space-y-4">
+        <div class="flex items-center justify-between">
+            <div>
+                <h3 class="font-bold text-slate-900 text-base font-display">AI Engine — Untab Brain</h3>
+                <p class="text-xs text-slate-500">The AI behind review replies &amp; post captions.</p>
+            </div>
+            <span class="text-xs font-bold {{ $aiConfigured ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700' }} px-2.5 py-1 rounded-full uppercase">
+                {{ $aiConfigured ? '● Connected' : '○ Offline (templates)' }}
+            </span>
+        </div>
+
+        @if($aiConfigured)
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                <div class="p-3 bg-slate-50 rounded-xl border border-slate-100">
+                    <span class="text-slate-400 uppercase text-[10px] font-bold block">Model</span>
+                    <strong class="text-slate-800 font-mono">{{ $aiModel }}</strong>
+                </div>
+                <div class="p-3 bg-slate-50 rounded-xl border border-slate-100">
+                    <span class="text-slate-400 uppercase text-[10px] font-bold block">Provider</span>
+                    <strong class="text-slate-800">OpenRouter</strong>
+                </div>
+            </div>
+            <p class="text-[11px] text-slate-500">
+                The AI Review Reply Assistant and Google Posts caption engine are live. Generate a reply from
+                the <a href="{{ route('app.reviews') }}" class="text-brand-600 font-bold">Reviews &amp; AI</a> page, or create a post on the
+                <a href="{{ route('app.posts') }}" class="text-brand-600 font-bold">Google Posts</a> page.
+            </p>
+        @else
+            <p class="text-xs text-slate-600">
+                Add <code class="bg-slate-50 px-1.5 py-0.5 rounded border border-slate-200 font-mono">OPENROUTER_API_KEY</code> (free at
+                <span class="font-semibold">openrouter.ai/keys</span>) to your <code class="font-mono">.env</code>, then run
+                <code class="bg-slate-50 px-1.5 py-0.5 rounded border border-slate-200 font-mono">php artisan config:clear</code>.
+                Until then, replies and captions use polished offline templates.
+            </p>
+        @endif
+    </div>
+
+    <!-- Google Connection -->
+    <div class="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200/80 shadow-sm space-y-4">
+        <div class="flex items-center justify-between">
+            <div>
+                <h3 class="font-bold text-slate-900 text-base font-display">Google Business Profile</h3>
+                <p class="text-xs text-slate-500">Live profile sync &amp; review import.</p>
+            </div>
+            <span class="text-xs font-bold {{ $googleConfigured ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-500' }} px-2.5 py-1 rounded-full uppercase">
+                {{ $googleConfigured ? '● Configured' : '○ Not configured' }}
+            </span>
+        </div>
+        @if($googleConfigured)
+            <p class="text-xs text-slate-600">
+                Google OAuth is ready. Go to the <a href="{{ route('app.connect') }}" class="text-brand-600 font-bold">Connect Accounts</a> page to link profiles.
+            </p>
+        @else
+            <p class="text-xs text-slate-600">
+                Add <code class="bg-slate-50 px-1.5 py-0.5 rounded border border-slate-200 font-mono">GOOGLE_CLIENT_ID</code> and
+                <code class="bg-slate-50 px-1.5 py-0.5 rounded border border-slate-200 font-mono">GOOGLE_CLIENT_SECRET</code> to your <code class="font-mono">.env</code>
+                (Google Cloud Console → My Business Account Management API), then run
+                <code class="bg-slate-50 px-1.5 py-0.5 rounded border border-slate-200 font-mono">php artisan config:clear</code>.
+            </p>
+        @endif
+    </div>
 </div>
 @endsection

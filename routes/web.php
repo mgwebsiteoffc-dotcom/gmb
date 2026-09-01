@@ -105,6 +105,8 @@ Route::prefix('app')->name('app.')->group(function () {
 
     Route::get('/connect', [ConnectController::class, 'index'])->name('connect');
     Route::post('/connect', [ConnectController::class, 'connectAccount'])->name('connect.store');
+    Route::get('/connect/google', [ConnectController::class, 'redirectToGoogle'])->name('connect.google');
+    Route::get('/connect/google/callback', [ConnectController::class, 'handleGoogleCallback'])->name('connect.google.callback');
 
     Route::get('/settings', [SettingsController::class, 'index'])->name('settings');
     Route::post('/settings', [SettingsController::class, 'update'])->name('settings.update');

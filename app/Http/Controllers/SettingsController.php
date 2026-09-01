@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\Client;
 use App\Models\Location;
 use App\Models\AgencySetting;
+use App\Services\OpenRouterService;
+use App\Services\GoogleBusinessService;
 
 class SettingsController extends Controller
 {
@@ -19,7 +21,7 @@ class SettingsController extends Controller
             'custom_domain' => 'clients.untab.com',
             'brand_color' => '#1a35c8',
             'support_email' => 'support@untab.com',
-            'ai_model' => 'gpt-4o-mini',
+            'ai_model' => config('services.openrouter.model', 'nvidia/nemotron-3.5-lightning:free'),
             'email_alerts' => true,
             'sms_alerts' => false
         ]);
@@ -29,7 +31,11 @@ class SettingsController extends Controller
             'allLocations',
             'selectedLocationId',
             'settings'
-        ));
+        ))->with([
+            'aiConfigured' => OpenRouterService::configured(),
+            'aiModel' => (new OpenRouterService())->model(),
+            'googleConfigured' => GoogleBusinessService::configured(),
+        ]);
     }
 
     public function update(Request $request)
