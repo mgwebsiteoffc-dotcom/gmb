@@ -46,6 +46,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => { if (window.lucide) lucide.createIcons(); });
     </script>
+    @stack('styles')
 </head>
 <body class="bg-slate-100 text-slate-900 font-sans antialiased">
     <div class="flex min-h-screen">

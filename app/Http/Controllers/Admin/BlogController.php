@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\BlogPost;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class BlogController extends Controller
 {
@@ -34,6 +35,7 @@ class BlogController extends Controller
     public function store(Request $request)
     {
         $data = $this->validateData($request);
+        $data['cover_image'] = $this->resolveCoverImage($request, null);
         $data['tags'] = $request->filled('tags') ? collect(explode(',', $request->tags))->map('trim')->filter()->values()->all() : [];
         $data['reading_time'] = $request->reading_time ?: null;
         $data['published_at'] = $data['status'] === 'published' && empty($request->published_at)
@@ -54,6 +56,7 @@ class BlogController extends Controller
     public function update(Request $request, BlogPost $blog)
     {
         $data = $this->validateData($request, $blog);
+        $data['cover_image'] = $this->resolveCoverImage($request, $blog->cover_image);
         $data['tags'] = $request->filled('tags') ? collect(explode(',', $request->tags))->map('trim')->filter()->values()->all() : [];
         $data['reading_time'] = $request->reading_time ?: null;
         $data['published_at'] = $request->filled('published_at')
@@ -74,14 +77,50 @@ class BlogController extends Controller
             ->with('success', 'Blog post deleted.');
     }
 
+    /**
+     * Handle an image uploaded from inside the rich-text content editor.
+     * Only real images are accepted; returns the public URL to embed in the HTML.
+     */
+    public function uploadEditorImage(Request $request)
+    {
+        $request->validate([
+            'image' => ['required', 'image', 'mimes:jpg,jpeg,png,webp,gif', 'max:8192'],
+        ]);
+
+        $url = Storage::disk('public')->url($request->file('image')->store('blog-content', 'public'));
+
+        return response()->json(['success' => true, 'url' => $url]);
+    }
+
+    /**
+     * Store an uploaded cover image, keep an existing one, or remove it when requested.
+     */
+    protected function resolveCoverImage(Request $request, ?string $current): ?string
+    {
+        if ($request->hasFile('cover_image')) {
+            $path = $request->file('cover_image')->store('blog-covers', 'public');
+
+            return Storage::disk('public')->url($path);
+        }
+
+        if ($request->boolean('remove_cover')) {
+            return null;
+        }
+
+        if ($request->filled('cover_image')) {
+            return $request->input('cover_image');
+        }
+
+        return $current;
+    }
+
     protected function validateData(Request $request, ?BlogPost $blog = null): array
     {
-        return $request->validate([
+        $rules = [
             'title' => ['required', 'string', 'max:255'],
             'slug' => ['nullable', 'string', 'max:255', 'unique:blog_posts,slug'.($blog ? ','.$blog->id : '')],
             'excerpt' => ['nullable', 'string', 'max:500'],
             'content' => ['required', 'string'],
-            'cover_image' => ['nullable', 'url', 'max:2048'],
             'category' => ['required', 'string', 'max:120'],
             'tags' => ['nullable', 'string'],
             'author' => ['nullable', 'string', 'max:120'],
@@ -92,6 +131,15 @@ class BlogController extends Controller
             'meta_description' => ['nullable', 'string', 'max:500'],
             'keywords' => ['nullable', 'string', 'max:255'],
             'reading_time' => ['nullable', 'string', 'max:40'],
-        ]);
+        ];
+
+        // cover_image is either an existing URL/value, or a brand-new image upload.
+        if ($request->hasFile('cover_image')) {
+            $rules['cover_image'] = ['nullable', 'image', 'mimes:jpg,jpeg,png,webp,gif', 'max:8192'];
+        } else {
+            $rules['cover_image'] = ['nullable', 'string', 'max:2048'];
+        }
+
+        return $request->validate($rules);
     }
 }

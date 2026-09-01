@@ -146,6 +146,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:super_admin'])
     Route::get('/blogs', [AdminBlogController::class, 'index'])->name('blogs.index');
     Route::get('/blogs/create', [AdminBlogController::class, 'create'])->name('blogs.create');
     Route::post('/blogs', [AdminBlogController::class, 'store'])->name('blogs.store');
+    Route::post('/blogs/editor-image', [AdminBlogController::class, 'uploadEditorImage'])->name('blogs.editor-image');
     Route::get('/blogs/{blog}/edit', [AdminBlogController::class, 'edit'])->name('blogs.edit');
     Route::put('/blogs/{blog}', [AdminBlogController::class, 'update'])->name('blogs.update');
     Route::delete('/blogs/{blog}', [AdminBlogController::class, 'destroy'])->name('blogs.destroy');

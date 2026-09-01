@@ -2,7 +2,18 @@
 @php($isEdit = isset($blog) && $blog->exists)
 @php($tagsString = ($blog?->tags ?? []) ? implode(', ', $blog->tags) : '')
 
-<form method="POST" action="{{ $isEdit ? route('admin.blogs.update', $blog) : route('admin.blogs.store') }}" enctype="multipart/form-data" class="space-y-6">
+@push('styles')
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css">
+<style>
+    #blog-content-editor .ql-toolbar { border-radius: 12px 12px 0 0; border-color: #e2e8f0; background: #f8fafc; }
+    #blog-content-editor .ql-container { border-color: #e2e8f0; font-family: 'Plus Jakarta Sans', sans-serif; border-radius: 0 0 12px 12px; }
+    #blog-content-editor .ql-editor { min-height: 300px; font-size: 14px; line-height: 1.7; }
+    #blog-content-editor .ql-editor img { max-width: 100%; height: auto; border-radius: 8px; margin: 0.5rem 0; }
+    #blog-content-editor .ql-editor h2, #blog-content-editor .ql-editor h3 { font-weight: 800; }
+</style>
+@endpush
+
+<form method="POST" id="blog-form" action="{{ $isEdit ? route('admin.blogs.update', $blog) : route('admin.blogs.store') }}" enctype="multipart/form-data" class="space-y-6">
     @csrf
     @if($isEdit) @method('PUT') @endif
 
@@ -28,8 +39,9 @@
                 <textarea name="excerpt" rows="2" class="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">{{ old('excerpt', $blog->excerpt ?? '') }}</textarea>
 
                 <label class="block text-sm font-bold text-slate-700 mb-1 mt-4">Content</label>
-                <textarea name="content" rows="16" required class="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-brand-500">{{ old('content', $blog->content ?? '') }}</textarea>
-                <p class="text-xs text-slate-400 mt-1">Supports HTML. Use <code class="bg-slate-100 px-1.5 py-0.5 rounded">&lt;h2&gt;</code>, <code class="bg-slate-100 px-1.5 py-0.5 rounded">&lt;p&gt;</code>, <code class="bg-slate-100 px-1.5 py-0.5 rounded">&lt;blockquote&gt;</code>, <code class="bg-slate-100 px-1.5 py-0.5 rounded">&lt;ul&gt;</code>.</p>
+                <div id="blog-content-editor" class="rounded-xl border border-slate-300"></div>
+                <textarea name="content" id="blog-content-input" style="display:none;">{{ old('content', $blog->content ?? '') }}</textarea>
+                <p class="text-xs text-slate-400 mt-1">Rich text editor. Use the toolbar to format headings, lists and quotes. The <b>image</b> button uploads an image (JPEG / PNG / WebP / GIF) and inserts it automatically.</p>
             </div>
 
             <!-- SEO fields -->
@@ -104,13 +116,108 @@
                     <input type="text" name="author" value="{{ old('author', $blog->author ?? 'Untab Team') }}" class="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
                 </div>
                 <div>
-                    <label class="block text-sm font-bold text-slate-700 mb-1">Cover Image URL</label>
-                    <input type="url" name="cover_image" value="{{ old('cover_image', $blog->cover_image ?? '') }}" placeholder="https://…" class="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
-                    @if(!empty($blog->cover_image))
-                        <img src="{{ $blog->cover_image }}" alt="" class="mt-2 w-full h-32 object-cover rounded-xl">
-                    @endif
+                    <label class="block text-sm font-bold text-slate-700 mb-1">Cover Image</label>
+                    <label for="blog-cover-input" class="cursor-pointer inline-flex items-center gap-2 bg-brand-50 text-brand-700 border border-brand-200 rounded-xl px-4 py-2.5 text-sm font-bold hover:bg-brand-100 transition-colors">
+                        <i data-lucide="upload" class="w-4 h-4"></i> Upload Cover Image
+                        <input type="file" id="blog-cover-input" name="cover_image" accept="image/*" class="hidden" onchange="untabBlogCoverPreview(this)">
+                    </label>
+                    <div id="blog-cover-preview" class="mt-3">
+                        @if(!empty($blog->cover_image))
+                            <div class="relative inline-block w-full">
+                                <img src="{{ $blog->cover_image }}" alt="Cover preview" class="w-full h-40 object-cover rounded-xl border border-slate-200">
+                                <button type="button" onclick="untabBlogCoverRemove()" class="absolute top-2 right-2 w-7 h-7 rounded-full bg-slate-900/70 text-white text-xs font-bold hover:bg-red-600">✕</button>
+                            </div>
+                        @endif
+                    </div>
+                    <input type="hidden" name="remove_cover" id="blog-cover-remove" value="0">
+                    <p class="text-[11px] text-slate-400 mt-1">JPEG, PNG, WebP or GIF up to 8MB. Only image files are accepted. The current cover stays unless you upload a new one.</p>
                 </div>
             </div>
         </div>
     </div>
 </form>
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
+<script>
+    function untabBlogCoverPreview(input) {
+        const file = input.files && input.files[0];
+        if (!file) return;
+        const wrap = document.getElementById('blog-cover-preview');
+        const url = URL.createObjectURL(file);
+        const remove = document.getElementById('blog-cover-remove');
+        if (remove) remove.value = '0'; // a fresh upload wins over "remove"
+        wrap.innerHTML = '<div class="relative inline-block w-full">' +
+            '<img src="' + url + '" class="w-full h-40 object-cover rounded-xl border border-slate-200">' +
+            '<button type="button" onclick="untabBlogCoverRemove()" class="absolute top-2 right-2 w-7 h-7 rounded-full bg-slate-900/70 text-white text-xs font-bold hover:bg-red-600">&#10005;</button>' +
+            '</div>';
+    }
+    function untabBlogCoverRemove() {
+        const input = document.getElementById('blog-cover-input');
+        if (input) input.value = '';
+        const remove = document.getElementById('blog-cover-remove');
+        if (remove) remove.value = '1';
+        const wrap = document.getElementById('blog-cover-preview');
+        if (wrap) wrap.innerHTML = '';
+    }
+    document.addEventListener('DOMContentLoaded', function () {
+        const el = document.getElementById('blog-content-editor');
+        if (!el || typeof Quill === 'undefined') return;
+        const ta = document.getElementById('blog-content-input');
+        const quill = new Quill(el, {
+            theme: 'snow',
+            placeholder: 'Write your blog post…',
+            modules: {
+                toolbar: [
+                    [{ header: [2, 3, false] }],
+                    ['bold', 'italic', 'underline', 'strike'],
+                    [{ color: [] }, { background: [] }],
+                    [{ list: 'ordered' }, { list: 'bullet' }],
+                    [{ align: [] }],
+                    ['blockquote', 'code-block', 'link', 'image'],
+                    ['clean'],
+                ]
+            }
+        });
+        // Prefill existing HTML when editing.
+        if (ta.value) {
+            quill.root.innerHTML = ta.value;
+        }
+        // Publish the editor HTML into the hidden textarea before submitting.
+        const form = document.getElementById('blog-form');
+        if (form) {
+            form.addEventListener('submit', function () { ta.value = quill.root.innerHTML; });
+        }
+        // Replace Quill's base64 "image" embed with a real image upload.
+        const toolbar = quill.getModule('toolbar');
+        toolbar.addHandler('image', function () {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.onchange = function () {
+                const file = input.files && input.files[0];
+                if (!file) return;
+                const fd = new FormData();
+                fd.append('image', file);
+                fetch('{{ route('admin.blogs.editor-image') }}', {
+                    method: 'POST',
+                    headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' },
+                    body: fd
+                })
+                .then(function (r) { return r.json(); })
+                .then(function (data) {
+                    if (data.success && data.url) {
+                        const range = quill.getSelection(true);
+                        quill.insertEmbed(range.index, 'image', data.url, 'user');
+                        quill.setSelection(range.index + 1);
+                    } else {
+                        alert(data.message || 'Image upload failed.');
+                    }
+                })
+                .catch(function () { alert('Image upload failed.'); });
+            };
+            input.click();
+        });
+    });
+</script>
+@endpush
