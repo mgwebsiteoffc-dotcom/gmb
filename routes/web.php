@@ -15,12 +15,16 @@ use App\Http\Controllers\ConnectController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\SeoController;
 use App\Http\Controllers\FaqController;
+use App\Http\Controllers\BlogController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\ClientController as AdminClientController;
 use App\Http\Controllers\Admin\SettingsController as AdminSettingsController;
+use App\Http\Controllers\Admin\BlogController as AdminBlogController;
+use App\Http\Controllers\Admin\FaqController as AdminFaqController;
+use App\Http\Controllers\Admin\SeoGuidelineController as AdminSeoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -37,6 +41,10 @@ Route::get('/', [MarketingController::class, 'index'])->name('home');
 Route::get('/faq', [FaqController::class, 'index'])->name('faq');
 Route::get('/pricing', [MarketingController::class, 'pricing'])->name('pricing');
 Route::get('/location/{slug}', [MarketingController::class, 'location'])->name('location.show');
+
+// 1a. Blog (publicly viewable, managed in Super Admin)
+Route::get('/blog', [BlogController::class, 'index'])->name('blog.index');
+Route::get('/blog/{post}', [BlogController::class, 'show'])->name('blog.show');
 
 // 1b. Authentication
 Route::middleware('guest')->group(function () {
@@ -123,6 +131,31 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:super_admin'])
     Route::get('/clients/{client}/edit', [AdminClientController::class, 'edit'])->name('clients.edit');
     Route::put('/clients/{client}', [AdminClientController::class, 'update'])->name('clients.update');
     Route::delete('/clients/{client}', [AdminClientController::class, 'destroy'])->name('clients.destroy');
+
+    // Blog management
+    Route::get('/blogs', [AdminBlogController::class, 'index'])->name('blogs.index');
+    Route::get('/blogs/create', [AdminBlogController::class, 'create'])->name('blogs.create');
+    Route::post('/blogs', [AdminBlogController::class, 'store'])->name('blogs.store');
+    Route::get('/blogs/{blog}/edit', [AdminBlogController::class, 'edit'])->name('blogs.edit');
+    Route::put('/blogs/{blog}', [AdminBlogController::class, 'update'])->name('blogs.update');
+    Route::delete('/blogs/{blog}', [AdminBlogController::class, 'destroy'])->name('blogs.destroy');
+
+    // FAQ management
+    Route::get('/faqs', [AdminFaqController::class, 'index'])->name('faqs.index');
+    Route::get('/faqs/create', [AdminFaqController::class, 'create'])->name('faqs.create');
+    Route::post('/faqs', [AdminFaqController::class, 'store'])->name('faqs.store');
+    Route::get('/faqs/{faq}/edit', [AdminFaqController::class, 'edit'])->name('faqs.edit');
+    Route::put('/faqs/{faq}', [AdminFaqController::class, 'update'])->name('faqs.update');
+    Route::patch('/faqs/{faq}/toggle-active', [AdminFaqController::class, 'toggleActive'])->name('faqs.toggle-active');
+    Route::delete('/faqs/{faq}', [AdminFaqController::class, 'destroy'])->name('faqs.destroy');
+
+    // SEO guidelines management
+    Route::get('/seo', [AdminSeoController::class, 'index'])->name('seo.index');
+    Route::get('/seo/create', [AdminSeoController::class, 'create'])->name('seo.create');
+    Route::post('/seo', [AdminSeoController::class, 'store'])->name('seo.store');
+    Route::get('/seo/{guideline}/edit', [AdminSeoController::class, 'edit'])->name('seo.edit');
+    Route::put('/seo/{guideline}', [AdminSeoController::class, 'update'])->name('seo.update');
+    Route::delete('/seo/{guideline}', [AdminSeoController::class, 'destroy'])->name('seo.destroy');
 
     // Platform settings
     Route::get('/settings', [AdminSettingsController::class, 'index'])->name('settings');

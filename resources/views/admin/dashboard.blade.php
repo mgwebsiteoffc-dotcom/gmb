@@ -50,6 +50,39 @@
         @endforeach
     </div>
 
+    <!-- Content engine (blogs, FAQs, SEO guidelines) -->
+    <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-5">
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="text-sm font-black text-slate-900 font-display flex items-center gap-2"><i data-lucide="newspaper" class="w-4 h-4 text-brand-600"></i> Content Engine</h2>
+            <div class="flex gap-2">
+                <a href="{{ route('admin.blogs.index') }}" class="text-xs font-bold text-brand-600 hover:text-brand-700">Manage Blogs →</a>
+                <a href="{{ route('admin.seo.index') }}" class="text-xs font-bold text-brand-600 hover:text-brand-700">SEO Guidelines →</a>
+            </div>
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="rounded-xl bg-brand-50 border border-brand-100 p-4">
+                <div class="flex items-center gap-2 text-brand-700 text-[10px] font-extrabold uppercase tracking-wider"><i data-lucide="file-text" class="w-4 h-4"></i> Blog Posts</div>
+                <div class="mt-1 text-2xl font-black font-display text-slate-900">{{ number_format($totalBlogPosts) }}</div>
+                <div class="text-[10px] text-slate-400 font-bold mt-0.5">{{ number_format($publishedBlogPosts) }} published</div>
+            </div>
+            <div class="rounded-xl bg-violet-50 border border-violet-100 p-4">
+                <div class="flex items-center gap-2 text-violet-700 text-[10px] font-extrabold uppercase tracking-wider"><i data-lucide="help-circle" class="w-4 h-4"></i> FAQs</div>
+                <div class="mt-1 text-2xl font-black font-display text-slate-900">{{ number_format($totalFaqs) }}</div>
+                <div class="text-[10px] text-slate-400 font-bold mt-0.5">{{ number_format($activeFaqs) }} visible</div>
+            </div>
+            <div class="rounded-xl bg-emerald-50 border border-emerald-100 p-4">
+                <div class="flex items-center gap-2 text-emerald-700 text-[10px] font-extrabold uppercase tracking-wider"><i data-lucide="search" class="w-4 h-4"></i> SEO Guidelines</div>
+                <div class="mt-1 text-2xl font-black font-display text-slate-900">{{ number_format($totalSeoGuidelines) }}</div>
+                <div class="text-[10px] text-slate-400 font-bold mt-0.5">{{ number_format($activeSeoGuidelines) }} active</div>
+            </div>
+            <div class="rounded-xl bg-amber-50 border border-amber-100 p-4">
+                <div class="flex items-center gap-2 text-amber-700 text-[10px] font-extrabold uppercase tracking-wider"><i data-lucide="users" class="w-4 h-4"></i> Team Members</div>
+                <div class="mt-1 text-2xl font-black font-display text-slate-900">{{ number_format($teamMembers) }}</div>
+                <div class="text-[10px] text-slate-400 font-bold mt-0.5">in the agency</div>
+            </div>
+        </div>
+    </div>
+
     <!-- Engagement row -->
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
         @php

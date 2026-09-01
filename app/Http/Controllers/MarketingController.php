@@ -11,8 +11,9 @@ class MarketingController extends Controller
 {
     public function index()
     {
-        $locationsCount = Location::count();
-        $clientsCount = Client::count();
+        // Fail-safe: the marketing site must render even before the DB is seeded.
+        $locationsCount = $this->safeCount(Location::class);
+        $clientsCount = $this->safeCount(Client::class);
         return view('marketing.home', compact('locationsCount', 'clientsCount'));
     }
 
@@ -59,5 +60,22 @@ class MarketingController extends Controller
         }
 
         return view('marketing.location', compact('location'));
+    }
+
+    /**
+     * Return a row count, or 0 if the model's table doesn't exist yet,
+     * so the marketing pages never fatal on a fresh (pre-migrate) install.
+     */
+    protected function safeCount(string $modelClass): int
+    {
+        try {
+            $table = (new $modelClass)->getTable();
+
+            return \Illuminate\Support\Facades\Schema::hasTable($table)
+                ? $modelClass::count()
+                : 0;
+        } catch (\Throwable $e) {
+            return 0;
+        }
     }
 }

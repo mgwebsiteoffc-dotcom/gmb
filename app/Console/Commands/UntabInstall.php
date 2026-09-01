@@ -23,12 +23,16 @@ class UntabInstall extends Command
             $this->line('  .env already exists.');
         }
 
-        // 2. SQLite database file
-        $this->task('Ensuring database/database.sqlite exists', function () {
-            if (! file_exists(database_path('database.sqlite'))) {
-                touch(database_path('database.sqlite'));
-            }
-        });
+        // 2. SQLite database file (only when the app is configured for SQLite)
+        if (config('database.default') === 'sqlite') {
+            $this->task('Ensuring database/database.sqlite exists', function () {
+                if (! file_exists(database_path('database.sqlite'))) {
+                    touch(database_path('database.sqlite'));
+                }
+            });
+        } else {
+            $this->line('  DB driver: '.config('database.default').' — make sure the database "'.config('database.connections.'.config('database.default').'.database', '').'" exists.');
+        }
 
         // 3. Database migration
         $migrationArgs = ['--seed', '--force'];

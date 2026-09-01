@@ -9,6 +9,8 @@
     @php($seoDesc = $seoDesc ?? (trim(View::yieldContent('meta_description')) ?: 'Run every Google Business Profile from one dashboard. AI review replies, Google Posts scheduling, local insights, and white-label client reports.'))
     @include('partials.seo')
 
+    @stack('json-ld')
+
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -82,7 +84,7 @@
 
     <!-- Navigation Header -->
     <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200/80 transition-all">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
             <!-- Brand Logo -->
             <a href="{{ route('home') }}" class="flex items-center gap-2">
                 <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-800 to-brand-500 flex items-center justify-center text-white font-black text-xl shadow-md">
@@ -111,6 +113,9 @@
                 </a>
                 <a href="{{ route('pricing') }}" class="px-3 py-2 rounded-lg hover:text-brand-700 hover:bg-brand-50 transition-colors {{ request()->routeIs('pricing') ? 'text-brand-700 bg-brand-50 font-bold' : '' }}">
                     Pricing
+                </a>
+                <a href="{{ route('blog.index') }}" class="px-3 py-2 rounded-lg hover:text-brand-700 hover:bg-brand-50 transition-colors {{ request()->routeIs('blog.*') ? 'text-brand-700 bg-brand-50 font-bold' : '' }}">
+                    Blog
                 </a>
                 <a href="{{ route('faq') }}" class="px-3 py-2 rounded-lg hover:text-brand-700 hover:bg-brand-50 transition-colors {{ request()->routeIs('faq') ? 'text-brand-700 bg-brand-50 font-bold' : '' }}">
                     FAQ
@@ -217,10 +222,10 @@
                             Untab
                         </span>
                     </div>
-                    <p className="text-slate-400 text-xs sm:text-sm leading-relaxed max-w-sm">
+                    <p class="text-slate-400 text-xs sm:text-sm leading-relaxed max-w-sm">
                         The Google Business Profile management platform for SEO agencies and multi-location brands. Built by a team that managed 4,000+ local profiles across 15+ countries.
                     </p>
-                    <div className="flex items-center gap-3 pt-2">
+                    <div class="flex items-center gap-3 pt-2">
                         <a href="{{ route('app.dashboard') }}" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg border border-slate-700 font-semibold">
                             Web Dashboard
                         </a>
@@ -279,6 +284,7 @@
                     <a href="{{ route('tools.audit') }}" class="hover:text-white">Audit Tool</a>
                     <a href="{{ route('white-label-agency') }}" class="hover:text-white">White Label</a>
                     <a href="{{ route('pricing') }}" class="hover:text-white">Pricing</a>
+                    <a href="{{ route('blog.index') }}" class="hover:text-white">Blog</a>
                     <a href="{{ route('faq') }}" class="hover:text-white">FAQ</a>
                 </div>
             </div>

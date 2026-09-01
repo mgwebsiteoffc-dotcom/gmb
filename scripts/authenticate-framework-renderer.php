@@ -55,16 +55,23 @@ if (is_dir($destinationDir)) {
     say("vendor/laravel/framework not installed yet — renderer heal skipped.");
 }
 
-// --- B. SQLite database file ---
-$dbFile = $projectRoot.'/database/database.sqlite';
-if (! file_exists($dbFile)) {
-    if (@touch($dbFile)) {
-        say("created database/database.sqlite");
+// --- B. SQLite database file (only when the app uses SQLite) ---
+// If the app is configured for SQLite, make sure database/database.sqlite exists.
+// On MySQL the DB is created in the server and this block is skipped.
+$dbConnection = getenv('DB_CONNECTION') ?: 'mysql';
+if ($dbConnection === 'sqlite') {
+    $dbFile = $projectRoot.'/database/database.sqlite';
+    if (! file_exists($dbFile)) {
+        if (@touch($dbFile)) {
+            say("created database/database.sqlite");
+        } else {
+            say("WARNING: could not create database/database.sqlite — create it manually.");
+        }
     } else {
-        say("WARNING: could not create database/database.sqlite — create it manually.");
+        say("database/database.sqlite present.");
     }
 } else {
-    say("database/database.sqlite present.");
+    say("DB_CONNECTION={$dbConnection} (not sqlite) — skipping local sqlite file.");
 }
 
 // --- C. Storage framework directories ---

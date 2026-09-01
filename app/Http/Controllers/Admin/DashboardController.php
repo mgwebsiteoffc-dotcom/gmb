@@ -4,10 +4,13 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\AgencySetting;
+use App\Models\BlogPost;
 use App\Models\Client;
+use App\Models\Faq;
 use App\Models\Location;
 use App\Models\Post;
 use App\Models\Review;
+use App\Models\SeoGuideline;
 use App\Models\TeamMember;
 use App\Models\User;
 
@@ -29,6 +32,22 @@ class DashboardController extends Controller
         $unansweredReviews = Review::where('status', 'unanswered')->count();
         $totalPosts = Post::count();
         $teamMembers = TeamMember::count();
+
+        // Content engine stats (managed in the Super Admin panel).
+        // Guarded so the dashboard never crashes if these new tables haven't
+        // been migrated yet on an existing install.
+        $totalBlogPosts = $this->safeCount(BlogPost::class);
+        $publishedBlogPosts = \Illuminate\Support\Facades\Schema::hasTable('blog_posts')
+            ? BlogPost::published()->count()
+            : 0;
+        $totalFaqs = $this->safeCount(Faq::class);
+        $activeFaqs = \Illuminate\Support\Facades\Schema::hasTable('faqs')
+            ? Faq::where('is_active', true)->count()
+            : 0;
+        $totalSeoGuidelines = $this->safeCount(SeoGuideline::class);
+        $activeSeoGuidelines = \Illuminate\Support\Facades\Schema::hasTable('seo_guidelines')
+            ? SeoGuideline::where('is_active', true)->count()
+            : 0;
 
         $monthlyViews = Location::sum('monthly_views');
         $monthlyCalls = Location::sum('monthly_calls');
@@ -66,6 +85,12 @@ class DashboardController extends Controller
             'unansweredReviews',
             'totalPosts',
             'teamMembers',
+            'totalBlogPosts',
+            'publishedBlogPosts',
+            'totalFaqs',
+            'activeFaqs',
+            'totalSeoGuidelines',
+            'activeSeoGuidelines',
             'monthlyViews',
             'monthlyCalls',
             'monthlyDirections',
@@ -78,5 +103,21 @@ class DashboardController extends Controller
             'roleDistribution',
             'settings',
         ));
+    }
+
+    /**
+     * Return a row count, or 0 if the model's table does not exist yet.
+     */
+    protected function safeCount(string $modelClass): int
+    {
+        try {
+            $table = (new $modelClass)->getTable();
+
+            return \Illuminate\Support\Facades\Schema::hasTable($table)
+                ? $modelClass::count()
+                : 0;
+        } catch (\Throwable $e) {
+            return 0;
+        }
     }
 }

@@ -66,6 +66,9 @@
                     ['route' => 'admin.dashboard', 'label' => 'Dashboard', 'icon' => 'layout-dashboard', 'pattern' => 'admin.dashboard'],
                     ['route' => 'admin.clients.index', 'label' => 'Brands & Clients', 'icon' => 'building-2', 'pattern' => 'admin.clients.*'],
                     ['route' => 'admin.users.index', 'label' => 'Users & Roles', 'icon' => 'users', 'pattern' => 'admin.users.*'],
+                    ['route' => 'admin.blogs.index', 'label' => 'Blog Management', 'icon' => 'newspaper', 'pattern' => 'admin.blogs.*'],
+                    ['route' => 'admin.faqs.index', 'label' => 'FAQ Management', 'icon' => 'help-circle', 'pattern' => 'admin.faqs.*'],
+                    ['route' => 'admin.seo.index', 'label' => 'SEO Guidelines', 'icon' => 'search', 'pattern' => 'admin.seo.*'],
                     ['route' => 'admin.settings', 'label' => 'Platform Settings', 'icon' => 'settings', 'pattern' => 'admin.settings'],
                 ];
             @endphp
@@ -110,7 +113,12 @@
             <header class="h-16 bg-white border-b border-slate-200 px-4 sm:px-6 flex items-center justify-between flex-shrink-0">
                 <div class="flex items-center gap-3">
                     <div class="md:hidden w-9 h-9 rounded-xl bg-brand-500 flex items-center justify-center text-white font-black text-lg">⚡</div>
-                    <h1 class="text-lg font-black font-display text-slate-900">@yield('page_title', 'SaaS Admin Panel')</h1>
+                    <div>
+                        <h1 class="text-lg font-black font-display text-slate-900">@yield('page_title', 'SaaS Admin Panel')</h1>
+                        @hasSection('page_subtitle')
+                            <p class="text-xs text-slate-400 font-bold mt-0.5">@yield('page_subtitle')</p>
+                        @endif
+                    </div>
                 </div>
                 <div class="flex items-center gap-3">
                     <span class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 bg-brand-50 text-brand-800 rounded-xl text-xs font-bold border border-brand-200">

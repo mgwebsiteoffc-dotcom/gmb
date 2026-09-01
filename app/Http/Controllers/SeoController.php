@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Schema;
+use App\Models\BlogPost;
 use App\Models\Location;
 
 class SeoController extends Controller
@@ -22,6 +24,7 @@ class SeoController extends Controller
             '/industry-multi-location' => '0.9',
             '/google-reviews-management' => '0.9',
             '/google-business-profile-posts' => '0.9',
+            '/blog' => '0.8',
             '/faq' => '0.8',
             '/pricing' => '0.8',
             '/google-business-profile-audit-tool' => '0.7',
@@ -40,15 +43,29 @@ class SeoController extends Controller
             ];
         });
 
+        // Add every published blog post (blog_posts must be migrated).
+        if (Schema::hasTable('blog_posts')) {
+            $urls = $urls->merge(BlogPost::published()->get()->map(function ($post) use ($baseUrl) {
+                return [
+                    'loc' => $baseUrl.'/blog/'.$post->slug,
+                    'lastmod' => ($post->updated_at ?? $post->published_at)?->toDateString() ?? date('Y-m-d'),
+                    'priority' => '0.7',
+                    'changefreq' => 'weekly',
+                ];
+            }));
+        }
+
         // Add every Google Business Profile location as a local-SEO landing URL.
-        $urls = $urls->merge(Location::query()->get()->map(function ($location) use ($baseUrl) {
-            return [
-                'loc' => $baseUrl.'/location/'.Str::slug($location->name),
-                'lastmod' => $location->updated_at ? $location->updated_at->toDateString() : date('Y-m-d'),
-                'priority' => '0.6',
-                'changefreq' => 'weekly',
-            ];
-        }));
+        if (Schema::hasTable('locations')) {
+            $urls = $urls->merge(Location::query()->get()->map(function ($location) use ($baseUrl) {
+                return [
+                    'loc' => $baseUrl.'/location/'.Str::slug($location->name),
+                    'lastmod' => $location->updated_at ? $location->updated_at->toDateString() : date('Y-m-d'),
+                    'priority' => '0.6',
+                    'changefreq' => 'weekly',
+                ];
+            }));
+        }
 
         return response()
             ->view('seo.sitemap', ['urls' => $urls])

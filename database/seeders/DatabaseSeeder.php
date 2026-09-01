@@ -450,11 +450,14 @@ class DatabaseSeeder extends Seeder
             'sms_alerts' => false
         ]);
 
-        // 9. Users (super admin, brand admins, staff) & team demo data.
-        //    Runs after clients exist so brand admins link to a client.
+        // 9. Users, team, blog, FAQ & SEO content.
+        //    UserSeeder runs last so brand admins can link to the clients above.
         $this->call([
-            UserSeeder::class,
             TeamSeeder::class,
+            UserSeeder::class,
+            BlogSeeder::class,
+            FaqSeeder::class,
+            SeoGuidelineSeeder::class,
         ]);
     }
 }
