@@ -30,6 +30,8 @@
 ])
 
 @section('title', $location->name.' — Untab Local SEO Profile')
+@section('meta_description', 'Learn about '.$location->name.' — '.$location->category.' reviews, services, and local SEO visibility managed with Untab.')
+@section('meta_keywords', $location->name.', '.$location->category.', local SEO, Google Business Profile, location management')
 
 @section('content')
 <section class="py-16 bg-gradient-to-b from-[#eef1ff] to-white">

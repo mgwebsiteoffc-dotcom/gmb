@@ -47,63 +47,61 @@
 
 <!-- Base Organization + WebSite + Application JSON-LD -->
 <script type="application/ld+json">
-@php
-    $baseSchemas = [
-        [
-            '@context' => 'https://schema.org',
-            '@type' => 'Organization',
-            'name' => $brand,
-            'alternateName' => 'Untab Local Growth Platform',
-            'url' => $baseUrl,
-            'logo' => $baseUrl.'/logo.svg',
-            'sameAs' => [
-                'https://twitter.com/untab',
-                'https://www.linkedin.com/company/untab',
-                'https://www.facebook.com/untab',
-            ],
-            'contactPoint' => [
-                '@type' => 'ContactPoint',
-                'telephone' => '+1-512-555-0100',
-                'contactType' => 'customer support',
-                'email' => 'mailto:support@untab.com',
-                'areaServed' => 'US',
-                'availableLanguage' => ['English'],
-            ],
-            'address' => [
-                '@type' => 'PostalAddress',
-                'streetAddress' => '401 Congress Ave, Suite 120',
-                'addressLocality' => 'Austin',
-                'addressRegion' => 'TX',
-                'postalCode' => '78701',
-                'addressCountry' => 'US',
-            ],
+@php($baseSchemas = [
+    [
+        '@context' => 'https://schema.org',
+        '@type' => 'Organization',
+        'name' => $brand,
+        'alternateName' => 'Untab Local Growth Platform',
+        'url' => $baseUrl,
+        'logo' => $baseUrl.'/logo.svg',
+        'sameAs' => [
+            'https://twitter.com/untab',
+            'https://www.linkedin.com/company/untab',
+            'https://www.facebook.com/untab',
         ],
-        [
-            '@context' => 'https://schema.org',
-            '@type' => 'WebSite',
-            'name' => $brand,
-            'url' => $baseUrl,
-            'potentialAction' => [
-                '@type' => 'SearchAction',
-                'target' => $baseUrl.'/search?q={search_term_string}',
-                'query-input' => 'required name=search_term_string',
-            ],
+        'contactPoint' => [
+            '@type' => 'ContactPoint',
+            'telephone' => '+1-512-555-0100',
+            'contactType' => 'customer support',
+            'email' => 'mailto:support@untab.com',
+            'areaServed' => 'US',
+            'availableLanguage' => ['English'],
         ],
-        [
-            '@context' => 'https://schema.org',
-            '@type' => 'SoftwareApplication',
-            'name' => 'Untab',
-            'applicationCategory' => 'BusinessApplication',
-            'operatingSystem' => 'Web, iOS, Android',
-            'url' => $baseUrl,
-            'offers' => [
-                '@type' => 'Offer',
-                'price' => '0',
-                'priceCurrency' => 'USD',
-            ],
+        'address' => [
+            '@type' => 'PostalAddress',
+            'streetAddress' => '401 Congress Ave, Suite 120',
+            'addressLocality' => 'Austin',
+            'addressRegion' => 'TX',
+            'postalCode' => '78701',
+            'addressCountry' => 'US',
         ],
-    ];
-@endphp
+    ],
+    [
+        '@context' => 'https://schema.org',
+        '@type' => 'WebSite',
+        'name' => $brand,
+        'url' => $baseUrl,
+        'potentialAction' => [
+            '@type' => 'SearchAction',
+            'target' => $baseUrl.'/search?q={search_term_string}',
+            'query-input' => 'required name=search_term_string',
+        ],
+    ],
+    [
+        '@context' => 'https://schema.org',
+        '@type' => 'SoftwareApplication',
+        'name' => 'Untab',
+        'applicationCategory' => 'BusinessApplication',
+        'operatingSystem' => 'Web, iOS, Android',
+        'url' => $baseUrl,
+        'offers' => [
+            '@type' => 'Offer',
+            'price' => '0',
+            'priceCurrency' => 'USD',
+        ],
+    ],
+])
 {!! json_encode($baseSchemas, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) !!}
 </script>
 

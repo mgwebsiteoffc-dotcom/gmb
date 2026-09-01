@@ -1,6 +1,8 @@
 @extends('layouts.marketing')
 
 @section('title', 'Login to Untab — Google Business Profile Management')
+@section('meta_description', 'Sign in to Untab to manage every Google Business Profile from one dashboard — AI review replies, Google Posts, local SEO insights, and white-label client reports.')
+@section('meta_robots', 'noindex, follow')
 
 @section('content')
 <section class="min-h-screen bg-gradient-to-b from-[#eef1ff] to-white flex items-center justify-center py-16 px-4">

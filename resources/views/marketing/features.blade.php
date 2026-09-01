@@ -1,13 +1,21 @@
 @extends('layouts.marketing')
 
 @section('title', 'Features - Google Business Profile Management for Agencies | Untab')
+@section('meta_description', 'Explore Untab\'s features: multi-location dashboards, AI review replies, Google Posts scheduling, performance insights, Google Search Console, media & geotagging, white-label reports, and team permissions.')
+@section('meta_keywords', 'GBP management features, Google Business Profile tool, local SEO insights, white-label reports, AI review replies')
 
 @php($faqs = [
     ['q' => 'What features does Untab include?', 'a' => 'Untab bundles multi-location dashboards, an AI Review Reply Assistant, a Google Posts scheduler, performance insights, Google Search Console, a media & geotagging library, white-label client reports, and a team & permissions manager.'],
     ['q' => 'Does Untab work for single-location businesses too?', 'a' => 'Yes. Untab is built for scale but works equally well for a single location.'],
     ['q' => 'Can I white-label the platform?', 'a' => 'Yes. Upload your agency logo, set your brand accent color and custom domain, and send reports that carry your brand.'],
 ])
-@php($jsonLd = [\App\Support\SeoHelper::faqSchema($faqs)])
+@php($jsonLd = [
+    \App\Support\SeoHelper::faqSchema($faqs),
+    \App\Support\SeoHelper::breadcrumbSchema([
+        ['name' => 'Home', 'url' => route('home')],
+        ['name' => 'Features', 'url' => route('features')],
+    ]),
+])
 
 @section('content')
 <section class="py-16 bg-gradient-to-b from-brand-50 to-white text-center">

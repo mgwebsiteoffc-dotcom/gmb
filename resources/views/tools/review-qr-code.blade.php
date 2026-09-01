@@ -1,13 +1,21 @@
 @extends('layouts.marketing')
 
 @section('title', 'Google Review QR Code Generator & Printable Stand | Untab')
+@section('meta_description', 'Generate a high-resolution Google review QR code and printable desk stand. Customers scan to leave a review instantly — boost conversions at any location.')
+@section('meta_keywords', 'Google review QR code, printable review stand, review QR generator, Google reviews')
 
 @php($faqs = [
     ['q' => 'How do I create a Google review QR code?', 'a' => 'Enter your business name and Place ID. Untab generates a high-resolution QR code that links directly to your Google review form — ready to print.'],
     ['q' => 'Where should I place my review QR code?', 'a' => 'Put it at the point of sale, on receipts, at the front desk, or on table tents — wherever a happy customer is most likely to scan it.'],
     ['q' => 'Will this QR code increase my review count?', 'a' => 'Yes. A direct review QR code removes friction by skipping the search for your business on Google Maps, dramatically increasing conversion.'],
 ])
-@php($jsonLd = [\App\Support\SeoHelper::faqSchema($faqs)])
+@php($jsonLd = [
+    \App\Support\SeoHelper::faqSchema($faqs),
+    \App\Support\SeoHelper::breadcrumbSchema([
+        ['name' => 'Home', 'url' => route('home')],
+        ['name' => 'Review QR Code', 'url' => route('tools.review-qr')],
+    ]),
+])
 
 @section('content')
 <div class="max-w-4xl mx-auto py-12 px-4 sm:px-6" x-data="qrGen()" x-init="renderQr()">
@@ -122,7 +130,7 @@
             targetUrl: 'https://search.google.com/local/writereview?placeid=ChIJN1t_tDeuEmsRUsoyG83frY4',
             colorDark: '#1a35c8',
             renderQr() {
-                setTimeout(() => {
+                const draw = (n) => {
                     const canvas = document.getElementById('qrCanvas');
                     if (canvas && typeof QRCode !== 'undefined') {
                         QRCode.toCanvas(canvas, this.targetUrl, {
@@ -130,8 +138,12 @@
                             margin: 1,
                             color: { dark: this.colorDark, light: '#ffffff' }
                         });
+                    } else if (n < 20) {
+                        // Library may still be loading — retry shortly.
+                        setTimeout(() => draw(n + 1), 100);
                     }
-                }, 50);
+                };
+                draw(0);
             },
             downloadQr() {
                 const canvas = document.getElementById('qrCanvas');

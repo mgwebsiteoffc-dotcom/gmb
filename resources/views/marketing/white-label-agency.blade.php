@@ -1,13 +1,21 @@
 @extends('layouts.marketing')
 
 @section('title', 'White-Label GBP Platform for Agencies | Untab')
+@section('meta_description', 'Resell a white-label Google Business Profile platform under your own agency brand — your logo, domain, accent color, and client-ready PDF reports. Manage every client from one dashboard.')
+@section('meta_keywords', 'white-label GBP platform, agency white label, resell GBP tool, client reports, agency dashboard')
 
 @php($faqs = [
     ['q' => 'What is a white-label GBP platform?', 'a' => 'It\'s a Google Business Profile management tool that runs entirely under your agency\'s brand — your logo, your domain, your reports.'],
     ['q' => 'Can my agency resell Untab under its own brand?', 'a' => 'Yes. Customize your domain, brand color, logo, and report branding so your clients only see your agency.'],
     ['q' => 'Do my clients get their own login?', 'a' => 'Yes. Create client view-only logins so they see only their own locations.'],
 ])
-@php($jsonLd = [\App\Support\SeoHelper::faqSchema($faqs)])
+@php($jsonLd = [
+    \App\Support\SeoHelper::faqSchema($faqs),
+    \App\Support\SeoHelper::breadcrumbSchema([
+        ['name' => 'Home', 'url' => route('home')],
+        ['name' => 'White-Label for Agencies', 'url' => route('white-label-agency')],
+    ]),
+])
 
 @section('content')
 <section class="py-16 bg-gradient-to-r from-brand-800 to-indigo-900 text-white text-center">

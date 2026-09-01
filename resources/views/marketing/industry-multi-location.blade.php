@@ -1,13 +1,21 @@
 @extends('layouts.marketing')
 
 @section('title', 'Multi-Location GBP Management Software | Untab')
+@section('meta_description', 'Manage hundreds of Google Business Profiles from one dashboard. Group locations by brand or franchise, post to 100+ stores in one click, and benchmark every location with cross-location analytics.')
+@section('meta_keywords', 'multi-location GBP, franchise Google Business, manage multiple locations, location comparison, bulk posting')
 
 @php($faqs = [
     ['q' => 'How does Untab handle hundreds of locations?', 'a' => 'Group locations by brand or franchise, then filter every module by client, group, or a single location. Post to 100+ stores in one click.'],
     ['q' => 'Can store managers see only their own location?', 'a' => 'Yes. Give location managers role-based access so they manage only the profiles they own.'],
     ['q' => 'How do I benchmark my best and worst locations?', 'a' => 'The cross-location comparison matrix shows calls, directions, clicks, and health scores side by side.'],
 ])
-@php($jsonLd = [\App\Support\SeoHelper::faqSchema($faqs)])
+@php($jsonLd = [
+    \App\Support\SeoHelper::faqSchema($faqs),
+    \App\Support\SeoHelper::breadcrumbSchema([
+        ['name' => 'Home', 'url' => route('home')],
+        ['name' => 'Multi-Location Brands', 'url' => route('industry-multi-location')],
+    ]),
+])
 
 @section('content')
 <section class="py-16 bg-gradient-to-b from-[#eef1ff] to-white text-center">

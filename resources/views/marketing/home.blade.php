@@ -1,6 +1,8 @@
 @extends('layouts.marketing')
 
 @section('title', 'Untab — Run every Google Business Profile from one dashboard')
+@section('meta_description', 'Run every Google Business Profile from one dashboard. Untab gives SEO agencies and multi-location brands AI review replies, Google Posts scheduling, local SEO insights, and white-label client reports.')
+@section('meta_keywords', 'Google Business Profile management, GBP tool, GMB management, local SEO, multi-location, AI review replies, white-label reports')
 
 @php($faqs = [
     ['q' => 'What is Untab and who is it for?', 'a' => 'Untab is a Google Business Profile management platform built for SEO agencies, franchise operators, and multi-location brands that need to manage many local profiles from one dashboard.'],
@@ -10,7 +12,10 @@
     ['q' => 'Can I send white-label reports to clients?', 'a' => 'Yes. Generate branded performance PDF reports with your agency logo and a client-ready link.'],
     ['q' => 'Is Untab free to start?', 'a' => 'Yes. Start free and explore every module in the live demo without a credit card.'],
 ])
-@php($jsonLd = [\App\Support\SeoHelper::faqSchema($faqs)])
+@php($jsonLd = [
+    \App\Support\SeoHelper::faqSchema($faqs),
+    \App\Support\SeoHelper::softwareApplicationSchema(['name' => 'Untab']),
+])
 
 @section('content')
 <!-- Hero Section -->

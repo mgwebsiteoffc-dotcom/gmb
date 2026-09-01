@@ -7,6 +7,8 @@
     @php($seoType = $seoType ?? 'website')
     @php($seoTitle = $seoTitle ?? (trim(View::yieldContent('title')) ?: 'Untab — Google Business App for SEO Agencies & Multi-Location Brands'))
     @php($seoDesc = $seoDesc ?? (trim(View::yieldContent('meta_description')) ?: 'Run every Google Business Profile from one dashboard. AI review replies, Google Posts scheduling, local insights, and white-label client reports.'))
+    @php($seoKeywords = $seoKeywords ?? trim(View::yieldContent('meta_keywords')))
+    @php($seoRobots = ($seoRobots ?? trim(View::yieldContent('meta_robots'))) ?: 'index, follow')
     @include('partials.seo')
 
     @stack('json-ld')
@@ -52,6 +54,15 @@
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- QR Code generator (used by the QR Code + Review Link tools) -->
+    <script src="{{ asset('vendor/qrcode.bundle.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            if (window.lucide && typeof window.lucide.createIcons === 'function') {
+                window.lucide.createIcons();
+            }
+        });
+    </script>
 
     <style>
         :root {
@@ -174,6 +185,18 @@
                             <div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-700 flex items-center justify-center flex-shrink-0"><i data-lucide="image" class="w-4 h-4"></i></div>
                             <div><div class="font-bold text-xs text-slate-800">GBP Photo Size Guide</div><div class="text-[10px] text-slate-500">2026 specs & dimensions</div></div>
                         </a>
+                        <a href="{{ route('tools.character-counter') }}" class="flex items-start gap-3 p-2.5 rounded-xl hover:bg-slate-50 transition-colors">
+                            <div class="w-8 h-8 rounded-lg bg-teal-50 text-teal-700 flex items-center justify-center flex-shrink-0"><i data-lucide="type" class="w-4 h-4"></i></div>
+                            <div><div class="font-bold text-xs text-slate-800">Post Character Counter</div><div class="text-[10px] text-slate-500">1,500-char GBP limit checker</div></div>
+                        </a>
+                        <a href="{{ route('tools.local-seo') }}" class="flex items-start gap-3 p-2.5 rounded-xl hover:bg-slate-50 transition-colors">
+                            <div class="w-8 h-8 rounded-lg bg-rose-50 text-rose-700 flex items-center justify-center flex-shrink-0"><i data-lucide="map-pin" class="w-4 h-4"></i></div>
+                            <div><div class="font-bold text-xs text-slate-800">Local SEO Checklist</div><div class="text-[10px] text-slate-500">NAP & keyword health score</div></div>
+                        </a>
+                        <a href="{{ route('tools.description-writer') }}" class="flex items-start gap-3 p-2.5 rounded-xl hover:bg-slate-50 transition-colors">
+                            <div class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-700 flex items-center justify-center flex-shrink-0"><i data-lucide="edit-3" class="w-4 h-4"></i></div>
+                            <div><div class="font-bold text-xs text-slate-800">GBP Description Writer</div><div class="text-[10px] text-slate-500">750-char AI description</div></div>
+                        </a>
                     </div>
                 </div>
             </nav>
@@ -222,6 +245,9 @@
                     <a href="{{ route('tools.review-qr') }}" class="block px-4 py-2.5 rounded-xl hover:bg-slate-50">Review QR Code</a>
                     <a href="{{ route('tools.review-card') }}" class="block px-4 py-2.5 rounded-xl hover:bg-slate-50">NFC Smart Card</a>
                     <a href="{{ route('tools.photo-size') }}" class="block px-4 py-2.5 rounded-xl hover:bg-slate-50">Photo Size Guide</a>
+                    <a href="{{ route('tools.character-counter') }}" class="block px-4 py-2.5 rounded-xl hover:bg-slate-50">Character Counter</a>
+                    <a href="{{ route('tools.local-seo') }}" class="block px-4 py-2.5 rounded-xl hover:bg-slate-50">Local SEO Checklist</a>
+                    <a href="{{ route('tools.description-writer') }}" class="block px-4 py-2.5 rounded-xl hover:bg-slate-50">Description Writer</a>
                 </div>
             </nav>
         </div>
@@ -297,6 +323,9 @@
                         <li><a href="{{ route('tools.review-qr') }}" class="hover:text-white transition-colors">Review QR Code Maker</a></li>
                         <li><a href="{{ route('tools.review-card') }}" class="hover:text-white transition-colors">NFC Tap Card Configurator</a></li>
                         <li><a href="{{ route('tools.photo-size') }}" class="hover:text-white transition-colors">Photo Size & Aspect Ratio</a></li>
+                        <li><a href="{{ route('tools.character-counter') }}" class="hover:text-white transition-colors">Post Character Counter</a></li>
+                        <li><a href="{{ route('tools.local-seo') }}" class="hover:text-white transition-colors">Local SEO Checklist</a></li>
+                        <li><a href="{{ route('tools.description-writer') }}" class="hover:text-white transition-colors">GBP Description Writer</a></li>
                     </ul>
                 </div>
             </div>

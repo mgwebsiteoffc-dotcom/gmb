@@ -31,9 +31,15 @@ class FaqController extends Controller
         $flattened = $grouped->flatten(1);
         $categories = $faqs->pluck('category')->unique()->filter()->values();
 
-        $jsonLd = [SeoHelper::faqSchema(
-            $flattened->map(fn ($f) => ['q' => $f->question, 'a' => $f->answer])->values()->all()
-        )];
+        $jsonLd = [
+            SeoHelper::faqSchema(
+                $flattened->map(fn ($f) => ['q' => $f->question, 'a' => $f->answer])->values()->all()
+            ),
+            SeoHelper::breadcrumbSchema([
+                ['name' => 'Home', 'url' => route('home')],
+                ['name' => 'FAQs', 'url' => route('faq')],
+            ]),
+        ];
 
         return view('marketing.faq', compact('grouped', 'categories', 'category', 'jsonLd'));
     }

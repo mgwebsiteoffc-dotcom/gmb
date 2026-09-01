@@ -1,13 +1,21 @@
 @extends('layouts.marketing')
 
 @section('title', 'Google Review NFC Smart Card Configurator | Untab')
+@section('meta_description', 'Design a Google review NFC smart card. Tap the card to open your live Google review form — a premium, app-free way to turn happy customers into 5-star reviews.')
+@section('meta_keywords', 'NFC review card, tap to review, Google review NFC, smart review card')
 
 @php($faqs = [
     ['q' => 'What is a Google review NFC card?', 'a' => 'An NFC smart card embedded with a tag that, when tapped by a customer\'s phone, opens your Google review form instantly.'],
     ['q' => 'How do I configure the NFC tap card?', 'a' => 'Set your business name, card color, and review link. Untab generates the NFC tag data and a printable card design.'],
     ['q' => 'Why use NFC instead of a QR code?', 'a' => 'NFC requires no app and works with a single tap. It feels premium and removes scanning friction.'],
 ])
-@php($jsonLd = [\App\Support\SeoHelper::faqSchema($faqs)])
+@php($jsonLd = [
+    \App\Support\SeoHelper::faqSchema($faqs),
+    \App\Support\SeoHelper::breadcrumbSchema([
+        ['name' => 'Home', 'url' => route('home')],
+        ['name' => 'NFC Review Card', 'url' => route('tools.review-card')],
+    ]),
+])
 
 @section('content')
 <div class="max-w-4xl mx-auto py-12 px-4 sm:px-6" x-data="nfcCard()">

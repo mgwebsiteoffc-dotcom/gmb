@@ -1,6 +1,8 @@
 @extends('layouts.marketing')
 
 @section('title', 'Create your free Untab account — Google Business Profile Platform')
+@section('meta_description', 'Create a free Untab account and manage every Google Business Profile from one dashboard with AI review replies, Google Posts, and white-label client reports.')
+@section('meta_robots', 'noindex, follow')
 
 @section('content')
 <section class="min-h-screen bg-gradient-to-b from-[#eef1ff] to-white flex items-center justify-center py-16 px-4">

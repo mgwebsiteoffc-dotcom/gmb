@@ -66,6 +66,10 @@ Route::get('/google-review-link', [ToolsController::class, 'reviewLink'])->name(
 Route::get('/google-review-qr-code', [ToolsController::class, 'reviewQrCode'])->name('tools.review-qr');
 Route::get('/google-review-card', [ToolsController::class, 'reviewCard'])->name('tools.review-card');
 Route::get('/google-business-profile-photo-size', [ToolsController::class, 'photoSizeGuide'])->name('tools.photo-size');
+Route::get('/google-review-character-limit', [ToolsController::class, 'characterCounter'])->name('tools.character-counter');
+Route::get('/local-seo-keywords-checklist', [ToolsController::class, 'localSeoChecklist'])->name('tools.local-seo');
+Route::get('/google-business-profile-description-writer', [ToolsController::class, 'descriptionWriter'])->name('tools.description-writer');
+Route::post('/google-business-profile-description-writer/ai', [ToolsController::class, 'generateDescription'])->name('tools.description-writer.ai');
 
 // 3. SaaS Web Application (`app.untab.com`)
 Route::prefix('app')->name('app.')->group(function () {

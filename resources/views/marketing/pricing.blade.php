@@ -1,20 +1,28 @@
 @extends('layouts.marketing')
 
-@php($jsonLd = [[
-    '@context' => 'https://schema.org',
-    '@type' => 'Product',
-    'name' => 'Untab',
-    'description' => 'Google Business Profile management platform for agencies and multi-location brands.',
-    'offers' => [
-        '@type' => 'AggregateOffer',
-        'lowPrice' => '0',
-        'highPrice' => '349',
-        'priceCurrency' => 'USD',
-        'offerCount' => '3',
-    ],
-]])
-
 @section('title', 'Pricing — Start free with Untab, Google Business Profile Platform')
+@section('meta_description', 'Simple, transparent pricing for Untab. Start free, then scale from one location to 500+ Google Business Profiles with AI review replies, Google Posts scheduling, and white-label client reports.')
+@section('meta_keywords', 'Untab pricing, GBP platform cost, white-label agency pricing, multi-location pricing')
+
+@php($jsonLd = [
+    [
+        '@context' => 'https://schema.org',
+        '@type' => 'Product',
+        'name' => 'Untab',
+        'description' => 'Google Business Profile management platform for agencies and multi-location brands.',
+        'offers' => [
+            '@type' => 'AggregateOffer',
+            'lowPrice' => '0',
+            'highPrice' => '349',
+            'priceCurrency' => 'USD',
+            'offerCount' => '3',
+        ],
+    ],
+    \App\Support\SeoHelper::breadcrumbSchema([
+        ['name' => 'Home', 'url' => route('home')],
+        ['name' => 'Pricing', 'url' => route('pricing')],
+    ]),
+])
 
 @section('content')
 <section class="py-20 bg-gradient-to-b from-[#eef1ff] to-white">

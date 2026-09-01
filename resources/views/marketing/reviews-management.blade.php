@@ -1,6 +1,23 @@
 @extends('layouts.marketing')
 
 @section('title', 'Google Review Management With AI Replies | Untab')
+@section('meta_description', 'Manage every Google review from one dashboard. The Untab AI Review Reply Assistant drafts on-brand responses in seconds, and you can publish replies individually or in bulk.')
+@section('meta_keywords', 'Google review management, AI review replies, reply to Google reviews, review response tool, GBP review strategy')
+
+@php($faqs = [
+    ['q' => 'How does the AI Review Reply Assistant work?', 'a' => 'Untab reads each review\'s star rating, sentiment, and keywords, then drafts an on-brand reply matching your chosen tone — friendly, professional, SEO-rich, or empathetic.'],
+    ['q' => 'Can I reply to reviews in bulk?', 'a' => 'Yes. Generate AI replies for every unanswered review in one click, review them, then publish individually or approve them all.'],
+    ['q' => 'Does replying to reviews help my ranking?', 'a' => 'Yes. Responding to reviews signals an engaged, credible business and Google favors profiles that reply promptly.'],
+    ['q' => 'Can I control the tone and keywords?', 'a' => 'Absolutely. Choose a tone per reply and add custom instructions, and Untab naturally weaves in your local service keywords.'],
+])
+@php($jsonLd = [
+    \App\Support\SeoHelper::faqSchema($faqs),
+    \App\Support\SeoHelper::breadcrumbSchema([
+        ['name' => 'Home', 'url' => route('home')],
+        ['name' => 'Review Management', 'url' => route('reviews-management')],
+    ]),
+    \App\Support\SeoHelper::softwareApplicationSchema(['name' => 'Untab AI Review Assistant', 'category' => 'BusinessApplication']),
+])
 
 @section('content')
 <section class="py-16 bg-gradient-to-b from-brand-50 to-white text-center">
