@@ -114,7 +114,7 @@
                             class="w-full bg-slate-800 border border-slate-700 text-white text-xs font-semibold rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-500 cursor-pointer"
                         >
                             <option value="all" {{ ($selectedLocationId ?? 'all') == 'all' ? 'selected' : '' }}>
-                                🌐 All Locations ({{ \App\Models\Location::count() }} Profiles)
+                                🌐 All Locations ({{ isset($allLocations) ? $allLocations->count() : \App\Models\Location::count() }} Profiles)
                             </option>
                             @if(isset($clients))
                                 @foreach($clients as $client)

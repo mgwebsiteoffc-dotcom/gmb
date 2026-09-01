@@ -3,17 +3,19 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Client;
-use App\Models\Location;
+use App\Http\Controllers\Concerns\ScopesByClient;
 use App\Models\TeamMember;
 
 class TeamController extends Controller
 {
+    use ScopesByClient;
+
     public function index(Request $request)
     {
         $selectedLocationId = $request->get('location_id', 'all');
-        $clients = Client::with('locations')->get();
-        $allLocations = Location::all();
+        $clients = $this->scopedClients();
+        $allLocations = $this->scopedAllLocations();
+        $selectedLocationId = $this->resolveLocationFilter($selectedLocationId, $clients);
         $team = TeamMember::all();
 
         return view('app.team', compact(

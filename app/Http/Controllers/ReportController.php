@@ -3,23 +3,29 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Client;
-use App\Models\Location;
-use App\Models\Review;
-use App\Models\SearchQuery;
+use Illuminate\Support\Str;
+use App\Http\Controllers\Concerns\ScopesByClient;
 use App\Models\AgencySetting;
+use App\Models\SearchQuery;
 
 class ReportController extends Controller
 {
+    use ScopesByClient;
+
     public function index(Request $request)
     {
         $selectedLocationId = $request->get('location_id', 'all');
-        $clients = Client::with('locations')->get();
-        $allLocations = Location::all();
-        $settings = AgencySetting::first();
+        $clients = $this->scopedClients();
+        $allLocations = $this->scopedAllLocations();
+        $selectedLocationId = $this->resolveLocationFilter($selectedLocationId, $clients);
+
+        $client = $this->scopeClient();
+        $settings = AgencySetting::workspace($client?->id);
 
         $selectedClient = $clients->first();
-        $locations = $selectedClient ? $selectedClient->locations : $allLocations;
+        $locations = $selectedClient && $selectedClient->relationLoaded('locations')
+            ? $selectedClient->locations
+            : $allLocations;
 
         $totalViews = $locations->sum('monthly_views');
         $totalCalls = $locations->sum('monthly_calls');

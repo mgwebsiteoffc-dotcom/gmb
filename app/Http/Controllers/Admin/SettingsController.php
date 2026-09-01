@@ -11,7 +11,7 @@ class SettingsController extends Controller
     public function index()
     {
         $settings = AgencySetting::firstOrCreate(
-            ['id' => 1],
+            ['client_id' => null],
             [
                 'agency_name' => 'Untab Local Growth Agency',
                 'custom_domain' => 'clients.untab.com',
@@ -59,7 +59,7 @@ class SettingsController extends Controller
             'sms_alerts' => ['nullable', 'boolean'],
         ]);
 
-        $settings = AgencySetting::firstOrCreate(['id' => 1]);
+        $settings = AgencySetting::firstOrCreate(['client_id' => null]);
 
         // Keep the existing secret key when the field is submitted blank.
         $aiKey = $data['ai_api_key'] ?? '';

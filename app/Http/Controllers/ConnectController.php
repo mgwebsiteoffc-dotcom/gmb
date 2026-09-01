@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Http\Controllers\Concerns\ScopesByClient;
 use App\Models\Client;
 use App\Models\Location;
 use App\Models\GoogleAccount;
@@ -12,6 +13,8 @@ use Illuminate\Support\Str;
 
 class ConnectController extends Controller
 {
+    use ScopesByClient;
+
     /**
      * The Connect page: linked Google accounts, client portfolios, and a
      * real "Connect with Google" entry point (OAuth) when configured.
@@ -19,8 +22,9 @@ class ConnectController extends Controller
     public function index(Request $request)
     {
         $selectedLocationId = $request->get('location_id', 'all');
-        $clients = Client::with('locations')->get();
-        $allLocations = Location::all();
+        $clients = $this->scopedClients();
+        $allLocations = $this->scopedAllLocations();
+        $selectedLocationId = $this->resolveLocationFilter($selectedLocationId, $clients);
         $googleAccounts = GoogleAccount::orderBy('display_name')->get();
         $googleConfigured = GoogleBusinessService::configured();
 

@@ -4,31 +4,23 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use App\Models\Client;
-use App\Models\Location;
+use App\Http\Controllers\Concerns\ScopesByClient;
 use App\Models\AgencySetting;
 use App\Services\OpenRouterService;
 use App\Services\GoogleBusinessService;
 
 class SettingsController extends Controller
 {
+    use ScopesByClient;
+
     public function index(Request $request)
     {
         $selectedLocationId = $request->get('location_id', 'all');
-        $clients = Client::with('locations')->get();
-        $allLocations = Location::all();
-        $settings = AgencySetting::firstOrCreate([], [
-            'agency_name' => 'Untab Local Growth Agency',
-            'custom_domain' => 'clients.untab.com',
-            'brand_color' => '#1a35c8',
-            'support_email' => 'support@untab.com',
-            'ai_model' => config('services.openrouter.model', 'nvidia/nemotron-3.5-lightning:free'),
-            'email_alerts' => true,
-            'sms_alerts' => false,
-            'payment_provider' => 'stripe',
-            'payment_mode' => 'test',
-            'payment_currency' => 'USD',
-        ]);
+        $clients = $this->scopedClients();
+        $allLocations = $this->scopedAllLocations();
+        $selectedLocationId = $this->resolveLocationFilter($selectedLocationId, $clients);
+
+        $settings = AgencySetting::workspace($this->scopeClient()?->id);
 
         return view('app.settings', compact(
             'clients',
@@ -44,7 +36,7 @@ class SettingsController extends Controller
 
     public function update(Request $request)
     {
-        $settings = AgencySetting::firstOrCreate(['id' => 1]);
+        $settings = AgencySetting::workspace($this->scopeClient()?->id);
 
         // Keep existing secret keys when submitted blank.
         $aiKey = $request->input('ai_api_key') ?? '';
@@ -57,10 +49,10 @@ class SettingsController extends Controller
         }
 
         $settings->update([
-            'agency_name' => $request->input('agency_name'),
-            'custom_domain' => $request->input('custom_domain'),
-            'brand_color' => $request->input('brand_color'),
-            'support_email' => $request->input('support_email'),
+            'agency_name' => $request->input('agency_name', $settings->agency_name),
+            'custom_domain' => $request->input('custom_domain', $settings->custom_domain),
+            'brand_color' => $request->input('brand_color', $settings->brand_color),
+            'support_email' => $request->input('support_email', $settings->support_email),
 
             // AI / OpenRouter
             'ai_model' => $request->input('ai_model', $settings->ai_model),
@@ -109,7 +101,6 @@ class SettingsController extends Controller
             'password' => $request->input('new_password'),
         ]);
 
-        // Re-authenticate the session so it stays valid after a password change.
         $request->session()->regenerate();
 
         return back()->with('success', 'Your password has been updated successfully.');

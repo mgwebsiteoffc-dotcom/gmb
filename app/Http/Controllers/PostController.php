@@ -4,22 +4,34 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use App\Models\Client;
-use App\Models\Location;
+use App\Http\Controllers\Concerns\ScopesByClient;
 use App\Models\Post;
 use App\Services\AiAssistantService;
 
 class PostController extends Controller
 {
+    use ScopesByClient;
+
     public function index(Request $request)
     {
         $tab = $request->get('tab', 'all');
         $selectedLocationId = $request->get('location_id', 'all');
 
-        $clients = Client::with('locations')->get();
-        $allLocations = Location::all();
+        $clients = $this->scopedClients();
+        $allLocations = $this->scopedAllLocations();
+        $selectedLocationId = $this->resolveLocationFilter($selectedLocationId, $clients);
+        $visibleIds = $allLocations->pluck('id')->all();
 
         $query = Post::query();
+        $query->where(function ($q) use ($visibleIds) {
+            if (! empty($visibleIds)) {
+                foreach ($visibleIds as $id) {
+                    $q->orWhereJsonContains('target_locations', $id);
+                }
+            } else {
+                $q->whereRaw('1 = 0');
+            }
+        });
 
         if ($tab === 'published') {
             $query->where('status', 'PUBLISHED');
@@ -62,16 +74,18 @@ class PostController extends Controller
             'media_url' => 'nullable|string',
         ]);
 
-        $locations = $request->input('target_locations', []);
-        $allLocs = Location::all();
+        $allLocs = $this->scopedAllLocations();
+        $visibleIds = $allLocs->pluck('id')->all();
 
-        $locNames = count($locations) === $allLocs->count() || empty($locations)
+        // Only allow posting to the signed-in user's own locations.
+        $locations = array_values(array_intersect($request->input('target_locations', []), $visibleIds));
+
+        $locNames = empty($locations) || count($locations) === $allLocs->count()
             ? "All Locations ({$allLocs->count()})"
             : count($locations) . ' Selected Locations';
 
         $isScheduled = $request->has('is_scheduled') && $request->input('is_scheduled') == '1';
 
-        // Resolve the post image: prefer a real upload, otherwise the URL field, otherwise a default.
         $mediaUrl = $request->input('media_url');
         if ($request->hasFile('media_image')) {
             $path = $request->file('media_image')->store('posts', 'public');
@@ -105,7 +119,16 @@ class PostController extends Controller
 
     public function destroy($id)
     {
-        $post = Post::findOrFail($id);
+        $visibleIds = $this->scopedAllLocations()->pluck('id')->all();
+        $post = Post::where(function ($q) use ($visibleIds) {
+            if (! empty($visibleIds)) {
+                foreach ($visibleIds as $idv) {
+                    $q->orWhereJsonContains('target_locations', $idv);
+                }
+            } else {
+                $q->whereRaw('1 = 0');
+            }
+        })->findOrFail($id);
         $post->delete();
 
         return back()->with('success', 'Post removed successfully.');

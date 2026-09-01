@@ -3,21 +3,26 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Client;
+use Illuminate\Support\Facades\Storage;
+use App\Http\Controllers\Concerns\ScopesByClient;
 use App\Models\Location;
 use App\Models\MediaItem;
 
 class MediaController extends Controller
 {
+    use ScopesByClient;
+
     public function index(Request $request)
     {
         $selectedLocationId = $request->get('location_id', 'all');
         $category = $request->get('category', 'all');
 
-        $clients = Client::with('locations')->get();
-        $allLocations = Location::all();
+        $clients = $this->scopedClients();
+        $allLocations = $this->scopedAllLocations();
+        $selectedLocationId = $this->resolveLocationFilter($selectedLocationId, $clients);
+        $visibleIds = $allLocations->pluck('id')->all();
 
-        $query = MediaItem::with('location');
+        $query = MediaItem::with('location')->whereIn('location_id', $visibleIds);
 
         if ($category !== 'all') {
             $query->where('category', $category);
@@ -44,20 +49,25 @@ class MediaController extends Controller
             'url' => 'nullable|string',
         ]);
 
-        $loc = Location::find($request->input('location_id'));
+        $visibleIds = $this->scopedAllLocations()->pluck('id')->all();
+        $loc = Location::whereIn('id', $visibleIds)->find($request->input('location_id'));
+
+        if (! $loc) {
+            return back()->withErrors([ 'location_id' => 'That location is not in your scope.' ])->withInput();
+        }
+
         $enableGeotag = $request->has('geotag_enabled');
 
-        // Resolve the media source: prefer a real upload, fall back to a URL.
         $mediaUrl = $request->input('url');
         if ($request->hasFile('photo')) {
             $path = $request->file('photo')->store('media', 'public');
-            $mediaUrl = \Illuminate\Support\Facades\Storage::disk('public')->url($path);
+            $mediaUrl = Storage::disk('public')->url($path);
         } elseif (empty($mediaUrl)) {
             $mediaUrl = 'https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=800&q=80';
         }
 
         $geotag = 'None';
-        if ($enableGeotag && $loc) {
+        if ($enableGeotag) {
             $coords = [
                 '30.2672° N, 97.7431° W (Austin, TX)',
                 '25.7617° N, 80.1918° W (Miami Brickell)',
@@ -81,7 +91,8 @@ class MediaController extends Controller
 
     public function destroy($id)
     {
-        $item = MediaItem::findOrFail($id);
+        $visibleIds = $this->scopedAllLocations()->pluck('id')->all();
+        $item = MediaItem::whereIn('location_id', $visibleIds)->findOrFail($id);
         $item->delete();
 
         return back()->with('success', 'Media item removed.');

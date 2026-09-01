@@ -3,13 +3,15 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Client;
+use App\Http\Controllers\Concerns\ScopesByClient;
 use App\Models\Location;
 use App\Models\Review;
 use App\Services\AiAssistantService;
 
 class ReviewController extends Controller
 {
+    use ScopesByClient;
+
     public function index(Request $request)
     {
         $selectedLocationId = $request->get('location_id', 'all');
@@ -18,15 +20,18 @@ class ReviewController extends Controller
         $statusFilter = $request->get('status', 'all');
         $search = $request->get('search', '');
 
-        $clients = Client::with('locations')->get();
-        $allLocations = Location::all();
+        $clients = $this->scopedClients();
+        $allLocations = $this->scopedAllLocations();
+        $selectedLocationId = $this->resolveLocationFilter($selectedLocationId, $clients);
 
-        $query = Review::with('location');
+        $visibleLocationIds = $allLocations->pluck('id')->all();
+
+        $query = Review::with('location')->whereIn('location_id', $visibleLocationIds);
 
         if ($selectedLocationId !== 'all') {
             if (str_starts_with($selectedLocationId, 'client-')) {
                 $clientId = (int) str_replace('client-', '', $selectedLocationId);
-                $query->whereHas('location', function($q) use ($clientId) {
+                $query->whereHas('location', function ($q) use ($clientId) {
                     $q->where('client_id', $clientId);
                 });
             } else {
@@ -35,7 +40,7 @@ class ReviewController extends Controller
         }
 
         if ($ratingFilter !== 'all') {
-            $query->where('rating', (int)$ratingFilter);
+            $query->where('rating', (int) $ratingFilter);
         }
 
         if ($sentimentFilter !== 'all') {
@@ -46,15 +51,17 @@ class ReviewController extends Controller
             $query->where('status', $statusFilter);
         }
 
-        if (!empty($search)) {
-            $query->where(function($q) use ($search) {
+        if (! empty($search)) {
+            $query->where(function ($q) use ($search) {
                 $q->where('author_name', 'like', "%{$search}%")
                   ->orWhere('snippet', 'like', "%{$search}%");
             });
         }
 
         $reviews = $query->latest()->paginate(20)->withQueryString();
-        $unansweredCount = Review::where('status', 'unanswered')->count();
+        $unansweredCount = Review::whereIn('location_id', $visibleLocationIds)
+            ->where('status', 'unanswered')
+            ->count();
 
         return view('app.reviews', compact(
             'clients',
@@ -75,7 +82,8 @@ class ReviewController extends Controller
         $tone = $request->input('tone', 'friendly');
         $customInstructions = $request->input('instructions', '');
 
-        $review = Review::with('location')->findOrFail($reviewId);
+        $visibleIds = $this->scopedAllLocations()->pluck('id')->all();
+        $review = Review::with('location')->whereIn('location_id', $visibleIds)->findOrFail($reviewId);
         $reply = AiAssistantService::generateReviewReply($review, $tone, $customInstructions);
 
         return response()->json([
@@ -90,14 +98,14 @@ class ReviewController extends Controller
             'reply' => 'required|string',
         ]);
 
-        $review = Review::findOrFail($id);
+        $visibleIds = $this->scopedAllLocations()->pluck('id')->all();
+        $review = Review::whereIn('location_id', $visibleIds)->findOrFail($id);
         $review->update([
             'reply' => $request->input('reply'),
             'status' => 'replied',
             'replied_at' => now(),
         ]);
 
-        // Decrement location unanswered reviews count
         if ($review->location) {
             $review->location->decrement('unanswered_reviews');
         }
@@ -111,7 +119,11 @@ class ReviewController extends Controller
 
     public function bulkAiReply(Request $request)
     {
-        $unrepliedReviews = Review::with('location')->where('status', 'unanswered')->get();
+        $visibleIds = $this->scopedAllLocations()->pluck('id')->all();
+        $unrepliedReviews = Review::with('location')
+            ->whereIn('location_id', $visibleIds)
+            ->where('status', 'unanswered')
+            ->get();
         $count = 0;
 
         foreach ($unrepliedReviews as $review) {
@@ -125,7 +137,7 @@ class ReviewController extends Controller
             $count++;
         }
 
-        Location::query()->update(['unanswered_reviews' => 0]);
+        Location::whereIn('id', $visibleIds)->update(['unanswered_reviews' => 0]);
 
         return back()->with('success', "Successfully drafted and published AI replies for {$count} reviews!");
     }

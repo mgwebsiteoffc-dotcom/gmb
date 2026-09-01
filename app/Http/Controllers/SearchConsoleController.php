@@ -3,21 +3,23 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Client;
-use App\Models\Location;
+use App\Http\Controllers\Concerns\ScopesByClient;
 use App\Models\SearchQuery;
 use App\Models\SearchPage;
 
 class SearchConsoleController extends Controller
 {
+    use ScopesByClient;
+
     public function index(Request $request)
     {
         $selectedLocationId = $request->get('location_id', 'all');
         $tab = $request->get('tab', 'queries');
         $search = $request->get('search', '');
 
-        $clients = Client::with('locations')->get();
-        $allLocations = Location::all();
+        $clients = $this->scopedClients();
+        $allLocations = $this->scopedAllLocations();
+        $selectedLocationId = $this->resolveLocationFilter($selectedLocationId, $clients);
 
         $queriesQuery = SearchQuery::query();
         if (!empty($search)) {

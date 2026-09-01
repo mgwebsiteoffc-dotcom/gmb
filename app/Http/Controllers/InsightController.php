@@ -3,20 +3,22 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Client;
-use App\Models\Location;
+use App\Http\Controllers\Concerns\ScopesByClient;
 
 class InsightController extends Controller
 {
+    use ScopesByClient;
+
     public function index(Request $request)
     {
         $selectedLocationId = $request->get('location_id', 'all');
         $dateRange = $request->get('range', '30d');
 
-        $clients = Client::with('locations')->get();
-        $allLocations = Location::all();
+        $clients = $this->scopedClients();
+        $allLocations = $this->scopedAllLocations();
+        $selectedLocationId = $this->resolveLocationFilter($selectedLocationId, $clients);
 
-        $query = Location::query();
+        $query = $this->scopedLocationQuery();
         if ($selectedLocationId !== 'all') {
             if (str_starts_with($selectedLocationId, 'client-')) {
                 $clientId = (int) str_replace('client-', '', $selectedLocationId);
@@ -32,9 +34,8 @@ class InsightController extends Controller
         $totalDirections = $locations->sum('monthly_directions');
         $totalClicks = $locations->sum('monthly_website_clicks');
 
-        // Chart Data calculations
-        $mapsViews = (int)($totalViews * 0.65);
-        $searchViews = (int)($totalViews * 0.35);
+        $mapsViews = (int) ($totalViews * 0.65);
+        $searchViews = (int) ($totalViews * 0.35);
 
         return view('app.insights', compact(
             'clients',
